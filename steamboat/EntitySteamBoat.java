@@ -1,9 +1,10 @@
-package pchan3.steamboat;
+package mods.pchan3.steamboat;
  
 import java.util.List;
 
-import pchan3.PChan3mods;
 
+
+import mods.pchan3.PChan3Mods;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
@@ -107,6 +108,14 @@ public class EntitySteamBoat extends Entity
         if (par1DamageSource.getEntity() instanceof EntityPlayer && ((EntityPlayer)par1DamageSource.getEntity()).capabilities.isCreativeMode)
         {
             this.setDamageTaken(100);
+            if (this.riddenByEntity != null)
+            {
+                this.riddenByEntity.mountEntity(this);
+            }
+            
+            this.dropItemWithOffset(PChan3Mods.instance.steamBoat.itemID, 1, 0.0f);
+            this.setDead();
+            return true;
         }
 
         if (this.getDamageTaken() > 80)
@@ -115,16 +124,9 @@ public class EntitySteamBoat extends Entity
             {
                 this.riddenByEntity.mountEntity(this);
             }
-
-            for(int j = 0; j < 5; j++)
-            {
-            	this.dropItemWithOffset(Block.planks.blockID, 1, 0.0F);
-            }
-
-            for(int k = 0; k < 1; k++)
-            {
-            	this.dropItemWithOffset(Item.ingotIron.itemID, 1, 0.0f);
-            }
+            
+            this.dropItemWithOffset(Block.planks.blockID, 5, 0.0F);
+            this.dropItemWithOffset(Item.ingotIron.itemID, 1, 0.0f);
             this.setDead();
         }
 
@@ -251,7 +253,7 @@ public class EntitySteamBoat extends Entity
         {
             double var5 = this.boundingBox.minY + (this.boundingBox.maxY - this.boundingBox.minY) * (double)(var4 + 0) / (double)var1 - 0.125D;
             double var7 = this.boundingBox.minY + (this.boundingBox.maxY - this.boundingBox.minY) * (double)(var4 + 1) / (double)var1 - 0.125D;
-            AxisAlignedBB var9 = AxisAlignedBB.getAABBPool().addOrModifyAABBInPool(this.boundingBox.minX, var5, this.boundingBox.minZ, this.boundingBox.maxX, var7, this.boundingBox.maxZ);
+            AxisAlignedBB var9 = AxisAlignedBB.getAABBPool().getAABB(this.boundingBox.minX, var5, this.boundingBox.minZ, this.boundingBox.maxX, var7, this.boundingBox.maxZ);
 
             if (this.worldObj.isAABBInMaterial(var9, Material.water))
             {
@@ -265,10 +267,10 @@ public class EntitySteamBoat extends Entity
 
         if (!this.worldObj.isRemote && var24 > 0.26249999999999996D)
         {
-           PChan3mods.proxy.displaySplashEffect(this, var24);
+           PChan3Mods.instance.proxy.displaySplashEffect(this, var24);
         }
         if ( !this.worldObj.isRemote && this.getFuelTime()!=0) {
-        	PChan3mods.proxy.displaySmoke(this);
+        	PChan3Mods.instance.proxy.displaySmoke(this);
         }
         double var12;
         double var26;
@@ -447,12 +449,12 @@ public class EntitySteamBoat extends Entity
 
                         if (var22 == Block.snow.blockID)
                         {
-                            this.worldObj.setBlockWithNotify(var28, var21, var19, 0);
+                            this.worldObj.func_94571_i(var28, var21, var19);
                         }
                         else if (var22 == Block.waterlily.blockID)
                         {
                             Block.waterlily.dropBlockAsItemWithChance(this.worldObj, var28, var21, var19, var23, 0.3F, 0);
-                            this.worldObj.setBlockWithNotify(var28, var21, var19, 0);
+                            this.worldObj.func_94578_a(var28, var21, var19, true);//setBlockWithNotify
                         }
                     }
                 }
