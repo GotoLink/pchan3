@@ -1,4 +1,4 @@
-package pchan3.steamship;
+package mods.pchan3.steamship;
 
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.entity.Render;
@@ -48,19 +48,19 @@ public class RenderAirship extends Render
         {
             GL11.glRotatef(((MathHelper.sin(f2) * f2 * f3) / 10F) * (float)entityairship.getForwardDirection(), 1.0F, 0.0F, 0.0F);
         }
-        loadTexture("/terrain.png");
+        this.loadTexture("/terrain.png");
         float f4 = 0.75F;
         GL11.glScalef(f4, f4, f4);
         GL11.glScalef(1.0F / f4, 1.0F / f4, 1.0F / f4);
         
        
-        loadTexture("/pchan3/item/airship.png");
+        this.loadTexture("/mods/pchan3/textures/models/airship.png");
         
         GL11.glScalef(-1F, -1F, 1.0F);
         
         model.render(entityairship,0.0F, 0.0F, -0.1F, 0.0F, 0.0F, 0.0625F);
         	
-		loadTexture("/pchan3/item/balloon.png");
+        this.loadTexture("/mods/pchan3/textures/models/balloon.png");
 		renderPassModel.render(entityairship,0.0F, 0.0F, -0.1F, 0.0F, 0.0F, 0.0625F);	
         GL11.glPopMatrix();
    	 

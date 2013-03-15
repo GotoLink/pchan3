@@ -1,4 +1,4 @@
-package pchan3.pirate;
+package mods.pchan3.pirate;
 
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.entity.RenderLiving;
@@ -19,7 +19,7 @@ public class RenderPirate extends RenderLiving
     {
         if(i == 0)
         {
-            loadTexture("/pchan3/mob/balloon.png");              
+            this.loadTexture("/mods/pchan3/textures/models/pirateballoon.png");              
             return 2;
         } 
         else

@@ -1,11 +1,10 @@
-package pchan3;
+package mods.pchan3;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 
-import pchan3.steamship.EntityAirship;
-
+import mods.pchan3.steamship.EntityAirship;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetworkManager;

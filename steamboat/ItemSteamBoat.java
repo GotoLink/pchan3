@@ -1,4 +1,4 @@
-package pchan3.steamboat;
+package mods.pchan3.steamboat;
 
 import java.util.List;
 

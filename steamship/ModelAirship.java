@@ -1,9 +1,9 @@
-package pchan3.steamship;
+package mods.pchan3.steamship;
 
+import mods.pchan3.CustomModelRenderer;
+import mods.pchan3.PChan3Mods;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.entity.Entity;
-import pchan3.CustomModelRenderer;
-import pchan3.PChan3mods;
 
 public class ModelAirship extends ModelBase
 {
@@ -178,7 +178,7 @@ public class ModelAirship extends ModelBase
 		// Boiler
 		// boiler
 		// -8, -4, 0, 10, 8, 4
-		   if(PChan3mods.instance.SHOW_BOILER)
+		   if(PChan3Mods.instance.SHOW_BOILER)
 		   {
 			   boxes[20].addBox(-8, -4, 0.0f, 10, 8, 4, 0.0F);
 			   boxes[21].addBox(-2, -13, -1f, 2, 14, 2, 0.0F);

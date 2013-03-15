@@ -1,8 +1,15 @@
-package pchan3.steamship;
+package mods.pchan3.steamship;
+
+import static cpw.mods.fml.relauncher.Side.CLIENT;
 
 import java.util.List;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockFluid;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -10,6 +17,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumMovingObjectType;
+import net.minecraft.util.Icon;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
@@ -22,9 +30,8 @@ public class ItemAirship extends Item
 		 super(itemIndex);
 	        this.maxStackSize = 1;
 	        this.setCreativeTab(CreativeTabs.tabTransport);
-	        this.bFull3D =false;  
 	    }
-	 @Override
+	@Override
     public ItemStack onItemRightClick(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer)
     {
         float var4 = 1.0F;
@@ -33,7 +40,7 @@ public class ItemAirship extends Item
         double var7 = par3EntityPlayer.prevPosX + (par3EntityPlayer.posX - par3EntityPlayer.prevPosX) * (double)var4;
         double var9 = par3EntityPlayer.prevPosY + (par3EntityPlayer.posY - par3EntityPlayer.prevPosY) * (double)var4 + 1.62D - (double)par3EntityPlayer.yOffset;
         double var11 = par3EntityPlayer.prevPosZ + (par3EntityPlayer.posZ - par3EntityPlayer.prevPosZ) * (double)var4;
-        Vec3 var13 = Vec3.vec3dPool.getVecFromPool(var7, var9, var11);
+        Vec3 var13 = Vec3.fakePool.getVecFromPool(var7, var9, var11);
         float var14 = MathHelper.cos(-var6 * 0.017453292F - (float)Math.PI);
         float var15 = MathHelper.sin(-var6 * 0.017453292F - (float)Math.PI);
         float var16 = -MathHelper.cos(-var5 * 0.017453292F);
@@ -106,4 +113,9 @@ public class ItemAirship extends Item
             }
         }
     }
+	/* @SideOnly(Side.CLIENT)
+	    public void func_94581_a(IconRegister par1IconRegister)
+	    {
+	        this.iconIndex = par1IconRegister.func_94245_a(this.unlocalizedName);
+	    }*/
 }

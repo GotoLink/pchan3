@@ -1,4 +1,4 @@
-package pchan3;
+package mods.pchan3;
 
 import net.minecraft.client.particle.EntityFX;
 import net.minecraft.world.World;

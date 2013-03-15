@@ -1,8 +1,11 @@
-package pchan3.steamship;
+package mods.pchan3.steamship;
 
 import java.util.List;
 import java.util.Random;
 
+
+import mods.pchan3.EntitySteamExplode;
+import mods.pchan3.PChan3Mods;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -19,8 +22,6 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
-import pchan3.EntitySteamExplode;
-import pchan3.PChan3mods;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -102,7 +103,7 @@ public class EntityAirship extends Entity implements IInventory {
                 }
             }
     	 if (!this.worldObj.isRemote)
-    		 PChan3mods.proxy.displayExplodeFX(this);
+    		 PChan3Mods.instance.proxy.displayExplodeFX(this);
     
 	super.setDead();
     }
@@ -151,9 +152,9 @@ public class EntityAirship extends Entity implements IInventory {
         {
             this.riddenByEntity.mountEntity(this);
         }
-	    this.dropItemWithOffset(PChan3mods.instance.airShip.itemID, 1, 0.0F);
+	    this.dropItemWithOffset(PChan3Mods.instance.airShip.itemID, 1, 0.0F);
 	    this.setDead();
-	    PChan3mods.proxy.displayShipExplodeFX(source, this);
+	    PChan3Mods.instance.proxy.displayShipExplodeFX(source, this);
 	}
 	return true;
 	}
@@ -414,10 +415,10 @@ public class EntityAirship extends Entity implements IInventory {
 
 	double d11 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
 	if (!this.worldObj.isRemote && d11 > 0.14999999999999999D) {
-		PChan3mods.proxy.displaySplashEffect(this,d11);
+		PChan3Mods.instance.proxy.displaySplashEffect(this,d11);
 	}
-	if (PChan3mods.instance.SHOW_BOILER && !this.worldObj.isRemote && this.getFuelTime()!=0) {
-		PChan3mods.proxy.displaySmoke(this);
+	if (PChan3Mods.instance.SHOW_BOILER && !this.worldObj.isRemote && this.getFuelTime()!=0) {
+		PChan3Mods.instance.proxy.displaySmoke(this);
 	}
 
 	if (isCollidedHorizontally && d11 > 0.14999999999999999D) {
@@ -553,7 +554,7 @@ public class EntityAirship extends Entity implements IInventory {
 	if (this.riddenByEntity != null && this.riddenByEntity instanceof EntityPlayer
 		&& this.riddenByEntity != entityplayer) {
 		if (!this.worldObj.isRemote)
-			entityplayer.openGui(PChan3mods.instance, PChan3mods.instance.GUI_ID, this.worldObj,this.serverPosX, this.serverPosY, this.serverPosZ);;
+			entityplayer.openGui(PChan3Mods.instance, PChan3Mods.instance.GUI_ID, this.worldObj,this.serverPosX, this.serverPosY, this.serverPosZ);;
 	    return true;
 	}
 	if (!this.worldObj.isRemote) 
@@ -586,9 +587,11 @@ public class EntityAirship extends Entity implements IInventory {
 
     public void FireArrow(EntityPlayer entityplayer) {
 
-	boolean playerHasArrows=entityplayer.inventory.hasItem(Item.arrow.itemID); 
-	boolean shipHasArrows=this.getStackInSlot(1)!=null && this.getStackInSlot(1).itemID==Item.arrow.itemID;
-
+	boolean playerHasArrows = entityplayer.inventory.hasItem(Item.arrow.itemID); 
+	boolean shipHasArrows = this.getStackInSlot(1)!=null && this.getStackInSlot(1).itemID==Item.arrow.itemID;	
+	//if (this.getStackInSlot(1)!=null)
+	//Entity entity =this.getStackInSlot(1).getItem().createEntity(this.worldObj, location, this.getStackInSlot(1)); 
+	//if (entity instanceof IProjectile); 
 	if ((playerHasArrows|| shipHasArrows ||entityplayer.capabilities.isCreativeMode)&& this.getFireCountDown() == 0) {	    
 
 		Vec3 vec = entityplayer.getLook(1.0F);
@@ -626,5 +629,15 @@ public class EntityAirship extends Entity implements IInventory {
     public void openChest() {}
     @Override
     public void closeChest() {}
+	@Override
+	public boolean func_94042_c() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	@Override
+	public boolean func_94041_b(int i, ItemStack itemstack) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 
 }

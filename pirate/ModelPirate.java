@@ -1,8 +1,8 @@
-package pchan3.pirate;
+package mods.pchan3.pirate;
 
+import mods.pchan3.CustomModelRenderer;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.entity.Entity;
-import pchan3.CustomModelRenderer;
 
 public class ModelPirate extends ModelBase
 {

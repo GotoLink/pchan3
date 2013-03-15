@@ -1,12 +1,12 @@
-package pchan3.steamship;
+package mods.pchan3.steamship;
 
+import mods.pchan3.PChan3Mods;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import pchan3.PChan3mods;
 
 public class ContainerAirship extends Container {
 	private EntityAirship airship;
@@ -15,7 +15,7 @@ public class ContainerAirship extends Container {
     	this.airship=air;
         this.numRows = (air.getSizeInventory()-2)/ 4;
         air.openChest();
-        this.windowId=PChan3mods.instance.GUI_ID;//Avoid conflict with other screen
+        this.windowId=PChan3Mods.instance.GUI_ID;//Avoid conflict with other screen
         this.addSlotToContainer(new Slot(air, 0, 134, 16));
         this.addSlotToContainer(new Slot(air, 1, 134, 52));
 

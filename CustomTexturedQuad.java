@@ -1,4 +1,4 @@
-package pchan3;
+package mods.pchan3;
 
 import net.minecraft.client.model.PositionTextureVertex;
 import net.minecraft.client.renderer.Tessellator;

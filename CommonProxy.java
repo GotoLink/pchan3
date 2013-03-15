@@ -1,8 +1,12 @@
-package pchan3;
+package mods.pchan3;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 
+
+import mods.pchan3.steamship.ContainerAirship;
+import mods.pchan3.steamship.EntityAirship;
+import mods.pchan3.steamship.GuiAirship;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -10,9 +14,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
-import pchan3.steamship.ContainerAirship;
-import pchan3.steamship.EntityAirship;
-import pchan3.steamship.GuiAirship;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.IGuiHandler;
 import cpw.mods.fml.relauncher.Side;
@@ -20,7 +21,6 @@ import cpw.mods.fml.relauncher.Side;
 public class CommonProxy implements IGuiHandler{
 
 	public void registerRenderInformation() {}
-	public void preloadTextures() {}
 	public void displayExplodeFX(Entity entity){}
 	public void displayShipExplodeFX(DamageSource source, EntityAirship entity){}
 	public void displaySmoke(Entity entity){}
