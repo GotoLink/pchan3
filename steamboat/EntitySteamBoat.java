@@ -2,8 +2,6 @@ package mods.pchan3.steamboat;
  
 import java.util.List;
 
-
-
 import mods.pchan3.PChan3Mods;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -12,7 +10,6 @@ import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
@@ -20,7 +17,7 @@ import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class EntitySteamBoat extends Entity
+public class EntitySteamBoat extends EntityBoat
 {
 	private int boatPosRotationIncrements;
     private double boatX,boatY,boatZ;
@@ -32,69 +29,39 @@ public class EntitySteamBoat extends Entity
     private double velocityY;
     @SideOnly(Side.CLIENT)
     private double velocityZ;
-    private boolean field_70279_a;
     private double field_70276_b;
+    private boolean field_70279_a;
 
     public EntitySteamBoat(World world)
     {
     	super(world);
-        this.field_70279_a = true;
+    	this.field_70279_a = true;
         this.field_70276_b = 0.07D;
         this.preventEntitySpawning = true;
         this.setSize(1.5F, 0.6F);
         this.yOffset = this.height / 2.0F;
     }
-
-    /**
-     * returns if this entity triggers Block.onEntityWalking on the blocks they walk on. used for spiders and wolves to
-     * prevent them from trampling crops
-     */
-    protected boolean canTriggerWalking()
-    {
-        return false;
-    }
-
-    protected void entityInit()
-    {
-        this.dataWatcher.addObject(22, new Integer(0));
-        this.dataWatcher.addObject(23, new Integer(1));
-        this.dataWatcher.addObject(24, new Integer(0));     
-        this.dataWatcher.addObject(25, new Integer(0)); 	
-    }
-
-    public AxisAlignedBB getCollisionBox(Entity par1Entity)
-    {
-        return par1Entity.boundingBox;
-    }
-
-    public AxisAlignedBB getBoundingBox()
-    {
-        return this.boundingBox;
-    }
-
-    public boolean canBePushed()
-    {
-        return true;
-    }
-    public EntitySteamBoat(World world, double d, double d1, double d2)
+    public EntitySteamBoat(World world, double par2, double par4, double par6)
     {
     	this(world);
-        this.setPosition(d, d1 + (double)this.yOffset, d2);
+    	this.setPosition(par2, par4 + (double)this.yOffset, par6);
         this.motionX = 0.0D;
         this.motionY = 0.0D;
         this.motionZ = 0.0D;
-        this.prevPosX = d;
-        this.prevPosY = d1;
-        this.prevPosZ = d2;
+        this.prevPosX = par2;
+        this.prevPosY = par4;
+        this.prevPosZ = par6;
     }
     @Override
-    public double getMountedYOffset()
-    {
-        return (double)this.height * 0.0D - 0.30000001192092896D;
+    protected void entityInit()
+    {     
+    	super.entityInit();
+        this.dataWatcher.addObject(25, new Integer(0)); 	
     }
     @Override
     public boolean attackEntityFrom(DamageSource par1DamageSource, int par2)
-    {if (this.isEntityInvulnerable())
+    {
+    	if (this.isEntityInvulnerable())
     {
         return false;
     }
@@ -137,58 +104,7 @@ public class EntitySteamBoat extends Entity
         return true;
     }           
     }
-    @SideOnly(Side.CLIENT)
-    public void performHurtAnimation()
-    {
-        this.setForwardDirection(-this.getForwardDirection());
-        this.setTimeSinceHit(10);
-        this.setDamageTaken(this.getDamageTaken() * 11);
-    }
-    @Override
-    public boolean canBeCollidedWith()
-    {
-        return !this.isDead;
-    }
 
-    @SideOnly(Side.CLIENT)
-    public void setPositionAndRotation2(double par1, double par3, double par5, float par7, float par8, int par9)
-    {
-        if (this.field_70279_a)
-        {
-            this.boatPosRotationIncrements = par9 + 5;
-        }
-        else
-        {
-            double var10 = par1 - this.posX;
-            double var12 = par3 - this.posY;
-            double var14 = par5 - this.posZ;
-            double var16 = var10 * var10 + var12 * var12 + var14 * var14;
-
-            if (var16 <= 1.0D)
-            {
-                return;
-            }
-
-            this.boatPosRotationIncrements = 3;
-        }
-
-        this.boatX = par1;
-        this.boatY = par3;
-        this.boatZ = par5;
-        this.boatYaw = (double)par7;
-        this.boatPitch = (double)par8;
-        this.motionX = this.velocityX;
-        this.motionY = this.velocityY;
-        this.motionZ = this.velocityZ;
-    }
-
-    @SideOnly(Side.CLIENT)
-    public void setVelocity(double par1, double par3, double par5)
-    {
-        this.velocityX = this.motionX = par1;
-        this.velocityY = this.motionY = par3;
-        this.velocityZ = this.motionZ = par5;
-    }
     @SideOnly(Side.CLIENT)
     public void displayEffect(double par1)
     {
@@ -217,6 +133,45 @@ public class EntitySteamBoat extends Entity
          }	
     }
     @SideOnly(Side.CLIENT)
+    public void setPositionAndRotation2(double par1, double par3, double par5, float par7, float par8, int par9)
+    {
+        if (this.field_70279_a)
+        {
+            this.boatPosRotationIncrements = par9 + 5;
+        }
+        else
+        {
+            double d3 = par1 - this.posX;
+            double d4 = par3 - this.posY;
+            double d5 = par5 - this.posZ;
+            double d6 = d3 * d3 + d4 * d4 + d5 * d5;
+
+            if (d6 <= 1.0D)
+            {
+                return;
+            }
+
+            this.boatPosRotationIncrements = 3;
+        }
+
+        this.boatX = par1;
+        this.boatY = par3;
+        this.boatZ = par5;
+        this.boatYaw = (double)par7;
+        this.boatPitch = (double)par8;
+        this.motionX = this.velocityX;
+        this.motionY = this.velocityY;
+        this.motionZ = this.velocityZ;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void setVelocity(double par1, double par3, double par5)
+    {
+        this.velocityX = this.motionX = par1;
+        this.velocityY = this.motionY = par3;
+        this.velocityZ = this.motionZ = par5;
+    }
+    @SideOnly(Side.CLIENT)
     public void displaySmoke()
     {
     	double smoke = this.rand.nextFloat() * 2.0f - 1.0f;
@@ -227,7 +182,7 @@ public class EntitySteamBoat extends Entity
     @Override
     public void onUpdate()
     {
-        super.onUpdate();
+        super.onEntityUpdate();
         if (!this.worldObj.isRemote){
         if (this.getTimeSinceHit() > 0)
             this.setTimeSinceHit(this.getTimeSinceHit() - 1);
@@ -369,7 +324,7 @@ public class EntitySteamBoat extends Entity
 
             this.moveEntity(this.motionX, this.motionY, this.motionZ);
 
-            if (this.isCollidedHorizontally && var24 > 0.2D)
+            if (this.isCollidedHorizontally && var24 > 0.4D)
             {
                 if (!this.worldObj.isRemote)
                 {
@@ -429,7 +384,7 @@ public class EntitySteamBoat extends Entity
                     {
                         Entity var18 = (Entity)var16.get(var27);
 
-                        if (var18 != this.riddenByEntity && var18.canBePushed() && var18 instanceof EntityBoat)
+                        if (var18 != this.riddenByEntity && var18.canBePushed() && var18 instanceof EntitySteamBoat)
                         {
                             var18.applyEntityCollision(this);
                         }
@@ -445,16 +400,14 @@ public class EntitySteamBoat extends Entity
                     {
                         int var21 = MathHelper.floor_double(this.posY) + var20;
                         int var22 = this.worldObj.getBlockId(var28, var21, var19);
-                        int var23 = this.worldObj.getBlockMetadata(var28, var21, var19);
-
+                        
                         if (var22 == Block.snow.blockID)
                         {
-                            this.worldObj.func_94571_i(var28, var21, var19);
+                            this.worldObj.setBlockToAir(var28, var21, var19);
                         }
                         else if (var22 == Block.waterlily.blockID)
                         {
-                            Block.waterlily.dropBlockAsItemWithChance(this.worldObj, var28, var21, var19, var23, 0.3F, 0);
-                            this.worldObj.func_94578_a(var28, var21, var19, true);//setBlockWithNotify
+                            this.worldObj.destroyBlock(var28, var21, var19, true);
                         }
                     }
                 }
@@ -466,20 +419,7 @@ public class EntitySteamBoat extends Entity
             }
         }     
     }
-    
-	public void updateRiderPosition()
-    {
-        if (this.riddenByEntity != null)
-        {
-            double var1 = Math.cos((double)this.rotationYaw * Math.PI / 180.0D) * 0.4D;
-            double var3 = Math.sin((double)this.rotationYaw * Math.PI / 180.0D) * 0.4D;
-            this.riddenByEntity.setPosition(this.posX + var1, this.posY + this.getMountedYOffset() + this.riddenByEntity.getYOffset(), this.posZ + var3);
-        }
-    }
-	@Override
-    protected void writeEntityToNBT(NBTTagCompound par1NBTTagCompound) {}
-	@Override
-    protected void readEntityFromNBT(NBTTagCompound par1NBTTagCompound) {}
+	
     @Override
     public boolean interact(EntityPlayer par1EntityPlayer)
     {
@@ -504,45 +444,18 @@ public class EntitySteamBoat extends Entity
         }
         return true;
     }
-
-    @SideOnly(Side.CLIENT)
-    public float getShadowSize()
-    {
-        return 0.0F;
-    }
-    public void setDamageTaken(int par1)
-    {
-        this.dataWatcher.updateObject(24, Integer.valueOf(par1));
-    }
-    public int getDamageTaken()
-    {
-        return this.dataWatcher.getWatchableObjectInt(24);
-    }
-    public void setTimeSinceHit(int par1)
-    {
-        this.dataWatcher.updateObject(22, Integer.valueOf(par1));
-    }
-    public int getTimeSinceHit()
-    {
-        return this.dataWatcher.getWatchableObjectInt(22);
-    }
-    public void setForwardDirection(int par1)
-    {
-        this.dataWatcher.updateObject(23, Integer.valueOf(par1));
-    }
-    public int getForwardDirection()
-    {
-        return this.dataWatcher.getWatchableObjectInt(23);
-    }
+    
     public int getFuelTime()
 	{
 	return this.dataWatcher.getWatchableObjectInt(25);	
 	}
+    
 	public void setFuelTime(int par1)
 	{
 	this.dataWatcher.updateObject(25, Integer.valueOf(par1));
 	}
-    @SideOnly(Side.CLIENT)
+	
+	@SideOnly(Side.CLIENT)
     public void func_70270_d(boolean par1)
     {
         this.field_70279_a = par1;

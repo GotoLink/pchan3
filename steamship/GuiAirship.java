@@ -29,7 +29,7 @@ public class GuiAirship extends GuiContainer
     {
         
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.mc.renderEngine.func_98187_b("/mods/pchan3/textures/gui/airshipgui.png");//bindTexture
+        this.mc.renderEngine.bindTexture("/mods/pchan3/textures/gui/airshipgui.png");//bindTexture
         int j = (width - xSize) / 2;
         int k = (height - ySize) / 2;
         drawTexturedModalRect(j, k, 0, 0, xSize, ySize);        

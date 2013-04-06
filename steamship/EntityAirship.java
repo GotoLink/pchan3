@@ -14,6 +14,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemCoal;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -58,9 +59,9 @@ public class EntityAirship extends Entity implements IInventory {
     }
     @Override
 	protected void entityInit() {
-		this.dataWatcher.addObject(27, new Integer(0));
-        this.dataWatcher.addObject(28, new Integer(1));
-        this.dataWatcher.addObject(29, new Integer(0));
+    	this.dataWatcher.addObject(17, new Integer(0));
+        this.dataWatcher.addObject(18, new Integer(1));
+        this.dataWatcher.addObject(19, new Integer(0));
         this.dataWatcher.addObject(30, new Integer(0));
         this.dataWatcher.addObject(31, new Integer(0));
 	}
@@ -102,7 +103,6 @@ public class EntityAirship extends Entity implements IInventory {
                     }
                 }
             }
-    	 if (!this.worldObj.isRemote)
     		 PChan3Mods.instance.proxy.displayExplodeFX(this);
     
 	super.setDead();
@@ -166,32 +166,36 @@ public class EntityAirship extends Entity implements IInventory {
 	this.setTimeSinceHit(1);
 	this.setDamageTaken(this.getDamageTaken() * 2);
     }
-	public void setDamageTaken(int par1)
-	{
-    this.dataWatcher.updateObject(29, Integer.valueOf(par1));
-	}
-	public int getDamageTaken()
-	{
-    return this.dataWatcher.getWatchableObjectInt(29);
-	}
-	public void setTimeSinceHit(int par1)
-	{
-    this.dataWatcher.updateObject(27, Integer.valueOf(par1));
-	}
-	public int getTimeSinceHit()
-	{
-    return this.dataWatcher.getWatchableObjectInt(27);
-	}
+	
+    public void setDamageTaken(int par1)
+    {
+        this.dataWatcher.updateObject(19, Integer.valueOf(par1));
+    }
 
-	public void setForwardDirection(int par1)
-	{
-    this.dataWatcher.updateObject(28, Integer.valueOf(par1));
-	}
+    public int getDamageTaken()
+    {
+        return this.dataWatcher.getWatchableObjectInt(19);
+    }
 
-	public int getForwardDirection()
-	{
-    return this.dataWatcher.getWatchableObjectInt(28);
-	}
+    public void setTimeSinceHit(int par1)
+    {
+        this.dataWatcher.updateObject(17, Integer.valueOf(par1));
+    }
+
+    public int getTimeSinceHit()
+    {
+        return this.dataWatcher.getWatchableObjectInt(17);
+    }
+
+    public void setForwardDirection(int par1)
+    {
+        this.dataWatcher.updateObject(18, Integer.valueOf(par1));
+    }
+
+    public int getForwardDirection()
+    {
+        return this.dataWatcher.getWatchableObjectInt(18);
+    }
 	public int getFuelTime()
 	{
 	return this.dataWatcher.getWatchableObjectInt(30);	
@@ -414,10 +418,10 @@ public class EntityAirship extends Entity implements IInventory {
 	moveEntity(this.motionX, this.motionY, this.motionZ);
 
 	double d11 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
-	if (!this.worldObj.isRemote && d11 > 0.14999999999999999D) {
+	if (d11 > 0.14999999999999999D) {
 		PChan3Mods.instance.proxy.displaySplashEffect(this,d11);
 	}
-	if (PChan3Mods.instance.SHOW_BOILER && !this.worldObj.isRemote && this.getFuelTime()!=0) {
+	if (PChan3Mods.instance.SHOW_BOILER && this.getFuelTime()!=0) {
 		PChan3Mods.instance.proxy.displaySmoke(this);
 	}
 
@@ -554,7 +558,7 @@ public class EntityAirship extends Entity implements IInventory {
 	if (this.riddenByEntity != null && this.riddenByEntity instanceof EntityPlayer
 		&& this.riddenByEntity != entityplayer) {
 		if (!this.worldObj.isRemote)
-			entityplayer.openGui(PChan3Mods.instance, PChan3Mods.instance.GUI_ID, this.worldObj,this.serverPosX, this.serverPosY, this.serverPosZ);;
+			entityplayer.openGui(PChan3Mods.instance, PChan3Mods.instance.GUI_ID, this.worldObj, 0, 0, 0);
 	    return true;
 	}
 	if (!this.worldObj.isRemote) 
@@ -599,7 +603,6 @@ public class EntityAirship extends Entity implements IInventory {
 		double d1 = this.posX + vec.xCoord * d8;
 		double d2 = this.posY + (double) (height / 4.0F);
 		double d3 = this.posZ + vec.zCoord * d8;
-		/*EntityArrow round = new EntityArrow(this.worldObj, d1, d2, d3);*/
 		EntityArrow arrow = new EntityArrow(this.worldObj, entityplayer, 1.0F);
 		
 		this.worldObj.playSoundAtEntity(entityplayer, "random.bow", 1.0F,
@@ -630,14 +633,11 @@ public class EntityAirship extends Entity implements IInventory {
     @Override
     public void closeChest() {}
 	@Override
-	public boolean func_94042_c() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-	@Override
-	public boolean func_94041_b(int i, ItemStack itemstack) {
-		// TODO Auto-generated method stub
+	public boolean isInvNameLocalized() {
 		return true;
 	}
-
+	@Override
+	public boolean isStackValidForSlot(int i, ItemStack itemstack) {
+		return i>2 || (itemstack.getItem() instanceof ItemCoal && i==0) || (itemstack.itemID==Item.arrow.itemID && i==1 );
+	}
 }

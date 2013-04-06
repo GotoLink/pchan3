@@ -58,8 +58,8 @@ public class EntityPirate extends EntityFlying implements IMob,IRangedAttackMob 
 	@Override
 	public void initCreature()//added, not sure if held item will render or not
     {
-		this.setCurrentItemOrArmor(0, new ItemStack(Item.bow));
-		this.func_82162_bC();//add some enchantment
+		/*this.setCurrentItemOrArmor(0, new ItemStack(Item.bow));
+		this.func_82162_bC();//add some enchantment*/
     }
 	protected void updateEntityActionState() {
 		if (!this.worldObj.isRemote && this.worldObj.difficultySetting == 0)
