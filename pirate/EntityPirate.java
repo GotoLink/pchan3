@@ -208,27 +208,6 @@ public class EntityPirate extends EntityFlying implements IMob,IRangedAttackMob 
 	protected float getSoundVolume() {
 		return 10F;
 	}
-	@SideOnly(Side.CLIENT)
-	public void displayEffect(){
-		Minecraft mc = FMLClientHandler.instance().getClient();
-		for (int i = 1; i < 30; i++) {
-		if (i % 2 == 0) {			
-			mc.effectRenderer.addEffect(new EntitySteamExplode(this.worldObj,
-					this.posX + (this.rand.nextInt(i) / 8), this.posY, this.posZ
-							- (this.rand.nextInt(i) / 8), 0D, 0D, 0D));
-			mc.effectRenderer.addEffect(new EntitySteamExplode(this.worldObj,
-					this.posX + (this.rand.nextInt(i) / 8), this.posY, this.posZ
-							+ (this.rand.nextInt(i) / 8), 0D, 0D, 0D));
-		} else {
-			mc.effectRenderer.addEffect(new EntitySteamExplode(this.worldObj,
-					this.posX - (this.rand.nextInt(i) / 8), this.posY, this.posZ
-							+ (this.rand.nextInt(i) / 8), 0D, 0D, 0D));
-			mc.effectRenderer.addEffect(new EntitySteamExplode(this.worldObj,
-					this.posX - (this.rand.nextInt(i) / 8), this.posY, this.posZ
-							- (this.rand.nextInt(i) / 8), 0D, 0D, 0D));
-		}
-	}
-	}
 	@Override
 	public void setDead() {
 		if (!this.worldObj.isRemote ){

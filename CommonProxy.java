@@ -3,7 +3,6 @@ package mods.pchan3;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 
-
 import mods.pchan3.steamship.ContainerAirship;
 import mods.pchan3.steamship.EntityAirship;
 import mods.pchan3.steamship.GuiAirship;
@@ -28,12 +27,18 @@ public class CommonProxy implements IGuiHandler{
 	@Override
 	public Object getServerGuiElement(int ID, EntityPlayer player, World world,
 			int x, int y, int z) {
-		return new ContainerAirship(player.inventory, (EntityAirship) player.ridingEntity);      
+		if(ID==PChan3Mods.instance.GUI_ID)
+			return new ContainerAirship(player.inventory, (EntityAirship) player.ridingEntity);
+		else 
+			return null;
 	}
 	@Override
 	public Object getClientGuiElement(int ID, EntityPlayer player, World world,
 			int x, int y, int z) {
-		return new GuiAirship(player.inventory, (EntityAirship) player.ridingEntity);     
+		if(ID==PChan3Mods.instance.GUI_ID)
+			return new GuiAirship(player.inventory, (EntityAirship) player.ridingEntity);
+		else 
+			return null;
 	}
 	public void sendPacket(int i,Entity playerEntity) {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(2);

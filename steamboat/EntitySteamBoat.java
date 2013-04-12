@@ -104,34 +104,7 @@ public class EntitySteamBoat extends EntityBoat
         return true;
     }           
     }
-
-    @SideOnly(Side.CLIENT)
-    public void displayEffect(double par1)
-    {
-    	 double var6 = Math.cos((double)this.rotationYaw * Math.PI / 180.0D);
-         double var8 = Math.sin((double)this.rotationYaw * Math.PI / 180.0D);
-
-         for (int var10 = 0; (double)var10 < 1.0D + par1 * 60.0D; ++var10)
-         {
-             double var11 = (double)(this.rand.nextFloat() * 2.0F - 1.0F);
-             double var13 = (double)(this.rand.nextInt(2) * 2 - 1) * 0.7D;
-             double var15;
-             double var17;
-
-             if (this.rand.nextBoolean())
-             {
-                 var15 = this.posX - var6 * var11 * 0.8D + var8 * var13;
-                 var17 = this.posZ - var8 * var11 * 0.8D - var6 * var13;
-                 this.worldObj.spawnParticle("splash", var15, this.posY - 0.125D, var17, this.motionX, this.motionY, this.motionZ);
-             }
-             else
-             {
-                 var15 = this.posX + var6 + var8 * var11 * 0.7D;
-                 var17 = this.posZ + var8 - var6 * var11 * 0.7D;
-                 this.worldObj.spawnParticle("splash", var15, this.posY - 0.125D, var17, this.motionX, this.motionY, this.motionZ);
-             }
-         }	
-    }
+    
     @SideOnly(Side.CLIENT)
     public void setPositionAndRotation2(double par1, double par3, double par5, float par7, float par8, int par9)
     {
@@ -170,14 +143,6 @@ public class EntitySteamBoat extends EntityBoat
         this.velocityX = this.motionX = par1;
         this.velocityY = this.motionY = par3;
         this.velocityZ = this.motionZ = par5;
-    }
-    @SideOnly(Side.CLIENT)
-    public void displaySmoke()
-    {
-    	double smoke = this.rand.nextFloat() * 2.0f - 1.0f;
-        if (smoke > 0.65f) {
-           this.worldObj.spawnParticle("smoke", this.posX, this.posY+0.9D, this.posZ, 0.0D, 0.0D, 0.0D);
-        }
     }
     @Override
     public void onUpdate()
@@ -220,11 +185,11 @@ public class EntitySteamBoat extends EntityBoat
         double var6;
         double var8;
 
-        if (!this.worldObj.isRemote && var24 > 0.26249999999999996D)
+        if ( var24 > 0.26249999999999996D)
         {
            PChan3Mods.instance.proxy.displaySplashEffect(this, var24);
         }
-        if ( !this.worldObj.isRemote && this.getFuelTime()!=0) {
+        if ( this.getFuelTime()!=0) {
         	PChan3Mods.instance.proxy.displaySmoke(this);
         }
         double var12;

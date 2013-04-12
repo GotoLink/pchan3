@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 
 import mods.pchan3.pirate.EntityPirate;
@@ -34,7 +32,6 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
-import cpw.mods.fml.common.network.NetworkMod.SidedPacketHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -45,9 +42,8 @@ import cpw.mods.fml.relauncher.Side;
 * @author pchan3
 */
 @Mod(modid = "pchan3", name = "PChan3 mods", version = "0.4")
-@NetworkMod(clientSideRequired = true, serverSideRequired = false,
-        clientPacketHandlerSpec = @SidedPacketHandler(channels = {"Steamship" }, packetHandler = ClientPacketHandler.class),
-        serverPacketHandlerSpec = @SidedPacketHandler(channels = {"Steamship" }, packetHandler = ServerPacketHandler.class))
+@NetworkMod(clientSideRequired = true, serverSideRequired = false,channels = {"Steamship" },
+		packetHandler = PacketHandler.class)
 public class PChan3Mods{
 	@Instance("pchan3")
 	public static PChan3Mods instance;
@@ -61,8 +57,6 @@ public class PChan3Mods{
     public static int KEY_CHEST = Keyboard.KEY_R,KEY_FIRE = Keyboard.KEY_NUMPAD5;
     public static int GUI_ID=100;
     private static String SPAWNABLE_BIOMES;
-	private static List<BiomeGenBase> AVAILABLE_BIOMES=new ArrayList<BiomeGenBase>();
-	private static BiomeGenBase[] BIOMES = BiomeGenBase.biomeList;
 			
 	 
   @PreInit
@@ -72,27 +66,31 @@ public class PChan3Mods{
 		Properties properties = new Properties();
 		File file=new File(getMinecraftBaseDir()+ "/config/pchan3.properties");
 		if (file.exists()){
-		try {
-		    properties.load(new FileInputStream(getMinecraftBaseDir()+ "/config/pchan3.properties"));
-
-		    SHOW_BOILER=Boolean.parseBoolean(properties.getProperty("show_boiler"));
-		    ENABLE_AIRSHIP=Boolean.parseBoolean(properties.getProperty("Enable_Airship"));
-		    ENABLE_STEAMBOAT=Boolean.parseBoolean(properties.getProperty("Enable_Steamboat"));
-		    ENABLE_PIRATE=Boolean.parseBoolean(properties.getProperty("Enable_Pirate"));
-		    airshipItemID=Integer.parseInt(properties.getProperty("AirshipItemID"));
-		    engineItemID=Integer.parseInt(properties.getProperty("EngineItemID"));
-		    balloonItemID=Integer.parseInt(properties.getProperty("BalloonItemID"));
-		    steamboatItemID=Integer.parseInt(properties.getProperty("SteamboatItemID"));
-		    GUI_ID=Integer.parseInt(properties.getProperty("GUI_ID"));
-		    SPAWNABLE_BIOMES=properties.getProperty("Pirate_spawn_in_Biomes","This option is not yet working");
-
-		} catch (IOException e) {}
+			try{
+			FileInputStream sourceFile =new FileInputStream(file);
+			try {
+				properties.load(sourceFile);
+				SHOW_BOILER=Boolean.parseBoolean(properties.getProperty("show_boiler"));
+				ENABLE_AIRSHIP=Boolean.parseBoolean(properties.getProperty("Enable_Airship"));
+				ENABLE_STEAMBOAT=Boolean.parseBoolean(properties.getProperty("Enable_Steamboat"));
+				ENABLE_PIRATE=Boolean.parseBoolean(properties.getProperty("Enable_Pirate"));
+				airshipItemID=Integer.parseInt(properties.getProperty("AirshipItemID"));
+				engineItemID=Integer.parseInt(properties.getProperty("EngineItemID"));
+				balloonItemID=Integer.parseInt(properties.getProperty("BalloonItemID"));
+				steamboatItemID=Integer.parseInt(properties.getProperty("SteamboatItemID"));
+				GUI_ID=Integer.parseInt(properties.getProperty("GUI_ID"));
+				SPAWNABLE_BIOMES=properties.getProperty("Pirate_spawn_in_Biomes");	   
+				} 
+			finally{sourceFile.close();}		
+			}catch (IOException e) 
+			{e.printStackTrace();}
 		}
 		else{
+			
 			StringBuilder sb = new StringBuilder("");
 			for(int m=0; m<BiomeGenBase.biomeList.length; m++)
 			{	
-				if(BiomeGenBase.biomeList[m]!=null)
+				if(BiomeGenBase.biomeList[m]!=null )
 				{
 				sb.append(BiomeGenBase.biomeList[m].biomeName+",");
 				}
@@ -108,13 +106,15 @@ public class PChan3Mods{
 		    properties.setProperty("GUI_ID", "100");
 		    properties.setProperty("Pirate_spawn_in_Biomes",sb.toString());	
 		    SPAWNABLE_BIOMES=sb.toString();
-		    }
-
+		    try{
 		// Write properties file.
-		try {
-		    properties.store(new FileOutputStream(getMinecraftBaseDir()
-			    + "/config/pchan3.properties"), null);
-		} catch (IOException e) {}
+		    FileOutputStream fileOut = new FileOutputStream(file);
+		    	try{
+		    		properties.store(fileOut, null);
+		    	}finally{fileOut.close();}
+		    }
+			catch (IOException e) {e.printStackTrace();}		
+		}
   }
   @Init
     public void load(FMLInitializationEvent event) { 
@@ -156,8 +156,7 @@ public class PChan3Mods{
 	    //Character.valueOf('L'), Block.dispenser,
 	    Character.valueOf('D'), Item.boat,
 	    Character.valueOf('F'), Block.furnaceIdle});
-	
-	NetworkRegistry.instance().registerGuiHandler(this, proxy);	
+		
 	}
 	//Boat
      if (ENABLE_STEAMBOAT)
@@ -181,38 +180,47 @@ public class PChan3Mods{
       }         
       return FMLCommonHandler.instance().getMinecraftServerInstance().getFile("");
   }
-  private static final void setAvailableBiomes(){//TODO: To implement
-	  AVAILABLE_BIOMES.add(BiomeGenBase.plains);
-	 /* String[] biome=new String[BiomeGenBase.biomeList.length];
-	  biome = SPAWNABLE_BIOMES.split(",");
-	  System.out.println(SPAWNABLE_BIOMES);
-	  //BiomeGenBase[] chosenBiome=BiomeGenBase.biomeList;
-	  for(int k=0;k<BiomeGenBase.biomeList.length;k++)
+  private BiomeGenBase[] getAvailableBiomes(){
+	  String[] biome = SPAWNABLE_BIOMES.split(",");
+	  BiomeGenBase[] chosenBiome=BiomeGenBase.biomeList;
+	  boolean flag;
+	  for(int k=0;k<chosenBiome.length;k++)
 	  {
-		if(BiomeGenBase.biomeList[k]!=null)
-		{	boolean flag=false;
+		  flag=false;
+		  if(chosenBiome[k]!=null)
+		  {	
+			
 			for(int id=0;id<biome.length;id++)
 			{ 
-				if(biome[id]!=null && BiomeGenBase.biomeList[k].biomeName.equalsIgnoreCase(biome[id].trim()))
-					flag = true;
-			}
-			if (!flag)
-				AVAILABLE_BIOMES[k]=null;
-		}
-		//System.out.println("");
-	  } */
+				if(biome[id]!=null && chosenBiome[k].biomeName.equalsIgnoreCase(biome[id].trim()) && chosenBiome[k].getSpawnableList(EnumCreatureType.monster)!=null)
+				{			
+					flag = true;				
+				}
+			}		
+		  }
+		  if (!flag)
+		  {
+			  System.arraycopy(chosenBiome,k+1,chosenBiome,k,chosenBiome.length-1-k);
+		  }
 	  }
+	return  chosenBiome; 
+  }
   @PostInit
   public void modsLoaded(FMLPostInitializationEvent event)
   {
 	//Pirate
 		if (!(!ENABLE_PIRATE || SPAWNABLE_BIOMES==""))
 		{			
-			EntityRegistry.registerModEntity(EntityPirate.class, "Pirate", 3, this, 80, 1, true); 
-			setAvailableBiomes();
-			EntityRegistry.addSpawn(EntityPirate.class, 6,5,5, EnumCreatureType.monster, BiomeGenBase.ocean/*AVAILABLE_BIOMES.toArray(BIOMES)*/);
+			EntityRegistry.registerModEntity(EntityPirate.class, "Pirate", 3, this, 80, 1, true);
+			try{//FIXME
+			EntityRegistry.addSpawn(EntityPirate.class, 6,1,5, EnumCreatureType.monster, getAvailableBiomes());
+			}
+			catch(NullPointerException n){
+			EntityRegistry.addSpawn(EntityPirate.class, 6,1,5, EnumCreatureType.monster, BiomeGenBase.ocean);
+			}
 			LanguageRegistry.instance().addStringLocalization("entity.Pirate.name", "en_US", "Pirate");
 		}
 		proxy.registerRenderInformation();
+		NetworkRegistry.instance().registerGuiHandler(this,proxy);	  
   }
 }

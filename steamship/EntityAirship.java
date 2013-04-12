@@ -3,11 +3,8 @@ package mods.pchan3.steamship;
 import java.util.List;
 import java.util.Random;
 
-
-import mods.pchan3.EntitySteamExplode;
 import mods.pchan3.PChan3Mods;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -23,7 +20,6 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
-import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -235,69 +231,7 @@ public class EntityAirship extends Entity implements IInventory {
 	this.velocityY = this.motionY = d1;
 	this.velocityZ = this.motionZ = d2;
     }
-	@SideOnly(Side.CLIENT)
-	public void displayDeadEffect()
-	{   Minecraft mc= FMLClientHandler.instance().getClient();
-		for (int i = 1; i < 30; i++) {
-		    if (i % 2 == 0) {
-		    	mc.effectRenderer.addEffect(new EntitySteamExplode(this.worldObj,
-		    			this.posX + (rand.nextInt(i) / 8), this.posY, this.posZ
-				- (rand.nextInt(i) / 8), 0D, 0D, 0D));
-		    	mc.effectRenderer.addEffect(new EntitySteamExplode(this.worldObj,
-		    			this.posX + (rand.nextInt(i) / 8), this.posY, this.posZ
-				+ (rand.nextInt(i) / 8), 0D, 0D, 0D));
-		    } else {
-		    	mc.effectRenderer.addEffect(new EntitySteamExplode(this.worldObj,
-		    			this.posX - (rand.nextInt(i) / 8), this.posY, this.posZ
-				+ (rand.nextInt(i) / 8), 0D, 0D, 0D));
-		    	mc.effectRenderer.addEffect(new EntitySteamExplode(this.worldObj,
-		    			this.posX - (rand.nextInt(i) / 8), this.posY, this.posZ
-				- (rand.nextInt(i) / 8), 0D, 0D, 0D));
-		    }
-		}
-	}
-	@SideOnly(Side.CLIENT)
-    public void displayEffect(double d11)
-    {	int i=5;
-    	double d13 = Math.cos(((double) rotationYaw * 3.1415926535897931D) / 180D);
-	    double d15 = Math.sin(((double) rotationYaw * 3.1415926535897931D) / 180D);
-	    for (int i1 = 0; (double) i1 < 1.0D + d11 * 60D; i1++) {
-		double d18 = rand.nextFloat() * 2.0F - 1.0F;
-		double d20 = (double) (rand.nextInt(2) * 2 - 1) * 0.69999999999999996D;
-
-		double d4 = (boundingBox.minY + ((boundingBox.maxY - boundingBox.minY) * (double) (i1 + 0))
-			/ (double) i) - 0.125D;
-		double d8 = (boundingBox.minY + ((boundingBox.maxY - boundingBox.minY) * (double) (i1 + 1))
-			/ (double) i) - 0.125D;
-		AxisAlignedBB axisalignedbb = AxisAlignedBB
-			.getBoundingBox(boundingBox.minX, d4, boundingBox.minZ, boundingBox.maxX, d8,
-			boundingBox.maxZ);
-
-		if (rand.nextBoolean()) {
-		    double d21 = (posX - d13 * d18 * 0.80000000000000004D)+ d15 * d20;
-		    double d23 = posZ - d15 * d18 * 0.80000000000000004D - d13 * d20;
-
-		    if (this.worldObj.isAABBInMaterial(axisalignedbb, Material.water)) {
-		    	this.worldObj.spawnParticle("splash", d21, this.posY - 0.125D, d23, this.motionX, this.motionY, this.motionZ);
-		    }
-		} else {
-		    double d22 = posX + d13 + d15 * d18 * 0.69999999999999996D;
-		    double d24 = (posZ + d15) - d13 * d18 * 0.69999999999999996D;
-		    if (this.worldObj.isAABBInMaterial(axisalignedbb, Material.water)) {
-		    	this.worldObj.spawnParticle("splash", d22, this.posY - 0.125D, d24, this.motionX, this.motionY, this.motionZ);
-		    }
-		}
-	    }
-    }
-	@SideOnly(Side.CLIENT)
-    public void displaySmoke()
-    {
-    	double smoke = this.rand.nextFloat() * 2.0f - 1.0f;
-        if (smoke > 0.65f) {
-        	FMLClientHandler.instance().getClient().effectRenderer.addEffect(new EntitySteamFX(this.worldObj, this.posX,
-    			this.posY + 0.9D, this.posZ, 0.0D, 0.0D, 0.0D));
-    }
-    }
+	
     public int getFuelScaled(int i) {
 	return (this.getFuelTime() * i) / 600;
     }
