@@ -36,16 +36,15 @@ public class PacketHandler implements IPacketHandler
             return;
 		}
 		Entity ent = ((EntityPlayer)player).ridingEntity;
-		if (ent!=null && ent instanceof EntityAirship){
-				((EntityAirship)ent).isGoingUp=false;
-				((EntityAirship)ent).isGoingDown=false;
-				((EntityAirship)ent).isFiring=false;
-			if (data==2)
-				((EntityAirship)ent).isGoingUp=true;
-			else if (data==1)
-				((EntityAirship)ent).isGoingDown=true;	
-			else if (data==3)
-				((EntityAirship)ent).isFiring=true;
+		if (ent!=null && ent instanceof EntityAirship){	
+			switch(data){
+			case 1: ((EntityAirship)ent).isGoingUp=true;break;
+			case 2: ((EntityAirship)ent).isGoingDown=true;break;			
+			case 3: ((EntityAirship)ent).isFiring=true;break;	
+			case 4: ((EntityAirship)ent).isGoingUp=false;break;
+			case 5: ((EntityAirship)ent).isGoingDown=false;break;
+			case 6: ((EntityAirship)ent).isFiring=false;break;
+			}		
 		}
 	}
 }

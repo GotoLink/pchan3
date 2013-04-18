@@ -6,6 +6,7 @@ import java.util.Random;
 import mods.pchan3.PChan3Mods;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
@@ -23,7 +24,7 @@ import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class EntityAirship extends Entity implements IInventory {
+public class EntityAirship extends EntityBoat implements IInventory {
 	private ItemStack cargoItems[];
     private int airshipPosRotationIncrements;
     private double airShipX,airShipY,airShipZ;
@@ -55,9 +56,7 @@ public class EntityAirship extends Entity implements IInventory {
     }
     @Override
 	protected void entityInit() {
-    	this.dataWatcher.addObject(17, new Integer(0));
-        this.dataWatcher.addObject(18, new Integer(1));
-        this.dataWatcher.addObject(19, new Integer(0));
+    	super.entityInit();
         this.dataWatcher.addObject(30, new Integer(0));
         this.dataWatcher.addObject(31, new Integer(0));
 	}
@@ -103,18 +102,6 @@ public class EntityAirship extends Entity implements IInventory {
     
 	super.setDead();
     }
-    @Override
-    public AxisAlignedBB getCollisionBox(Entity entity) {
-	return entity.boundingBox;
-    }
-	@Override
-    public AxisAlignedBB getBoundingBox() {
-	return this.boundingBox;
-    }
-	@Override
-    public boolean canBePushed() {
-	return true;
-    }
 	@Override
 	protected void updateFallState(double par1, boolean par3){  }
 	@Override
@@ -123,10 +110,7 @@ public class EntityAirship extends Entity implements IInventory {
     }
 	@Override
     public void onInventoryChanged() {}
-	@Override
-    public double getMountedYOffset() {
-	return (double) this.height * 0.0D - 0.30000001192092896D;
-    }
+
 	@Override
     public boolean attackEntityFrom(DamageSource source, int i) {
 	if (this.isEntityInvulnerable())
@@ -156,42 +140,7 @@ public class EntityAirship extends Entity implements IInventory {
 	}
 	else return true;	    
 }
-	@SideOnly(Side.CLIENT)
-    public void performHurtAnimation() {
-	this.setForwardDirection(-this.getForwardDirection());
-	this.setTimeSinceHit(1);
-	this.setDamageTaken(this.getDamageTaken() * 2);
-    }
 	
-    public void setDamageTaken(int par1)
-    {
-        this.dataWatcher.updateObject(19, Integer.valueOf(par1));
-    }
-
-    public int getDamageTaken()
-    {
-        return this.dataWatcher.getWatchableObjectInt(19);
-    }
-
-    public void setTimeSinceHit(int par1)
-    {
-        this.dataWatcher.updateObject(17, Integer.valueOf(par1));
-    }
-
-    public int getTimeSinceHit()
-    {
-        return this.dataWatcher.getWatchableObjectInt(17);
-    }
-
-    public void setForwardDirection(int par1)
-    {
-        this.dataWatcher.updateObject(18, Integer.valueOf(par1));
-    }
-
-    public int getForwardDirection()
-    {
-        return this.dataWatcher.getWatchableObjectInt(18);
-    }
 	public int getFuelTime()
 	{
 	return this.dataWatcher.getWatchableObjectInt(30);	
@@ -208,10 +157,6 @@ public class EntityAirship extends Entity implements IInventory {
 	{
 		this.dataWatcher.updateObject(31, Integer.valueOf(par1));
 	}
-	@Override
-    public boolean canBeCollidedWith() {
-	return !isDead;
-    }
 	@SideOnly(Side.CLIENT)
     public void setPositionAndRotation2(double x, double y, double z, float f, float f1, int i) {	
 		
@@ -237,7 +182,7 @@ public class EntityAirship extends Entity implements IInventory {
     }
     @Override
     public void onUpdate() {	
-	super.onUpdate();
+	super.onEntityUpdate();
 	
 	if (this.getFuelTime() > 0) 
 	    this.setFuelTime(this.getFuelTime()-1);
@@ -248,19 +193,21 @@ public class EntityAirship extends Entity implements IInventory {
 	if (this.getDamageTaken() > 0) 
 	    this.setDamageTaken(this.getDamageTaken()-1);
 	
-	//if (!this.worldObj.isRemote){
+	
 	if (this.getFuelTime() == 0 && this.riddenByEntity != null) {
 			if (this.getStackInSlot(0)!=null && this.getStackInSlot(0).itemID==Item.coal.itemID){
 				this.setFuelTime(1600);
+				if (this.worldObj.isRemote){
 				if (--this.cargoItems[0].stackSize==0)
 					this.setInventorySlotContents(0, (ItemStack)null);
+				}
 			}
 			else if (((EntityPlayer) this.riddenByEntity).inventory.hasItem(Item.coal.itemID)) {
 		    	this.setFuelTime(1600);
+		    	if (this.worldObj.isRemote)
 			((EntityPlayer) this.riddenByEntity).inventory.consumeInventoryItem(Item.coal.itemID);
 		    }		
-	  }
-	//}
+	}
 	this.prevPosX = this.posX;
 	this.prevPosY = this.posY;
 	this.prevPosZ = this.posZ;
@@ -278,140 +225,137 @@ public class EntityAirship extends Entity implements IInventory {
 	double d1;
 	if (this.worldObj.isRemote) {
 	    if (this.airshipPosRotationIncrements > 0) {
-		d1 = this.posX + (this.airShipX - this.posX)/ (double) this.airshipPosRotationIncrements;
-		double d5 = this.posY + (this.airShipY - this.posY)/ (double) this.airshipPosRotationIncrements;
-		double d9 = this.posZ + (this.airShipZ - this.posZ)/ (double) this.airshipPosRotationIncrements;
-		double d12 = MathHelper.wrapAngleTo180_double(this.airshipYaw - (double)this.rotationYaw);
-	
-		this.rotationYaw += d12 / (double) this.airshipPosRotationIncrements;
-		this.rotationPitch += (airshipPitch - (double) rotationPitch)
-			/ (double) this.airshipPosRotationIncrements;
-		--this.airshipPosRotationIncrements;
-		this.setPosition(d1, d5, d9);
-		this.setRotation(this.rotationYaw, this.rotationPitch);
+			d1 = this.posX + (this.airShipX - this.posX)/ (double) this.airshipPosRotationIncrements;
+			double d5 = this.posY + (this.airShipY - this.posY)/ (double) this.airshipPosRotationIncrements;
+			double d9 = this.posZ + (this.airShipZ - this.posZ)/ (double) this.airshipPosRotationIncrements;
+			double d12 = MathHelper.wrapAngleTo180_double(this.airshipYaw - (double)this.rotationYaw);
+		
+			this.rotationYaw += d12 / (double) this.airshipPosRotationIncrements;
+			this.rotationPitch += (airshipPitch - (double) rotationPitch)
+				/ (double) this.airshipPosRotationIncrements;
+			--this.airshipPosRotationIncrements;
+			this.setPosition(d1, d5, d9);
+			this.setRotation(this.rotationYaw, this.rotationPitch);
 
 	    } else {
-		d1 = this.posX + this.motionX;
-		double d6 = this.posY + this.motionY;
-		double d10 = this.posZ + this.motionZ;
-		this.setPosition(d1, d6, d10);
-
-		if (this.onGround) {
+			d1 = this.posX + this.motionX;
+			double d6 = this.posY + this.motionY;
+			double d10 = this.posZ + this.motionZ;
+			this.setPosition(d1, d6, d10);
+	
+			if (this.onGround) {
+				this.motionX *= 0.5D;
+				this.motionY *= 0.5D;
+				this.motionZ *= 0.5D;
+				this.posY += 3D;
+			}
+			this.motionX *= 0.99000000953674316D;
+			this.motionY *= 0.94999998807907104D;
+			this.motionZ *= 0.99000000953674316D;
+		    }
+		    //return;
+	}
+	else{
+		if (this.riddenByEntity != null) {
+			this.motionX += this.riddenByEntity.motionX * 0.25000000000000001D;
+			this.motionZ += this.riddenByEntity.motionZ * 0.25000000000000001D;
+			if ( this.isGoingUp) {
+		    	//this.setVelocity(this.motionX, this.riddenByEntity.motionY * 0.04000000000000001D,this.motionZ);
+				this.motionY -= this.riddenByEntity.motionY * 0.04000000000000001D;
+			 }
+		    else if ( this.isGoingDown) {
+		    	for (int j = 0; j < i; j++) {
+				    double d4 = (this.boundingBox.minY + ((this.boundingBox.maxY - this.boundingBox.minY) * (double) (j - 2))
+					    / (double) i) - 0.125D;
+				    double d8 = (this.boundingBox.minY + ((this.boundingBox.maxY - this.boundingBox.minY) * (double) (j - 4))
+					    / (double) i) - 0.125D;
+				    AxisAlignedBB axisalignedbb = AxisAlignedBB
+					    .getBoundingBox(this.boundingBox.minX, d4,
+					    		this.boundingBox.minZ, this.boundingBox.maxX, d8,
+					    		this.boundingBox.maxZ);
+				    if (!this.worldObj.isAABBInMaterial(axisalignedbb, Material.water)) {
+				    	this.motionY += this.riddenByEntity.motionY * 0.01000000000000001D;
+					//this.setVelocity(this.motionX, this.motionY,this.motionZ);
+				    } else {
+				    	this.posY += 5D;
+				    	this.motionY = 0;
+				    }
+				}
+		    }
+		}
+		if (this.getFuelTime() == 0 && !this.onGround) {
+		    this.motionY -= (0.01D * 10) / 15; // Gravity :P
+		}
+		double d7 = 1D;
+		if (this.motionX < -d7) 
+			this.motionX = -d7;
+		if (this.motionX > d7) 
+			this.motionX = d7;
+		if (this.motionZ < -d7) 
+			this.motionZ = -d7;
+		if (this.motionZ > d7) 
+			this.motionZ = d7;
+		if (this.onGround||this.getFuelTime() == 0) {
 			this.motionX *= 0.5D;
 			this.motionY *= 0.5D;
 			this.motionZ *= 0.5D;
-			this.posY += 3D;
 		}
-		this.motionX *= 0.99000000953674316D;
-		this.motionY *= 0.94999998807907104D;
-		this.motionZ *= 0.99000000953674316D;
-	    }
-	    //return;
-	}
-	else{
-	if (this.riddenByEntity != null) {
-		this.motionX += this.riddenByEntity.motionX * 0.25000000000000001D;
-		this.motionZ += this.riddenByEntity.motionZ * 0.25000000000000001D;
-		if ( this.isGoingUp) {
-	    	//this.setVelocity(this.motionX, this.riddenByEntity.motionY * 0.04000000000000001D,this.motionZ);
-			this.motionY -= this.riddenByEntity.motionY * 0.04000000000000001D;
-		 }
-	    else if ( this.isGoingDown) {
-	    	for (int j = 0; j < i; j++) {
-			    double d4 = (this.boundingBox.minY + ((this.boundingBox.maxY - this.boundingBox.minY) * (double) (j - 2))
-				    / (double) i) - 0.125D;
-			    double d8 = (this.boundingBox.minY + ((this.boundingBox.maxY - this.boundingBox.minY) * (double) (j - 4))
-				    / (double) i) - 0.125D;
-			    AxisAlignedBB axisalignedbb = AxisAlignedBB
-				    .getBoundingBox(this.boundingBox.minX, d4,
-				    		this.boundingBox.minZ, this.boundingBox.maxX, d8,
-				    		this.boundingBox.maxZ);
-			    if (!this.worldObj.isAABBInMaterial(axisalignedbb, Material.water)) {
-			    	this.motionY += this.riddenByEntity.motionY * 0.01000000000000001D;
-				//this.setVelocity(this.motionX, this.motionY,this.motionZ);
-			    } else {
-			    	this.posY += 5D;
-			    	this.motionY = 0;
+		moveEntity(this.motionX, this.motionY, this.motionZ);
+	
+		double d11 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
+		if (d11 > 0.14999999999999999D) {
+			PChan3Mods.instance.proxy.displaySplashEffect(this,d11);
+		}
+		if (PChan3Mods.instance.SHOW_BOILER && this.getFuelTime()!=0) {
+			PChan3Mods.instance.proxy.displaySmoke(this);
+		}
+
+		if (isCollidedHorizontally && d11 > 0.14999999999999999D) {
+		} else {
+			this.motionX *= 0.99000000953674316D;
+			this.motionY *= 0.94999998807907104D;
+			this.motionZ *= 0.99000000953674316D;
+		}
+		this.rotationPitch = 0.0F;
+		double d14 = this.rotationYaw;
+		double d16 = this.prevPosX - this.posX;
+		double d17 = this.prevPosZ - this.posZ;
+		if (d16 * d16 + d17 * d17 > 0.001D) {
+		    d14 = (float) ((Math.atan2(d17, d16) * 180D) / 3.1415926535897931D);
+		}
+		double d19;
+		for (d19 = d14 - (double) this.rotationYaw; d19 >= 180D; d19 -= 360D) {
+		}
+		for (; d19 < -180D; d19 += 360D) {
+		}
+		if (d19 > 30D) {
+		    d19 = 30D;
+		}
+		if (d19 < -30D) {
+		    d19 = -30D;
+		}
+		this.rotationYaw += d19;
+		setRotation(this.rotationYaw, this.rotationPitch);
+		if (!this.worldObj.isRemote){
+			List<?> list = worldObj.getEntitiesWithinAABBExcludingEntity(this,
+				this.boundingBox.expand(0.20000000298023224D, 0.0D, 0.20000000298023224D));
+			if (list != null && list.size() > 0) {
+			    for (int j1 = 0; j1 < list.size(); j1++) {
+					Entity entity = (Entity) list.get(j1);
+					if (entity != this.riddenByEntity && entity.canBePushed() && (entity instanceof EntityAirship))
+					{
+					    entity.applyEntityCollision(this);
+					}
 			    }
 			}
-	    }
-	}
-	if (this.getFuelTime() == 0 && !this.onGround) {
-	    this.motionY -= (0.01D * 10) / 15; // Gravity :P
-	}
-	double d7 = 1D;
-	if (this.motionX < -d7) {this.motionX = -d7;}
-	if (this.motionX > d7) {this.motionX = d7;}
-	if (this.motionZ < -d7) {this.motionZ = -d7;}
-	if (this.motionZ > d7) {this.motionZ = d7;}
-	if (this.onGround||this.getFuelTime() == 0) {
-		this.motionX *= 0.5D;
-		this.motionY *= 0.5D;
-		this.motionZ *= 0.5D;
-	}
-	moveEntity(this.motionX, this.motionY, this.motionZ);
-
-	double d11 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
-	if (d11 > 0.14999999999999999D) {
-		PChan3Mods.instance.proxy.displaySplashEffect(this,d11);
-	}
-	if (PChan3Mods.instance.SHOW_BOILER && this.getFuelTime()!=0) {
-		PChan3Mods.instance.proxy.displaySmoke(this);
-	}
-
-	if (isCollidedHorizontally && d11 > 0.14999999999999999D) {
-	} else {
-		this.motionX *= 0.99000000953674316D;
-		this.motionY *= 0.94999998807907104D;
-		this.motionZ *= 0.99000000953674316D;
-	}
-	this.rotationPitch = 0.0F;
-	double d14 = this.rotationYaw;
-	double d16 = this.prevPosX - this.posX;
-	double d17 = this.prevPosZ - this.posZ;
-	if (d16 * d16 + d17 * d17 > 0.001D) {
-	    d14 = (float) ((Math.atan2(d17, d16) * 180D) / 3.1415926535897931D);
-	}
-	double d19;
-	for (d19 = d14 - (double) this.rotationYaw; d19 >= 180D; d19 -= 360D) {
-	}
-	for (; d19 < -180D; d19 += 360D) {
-	}
-	if (d19 > 30D) {
-	    d19 = 30D;
-	}
-	if (d19 < -30D) {
-	    d19 = -30D;
-	}
-	this.rotationYaw += d19;
-	setRotation(this.rotationYaw, this.rotationPitch);
-	if (!this.worldObj.isRemote){
-	List<?> list = worldObj.getEntitiesWithinAABBExcludingEntity(this,
-		this.boundingBox.expand(0.20000000298023224D, 0.0D, 0.20000000298023224D));
-	if (list != null && list.size() > 0) {
-	    for (int j1 = 0; j1 < list.size(); j1++) {
-		Entity entity = (Entity) list.get(j1);
-		if (entity != this.riddenByEntity && entity.canBePushed() && (entity instanceof EntityAirship))
-		{
-		    entity.applyEntityCollision(this);
+			if (this.riddenByEntity != null && this.riddenByEntity.isDead) {
+				this.riddenByEntity = null;
+			}
 		}
-	    }
-	}
-	if (this.riddenByEntity != null && this.riddenByEntity.isDead) {
-		this.riddenByEntity = null;
-	}
-	}
-	if (this.isFiring && this.getFireCountDown()==0) {
-		    this.FireArrow((EntityPlayer) this.riddenByEntity);    
-		} 
-	}
-    }
-    public void updateRiderPosition() {
-    	if (this.riddenByEntity != null){
-	    double d = Math.cos((double) rotationYaw * Math.PI / 180.0D) * 0.4D;
-	    double d1 = Math.sin((double) rotationYaw * Math.PI / 180.0D) * 0.4D;
-	    this.riddenByEntity.setPosition(this.posX + d, this.posY + this.getMountedYOffset()+ this.riddenByEntity.getYOffset(), this.posZ + d1);
-	}
+		if (this.isFiring && this.getFireCountDown()==0) {
+			    this.FireArrow((EntityPlayer) this.riddenByEntity);    
+			} 
+		}
     }
     @Override
     protected void writeEntityToNBT(NBTTagCompound par1NBTTagCompound) {
@@ -491,8 +435,8 @@ public class EntityAirship extends Entity implements IInventory {
 
 	if (this.riddenByEntity != null && this.riddenByEntity instanceof EntityPlayer
 		&& this.riddenByEntity != entityplayer) {
-		if (!this.worldObj.isRemote)
-			entityplayer.openGui(PChan3Mods.instance, PChan3Mods.instance.GUI_ID, this.worldObj, 0, 0, 0);
+		//if (!this.worldObj.isRemote)
+			//entityplayer.openGui(PChan3Mods.instance, PChan3Mods.instance.GUI_ID, this.worldObj, 0, 0, 0);
 	    return true;
 	}
 	if (!this.worldObj.isRemote) 
@@ -546,12 +490,12 @@ public class EntityAirship extends Entity implements IInventory {
 		if (!this.worldObj.isRemote){
 			this.worldObj.spawnEntityInWorld(arrow); 
 			this.setFireCountDown(20);
-			if (!entityplayer.capabilities.isCreativeMode && shipHasArrows)
+		}
+		else if (!entityplayer.capabilities.isCreativeMode && shipHasArrows)
 				if 	(--this.cargoItems[1].stackSize==0)
 				this.setInventorySlotContents(1, (ItemStack)null);
-			else if (!entityplayer.capabilities.isCreativeMode && playerHasArrows)
+		else if (!entityplayer.capabilities.isCreativeMode && playerHasArrows)
 				entityplayer.inventory.consumeInventoryItem(Item.arrow.itemID);
-		}
 		}
     }
     @Override

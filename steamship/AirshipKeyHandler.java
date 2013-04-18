@@ -24,31 +24,49 @@ public class AirshipKeyHandler extends KeyHandler {
     	Minecraft client = Minecraft.getMinecraft();
 		if (client != null && client.thePlayer != null)
 		{
-    	Entity ent=client.thePlayer.ridingEntity;
-    	if (ent!=null && ent instanceof EntityAirship){
-    		PChan3Mods.instance.proxy.sendPacket(0,ent.riddenByEntity);
-		if (kb.keyDescription=="OpenAirshipChest" && gui==null )
-		{
-	    ((EntityPlayer) ent.riddenByEntity).openGui(PChan3Mods.instance, PChan3Mods.instance.GUI_ID, ent.worldObj, ent.serverPosX, ent.serverPosY, ent.serverPosZ);
-		}
-		else if (kb.keyDescription=="AirshipUp" && ((EntityAirship) ent).getFuelTime()!=0)
-		{	
-			PChan3Mods.instance.proxy.sendPacket(2,ent.riddenByEntity);	
-		}
-		else if (kb.keyDescription=="AirshipDown")
-		{ 
-			PChan3Mods.instance.proxy.sendPacket(1,ent.riddenByEntity);
-		}
-		else if (kb.keyDescription=="AirshipFire" && ((EntityAirship) ent).getFireCountDown()==0)
-		{			
-			PChan3Mods.instance.proxy.sendPacket(3,ent.riddenByEntity);
-		}	
-		}	
+	    	Entity ent=client.thePlayer.ridingEntity;
+	    	if (ent!=null && ent instanceof EntityAirship){
+	    		
+				if (kb.keyDescription=="OpenAirshipChest" && gui==null )
+				{
+			    ((EntityPlayer) ent.riddenByEntity).openGui(PChan3Mods.instance, PChan3Mods.instance.GUI_ID, ent.worldObj, ent.serverPosX, ent.serverPosY, ent.serverPosZ);
+				}
+				else if (kb.keyDescription=="AirshipUp" && ((EntityAirship) ent).getFuelTime()!=0)
+				{	
+					PChan3Mods.instance.proxy.sendPacket(1,ent.riddenByEntity);	
+				}
+				else if (kb.keyDescription=="AirshipDown")
+				{ 
+					PChan3Mods.instance.proxy.sendPacket(2,ent.riddenByEntity);
+				}
+				else if (kb.keyDescription=="AirshipFire" && ((EntityAirship) ent).getFireCountDown()==0)
+				{			
+					PChan3Mods.instance.proxy.sendPacket(3,ent.riddenByEntity);
+				}	
+			}	
 		}
     }
     @Override
     public void keyUp(EnumSet<TickType> es, KeyBinding kb, boolean bln) {
-	
+    	Minecraft client = Minecraft.getMinecraft();
+		if (client != null && client.thePlayer != null)
+		{
+	    	Entity ent=client.thePlayer.ridingEntity;
+	    	if (ent!=null && ent instanceof EntityAirship){
+	    		if (kb.keyDescription=="AirshipUp")
+				{	
+					PChan3Mods.instance.proxy.sendPacket(4,ent.riddenByEntity);	
+				}
+				else if (kb.keyDescription=="AirshipDown")
+				{ 
+					PChan3Mods.instance.proxy.sendPacket(5,ent.riddenByEntity);
+				}
+				else if (kb.keyDescription=="AirshipFire")
+				{			
+					PChan3Mods.instance.proxy.sendPacket(6,ent.riddenByEntity);
+				}	
+			}	
+		}
     }
 
     @Override
