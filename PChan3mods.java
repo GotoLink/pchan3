@@ -192,7 +192,7 @@ public class PChan3Mods{
 			
 			for(int id=0;id<biome.length;id++)
 			{ 
-				if(biome[id]!=null && chosenBiome[k].biomeName.equalsIgnoreCase(biome[id].trim()) && chosenBiome[k].getSpawnableList(EnumCreatureType.monster)!=null)
+				if(biome[id]!=null &&  biome[id]!="" && chosenBiome[k].biomeName.equalsIgnoreCase(biome[id].trim()))
 				{			
 					flag = true;				
 				}
@@ -203,20 +203,21 @@ public class PChan3Mods{
 			  System.arraycopy(chosenBiome,k+1,chosenBiome,k,chosenBiome.length-1-k);
 		  }
 	  }
-	return  chosenBiome; 
+	return chosenBiome; 
   }
   @PostInit
   public void modsLoaded(FMLPostInitializationEvent event)
   {
 	//Pirate
-		if (!(!ENABLE_PIRATE || SPAWNABLE_BIOMES==""))
+		if (!(!ENABLE_PIRATE || SPAWNABLE_BIOMES==null || SPAWNABLE_BIOMES==""))
 		{			
 			EntityRegistry.registerModEntity(EntityPirate.class, "Pirate", 3, this, 80, 1, true);
 			try{//FIXME
 			EntityRegistry.addSpawn(EntityPirate.class, 6,1,5, EnumCreatureType.monster, getAvailableBiomes());
 			}
 			catch(NullPointerException n){
-			EntityRegistry.addSpawn(EntityPirate.class, 6,1,5, EnumCreatureType.monster, BiomeGenBase.ocean);
+				//n.printStackTrace();
+			//EntityRegistry.addSpawn(EntityPirate.class, 6,1,5, EnumCreatureType.monster, BiomeGenBase.ocean);
 			}
 			LanguageRegistry.instance().addStringLocalization("entity.Pirate.name", "en_US", "Pirate");
 		}
