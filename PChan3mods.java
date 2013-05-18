@@ -41,7 +41,7 @@ import cpw.mods.fml.relauncher.Side;
 *
 * @author pchan3
 */
-@Mod(modid = "pchan3", name = "PChan3 mods", version = "0.4")
+@Mod(modid = "pchan3", name = "PChan3 mods", version = "0.5")
 @NetworkMod(clientSideRequired = true, serverSideRequired = false,channels = {"Steamship" },
 		packetHandler = PacketHandler.class)
 public class PChan3Mods{
