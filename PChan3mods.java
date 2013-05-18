@@ -212,13 +212,14 @@ public class PChan3Mods{
 		if (!(!ENABLE_PIRATE || SPAWNABLE_BIOMES==null || SPAWNABLE_BIOMES==""))
 		{			
 			EntityRegistry.registerModEntity(EntityPirate.class, "Pirate", 3, this, 80, 1, true);
-			try{//FIXME
+			/*try{//FIXME
 			EntityRegistry.addSpawn(EntityPirate.class, 6,1,5, EnumCreatureType.monster, getAvailableBiomes());
 			}
 			catch(NullPointerException n){
 				//n.printStackTrace();
-			//EntityRegistry.addSpawn(EntityPirate.class, 6,1,5, EnumCreatureType.monster, BiomeGenBase.ocean);
-			}
+				 */
+			EntityRegistry.addSpawn(EntityPirate.class, 6,1,5, EnumCreatureType.monster, BiomeGenBase.ocean);
+			//}
 			LanguageRegistry.instance().addStringLocalization("entity.Pirate.name", "en_US", "Pirate");
 		}
 		proxy.registerRenderInformation();
