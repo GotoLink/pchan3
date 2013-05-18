@@ -29,17 +29,10 @@ public class EntityAirship extends EntityBoat implements IInventory {
     private int airshipPosRotationIncrements;
     private double airShipX,airShipY,airShipZ;
     private double airshipYaw,airshipPitch;
-    @SideOnly(Side.CLIENT)
-    private double velocityX;
-    @SideOnly(Side.CLIENT)
-    private double velocityY;
-    @SideOnly(Side.CLIENT)
-    private double velocityZ;
     public boolean isGoingUp, isGoingDown,isFiring;
 	
     public EntityAirship(World world) {
 	super(world);
-	this.preventEntitySpawning = true;
 	this.setSize(1.5F, 1.7F);
 	this.yOffset = this.height / 2.0F;
 	this.cargoItems = new ItemStack[this.getSizeInventory()];
@@ -120,14 +113,14 @@ public class EntityAirship extends EntityBoat implements IInventory {
     else if (!this.worldObj.isRemote && !this.isDead)
     {
     	this.setForwardDirection(-this.getForwardDirection());
-    	this.setTimeSinceHit(1);
+    	this.setTimeSinceHit(2);
     	this.setDamageTaken(this.getDamageTaken()+ i * 10);
     	this.setBeenAttacked();
 	if (source.getEntity() instanceof EntityPlayer && ((EntityPlayer)source.getEntity()).capabilities.isCreativeMode)
     {
-        this.setDamageTaken(400);
+        this.setDamageTaken(200);
     }
-	if (this.getDamageTaken() > 300) {
+	if (this.getDamageTaken() > 100) {
 		if (this.riddenByEntity != null)
         {
             this.riddenByEntity.mountEntity(this);
@@ -159,22 +152,13 @@ public class EntityAirship extends EntityBoat implements IInventory {
 	}
 	@SideOnly(Side.CLIENT)
     public void setPositionAndRotation2(double x, double y, double z, float f, float f1, int i) {	
-		
+		super.setPositionAndRotation2(x, y, z, f, f1, i);
     this.airshipPosRotationIncrements = i + 5;  	
 	this.airShipX = x;
 	this.airShipY = y;
 	this.airShipZ = z;
 	this.airshipYaw = f;
 	this.airshipPitch = f1;
-	this.motionX = this.velocityX;
-	this.motionY = this.velocityY;
-	this.motionZ = this.velocityZ;
-    }
-	@SideOnly(Side.CLIENT)
-    public void setVelocity(double d, double d1, double d2) {
-	this.velocityX = this.motionX = d;
-	this.velocityY = this.motionY = d1;
-	this.velocityZ = this.motionZ = d2;
     }
 	
     public int getFuelScaled(int i) {
@@ -230,9 +214,8 @@ public class EntityAirship extends EntityBoat implements IInventory {
 			double d9 = this.posZ + (this.airShipZ - this.posZ)/ (double) this.airshipPosRotationIncrements;
 			double d12 = MathHelper.wrapAngleTo180_double(this.airshipYaw - (double)this.rotationYaw);
 		
-			this.rotationYaw += d12 / (double) this.airshipPosRotationIncrements;
-			this.rotationPitch += (airshipPitch - (double) rotationPitch)
-				/ (double) this.airshipPosRotationIncrements;
+			this.rotationYaw = (float) ((double)this.rotationYaw + d12 / (double) this.airshipPosRotationIncrements);
+			this.rotationPitch = (float) ((double)this.rotationPitch +(airshipPitch - (double) rotationPitch)/ (double) this.airshipPosRotationIncrements);
 			--this.airshipPosRotationIncrements;
 			this.setPosition(d1, d5, d9);
 			this.setRotation(this.rotationYaw, this.rotationPitch);
@@ -317,24 +300,20 @@ public class EntityAirship extends EntityBoat implements IInventory {
 			this.motionZ *= 0.99000000953674316D;
 		}
 		this.rotationPitch = 0.0F;
-		double d14 = this.rotationYaw;
+		double d14 = (double)this.rotationYaw;
 		double d16 = this.prevPosX - this.posX;
 		double d17 = this.prevPosZ - this.posZ;
 		if (d16 * d16 + d17 * d17 > 0.001D) {
-		    d14 = (float) ((Math.atan2(d17, d16) * 180D) / 3.1415926535897931D);
+		    d14 = (double) ((float)(Math.atan2(d17, d16) * 180D / Math.PI));
 		}
-		double d19;
-		for (d19 = d14 - (double) this.rotationYaw; d19 >= 180D; d19 -= 360D) {
+		double d19= MathHelper.wrapAngleTo180_double(d14 - (double)this.rotationYaw);
+		if (d19 > 20D) {
+		    d19 = 20D;
 		}
-		for (; d19 < -180D; d19 += 360D) {
+		if (d19 < -20D) {
+		    d19 = -20D;
 		}
-		if (d19 > 30D) {
-		    d19 = 30D;
-		}
-		if (d19 < -30D) {
-		    d19 = -30D;
-		}
-		this.rotationYaw += d19;
+		this.rotationYaw = (float)((double)this.rotationYaw + d19);
 		setRotation(this.rotationYaw, this.rotationPitch);
 		if (!this.worldObj.isRemote){
 			List<?> list = worldObj.getEntitiesWithinAABBExcludingEntity(this,
