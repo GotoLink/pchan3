@@ -29,17 +29,15 @@ public class EntitySteamBoat extends EntityBoat
     private double velocityY;
     @SideOnly(Side.CLIENT)
     private double velocityZ;
-    private double field_70276_b;
+    private double speedMultiplier;
     private boolean field_70279_a;
 
     public EntitySteamBoat(World world)
     {
     	super(world);
     	this.field_70279_a = true;
-        this.field_70276_b = 0.07D;
-        this.preventEntitySpawning = true;
+        this.speedMultiplier = 0.07D;
         this.setSize(1.5F, 0.6F);
-        this.yOffset = this.height / 2.0F;
     }
     public EntitySteamBoat(World world, double par2, double par4, double par6)
     {
@@ -62,47 +60,47 @@ public class EntitySteamBoat extends EntityBoat
     public boolean attackEntityFrom(DamageSource par1DamageSource, int par2)
     {
     	if (this.isEntityInvulnerable())
-    {
-        return false;
-    }
-    else if (!this.worldObj.isRemote && !this.isDead)
-    {
-        this.setForwardDirection(-this.getForwardDirection());
-        this.setTimeSinceHit(10);
-        this.setDamageTaken(this.getDamageTaken() + par2 * 10);
-        this.setBeenAttacked();
-
-        if (par1DamageSource.getEntity() instanceof EntityPlayer && ((EntityPlayer)par1DamageSource.getEntity()).capabilities.isCreativeMode)
-        {
-            this.setDamageTaken(100);
-            if (this.riddenByEntity != null)
-            {
-                this.riddenByEntity.mountEntity(this);
-            }
-            
-            this.dropItemWithOffset(PChan3Mods.instance.steamBoat.itemID, 1, 0.0f);
-            this.setDead();
-            return true;
-        }
-
-        if (this.getDamageTaken() > 80)
-        {
-            if (this.riddenByEntity != null)
-            {
-                this.riddenByEntity.mountEntity(this);
-            }
-            
-            this.dropItemWithOffset(Block.planks.blockID, 5, 0.0F);
-            this.dropItemWithOffset(Item.ingotIron.itemID, 1, 0.0f);
-            this.setDead();
-        }
-
-        return true;
-    }
-    else
-    {
-        return true;
-    }           
+	    {
+	        return false;
+	    }
+	    else if (!this.worldObj.isRemote && !this.isDead)
+	    {
+	        this.setForwardDirection(-this.getForwardDirection());
+	        this.setTimeSinceHit(10);
+	        this.setDamageTaken(this.getDamageTaken() + par2 * 10);
+	        this.setBeenAttacked();
+	
+	        if (par1DamageSource.getEntity() instanceof EntityPlayer && ((EntityPlayer)par1DamageSource.getEntity()).capabilities.isCreativeMode)
+	        {
+	            this.setDamageTaken(100);
+	            if (this.riddenByEntity != null)
+	            {
+	                this.riddenByEntity.mountEntity(this);
+	            }
+	            
+	            this.dropItemWithOffset(PChan3Mods.instance.steamBoat.itemID, 1, 0.0f);
+	            this.setDead();
+	            return true;
+	        }
+	
+	        if (this.getDamageTaken() > 80)
+	        {
+	            if (this.riddenByEntity != null)
+	            {
+	                this.riddenByEntity.mountEntity(this);
+	            }
+	            
+	            this.dropItemWithOffset(Block.planks.blockID, 5, 0.0F);
+	            this.dropItemWithOffset(Item.ingotIron.itemID, 1, 0.0f);
+	            this.setDead();
+	        }
+	
+	        return true;
+	    }
+	    else
+	    {
+	        return true;
+	    }           
     }
     
     @SideOnly(Side.CLIENT)
@@ -148,7 +146,7 @@ public class EntitySteamBoat extends EntityBoat
     public void onUpdate()
     {
         super.onEntityUpdate();
-        if (!this.worldObj.isRemote){
+        
         if (this.getTimeSinceHit() > 0)
             this.setTimeSinceHit(this.getTimeSinceHit() - 1);
         if (this.getDamageTaken() > 0)
@@ -156,13 +154,12 @@ public class EntitySteamBoat extends EntityBoat
         if (this.getFuelTime() > 0) 
     	    this.setFuelTime(this.getFuelTime()-1);
         
-    	if (this.getFuelTime() == 0 && this.riddenByEntity != null) {
-    		    if (((EntityPlayer) this.riddenByEntity).inventory.hasItem(263)) {
-    		    	this.setFuelTime(1600);
-    			((EntityPlayer) this.riddenByEntity).inventory.consumeInventoryItem(263);
-    		    }		
-    	  }
-        }
+    	if (this.getFuelTime() == 0 && this.riddenByEntity != null && this.riddenByEntity instanceof EntityPlayer) {
+		    if (((EntityPlayer) this.riddenByEntity).inventory.hasItem(263)) {
+		    	this.setFuelTime(1600);
+			((EntityPlayer) this.riddenByEntity).inventory.consumeInventoryItem(263);
+		    }		
+	  	}
         this.prevPosX = this.posX;
         this.prevPosY = this.posY;
         this.prevPosZ = this.posZ;
@@ -247,8 +244,8 @@ public class EntitySteamBoat extends EntityBoat
 
             if (this.riddenByEntity != null)
             {
-                this.motionX += this.riddenByEntity.motionX * this.field_70276_b;
-                this.motionZ += this.riddenByEntity.motionZ * this.field_70276_b;
+                this.motionX += this.riddenByEntity.motionX * this.speedMultiplier;
+                this.motionZ += this.riddenByEntity.motionZ * this.speedMultiplier;
             }
 
             var6 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
@@ -261,22 +258,22 @@ public class EntitySteamBoat extends EntityBoat
                 var6 = 0.35D;
             }
 
-            if (var6 > var24 && this.field_70276_b < 0.35D)
+            if (var6 > var24 && this.speedMultiplier < 0.35D)
             {
-                this.field_70276_b += (0.35D - this.field_70276_b) / 35.0D;
+                this.speedMultiplier += (0.35D - this.speedMultiplier) / 35.0D;
 
-                if (this.field_70276_b > 0.35D)
+                if (this.speedMultiplier > 0.35D)
                 {
-                    this.field_70276_b = 0.35D;
+                    this.speedMultiplier = 0.35D;
                 }
             }
             else
             {
-                this.field_70276_b -= (this.field_70276_b - 0.07D) / 35.0D;
+                this.speedMultiplier -= (this.speedMultiplier - 0.07D) / 35.0D;
 
-                if (this.field_70276_b < 0.07D)
+                if (this.speedMultiplier < 0.07D)
                 {
-                    this.field_70276_b = 0.07D;
+                    this.speedMultiplier = 0.07D;
                 }
             }
 
@@ -393,19 +390,19 @@ public class EntitySteamBoat extends EntityBoat
             return true;
         }
         else {
-        ItemStack var2 = par1EntityPlayer.inventory.getCurrentItem();
+        ItemStack var2 = par1EntityPlayer.getCurrentEquippedItem();
 
         if (var2 != null && var2.itemID == Item.coal.itemID)
         {
             if (--var2.stackSize == 0)
             {
-                par1EntityPlayer.inventory.setInventorySlotContents(par1EntityPlayer.inventory.currentItem, (ItemStack)null);
+                par1EntityPlayer.destroyCurrentEquippedItem();
             }
             if (!this.worldObj.isRemote)
-            this.setFuelTime(1600);
+            	this.setFuelTime(1600);
         }
         else if (!this.worldObj.isRemote)   
-                par1EntityPlayer.mountEntity(this);       
+            par1EntityPlayer.mountEntity(this);       
         }
         return true;
     }

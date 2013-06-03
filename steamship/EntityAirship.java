@@ -30,22 +30,24 @@ public class EntityAirship extends EntityBoat implements IInventory {
     private double airShipX,airShipY,airShipZ;
     private double airshipYaw,airshipPitch;
     public boolean isGoingUp, isGoingDown,isFiring;
+	private boolean field_70279_a;
 	
     public EntityAirship(World world) {
-	super(world);
-	this.setSize(1.5F, 1.7F);
-	this.yOffset = this.height / 2.0F;
-	this.cargoItems = new ItemStack[this.getSizeInventory()];
+		super(world);
+		this.field_70279_a = true;
+	    this.setSize(1.5F, 1.7F);
+		this.yOffset = this.height / 2.0F;
+		this.cargoItems = new ItemStack[this.getSizeInventory()];
 	}
     public EntityAirship(World world, double d, double d1, double d2) {
-	this(world);
-	this.setPosition(d, d1 + (double) yOffset, d2);
-	this.motionX = 0.0D;
-	this.motionY = 0.0D;
-	this.motionZ = 0.0D;
-	this.prevPosX = d;
-	this.prevPosY = d1;
-	this.prevPosZ = d2;
+		this(world);
+		this.setPosition(d, d1 + (double) yOffset, d2);
+		this.motionX = 0.0D;
+		this.motionY = 0.0D;
+		this.motionZ = 0.0D;
+		this.prevPosX = d;
+		this.prevPosY = d1;
+		this.prevPosZ = d2;
     }
     @Override
 	protected void entityInit() {
@@ -152,13 +154,29 @@ public class EntityAirship extends EntityBoat implements IInventory {
 	}
 	@SideOnly(Side.CLIENT)
     public void setPositionAndRotation2(double x, double y, double z, float f, float f1, int i) {	
-		super.setPositionAndRotation2(x, y, z, f, f1, i);
-    this.airshipPosRotationIncrements = i + 5;  	
-	this.airShipX = x;
-	this.airShipY = y;
-	this.airShipZ = z;
-	this.airshipYaw = f;
-	this.airshipPitch = f1;
+		if (this.field_70279_a)
+        {
+            this.airshipPosRotationIncrements = i + 5;
+        }
+        else
+        {
+            double d3 = x - this.posX;
+            double d4 = y - this.posY;
+            double d5 = z - this.posZ;
+            double d6 = d3 * d3 + d4 * d4 + d5 * d5;
+
+            if (d6 <= 1.0D)
+            {
+                return;
+            }
+
+            this.airshipPosRotationIncrements = 3;
+        } 	
+		this.airShipX = x;
+		this.airShipY = y;
+		this.airShipZ = z;
+		this.airshipYaw = f;
+		this.airshipPitch = f1;
     }
 	
     public int getFuelScaled(int i) {
@@ -207,7 +225,7 @@ public class EntityAirship extends EntityBoat implements IInventory {
 	    }
 	}
 	double d1;
-	if (this.worldObj.isRemote) {
+	if (this.worldObj.isRemote && this.field_70279_a) {
 	    if (this.airshipPosRotationIncrements > 0) {
 			d1 = this.posX + (this.airShipX - this.posX)/ (double) this.airshipPosRotationIncrements;
 			double d5 = this.posY + (this.airShipY - this.posY)/ (double) this.airshipPosRotationIncrements;
@@ -497,4 +515,9 @@ public class EntityAirship extends EntityBoat implements IInventory {
 	public boolean isStackValidForSlot(int i, ItemStack itemstack) {
 		return i>2 || (itemstack.getItem() instanceof ItemCoal && i==0) || (itemstack.itemID==Item.arrow.itemID && i==1 );
 	}
+	@SideOnly(Side.CLIENT)
+    public void func_70270_d(boolean par1)
+    {
+        this.field_70279_a = par1;
+    }
 }
