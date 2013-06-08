@@ -397,16 +397,16 @@ public class EntityAirship extends EntityBoat implements IInventory {
     	{
 		if (stack.stackSize <= j) 
 	    	{
-	    	this.setInventorySlotContents(i, (ItemStack)null);
-	    	this.onInventoryChanged();
+		    	this.setInventorySlotContents(i, (ItemStack)null);
+		    	this.onInventoryChanged();
 	    	 }
 	    else
 	    	{
-	    stack = stack.splitStack(j);
-	    	if (stack.stackSize == 0) 
+		    	stack = stack.splitStack(j);
+		    	if (stack.stackSize == 0) 
 	    		{
-	    		this.setInventorySlotContents(i, (ItemStack)null);
-	    		this.onInventoryChanged();
+		    		this.setInventorySlotContents(i, (ItemStack)null);
+		    		this.onInventoryChanged();
 	    		}
 	    	}    
     	}   
@@ -414,18 +414,18 @@ public class EntityAirship extends EntityBoat implements IInventory {
 	}
     @Override
     public void setInventorySlotContents(int i, ItemStack itemstack) {
-	this.cargoItems[i] = itemstack;
-	if (itemstack != null && itemstack.stackSize > this.getInventoryStackLimit()) {
-	    itemstack.stackSize = this.getInventoryStackLimit();
-	}this.onInventoryChanged();
+		this.cargoItems[i] = itemstack;
+		if (itemstack != null && itemstack.stackSize > this.getInventoryStackLimit()) 
+		    itemstack.stackSize = this.getInventoryStackLimit();
+		this.onInventoryChanged();
     }
     @Override
     public int getInventoryStackLimit() {
-	return 64;
+    	return 64;
     }
     @SideOnly(Side.CLIENT)
     public float getShadowSize() {
-	return 0.0F;
+    	return 0.0F;
     }
     @Override
     public boolean interact(EntityPlayer entityplayer) {//TODO:Work on this
@@ -466,14 +466,14 @@ public class EntityAirship extends EntityBoat implements IInventory {
 
     public void FireArrow(EntityPlayer entityplayer) {
 
-	boolean playerHasArrows = entityplayer.inventory.hasItem(Item.arrow.itemID); 
-	boolean shipHasArrows = this.getStackInSlot(1)!=null && this.getStackInSlot(1).itemID==Item.arrow.itemID;	
-	//if (this.getStackInSlot(1)!=null)
-	//Entity entity =this.getStackInSlot(1).getItem().createEntity(this.worldObj, location, this.getStackInSlot(1)); 
-	//if (entity instanceof IProjectile); 
-	if ((playerHasArrows|| shipHasArrows ||entityplayer.capabilities.isCreativeMode)&& this.getFireCountDown() == 0) {	    
+		boolean playerHasArrows = entityplayer.inventory.hasItem(Item.arrow.itemID); 
+		boolean shipHasArrows = this.getStackInSlot(1)!=null && this.getStackInSlot(1).itemID==Item.arrow.itemID;	
+		//if (this.getStackInSlot(1)!=null)
+		//Entity entity =this.getStackInSlot(1).getItem().createEntity(this.worldObj, location, this.getStackInSlot(1)); 
+		//if (entity instanceof IProjectile); 
+		if ((playerHasArrows|| shipHasArrows ||entityplayer.capabilities.isCreativeMode)&& this.getFireCountDown() == 0) {	    
 
-		Vec3 vec = entityplayer.getLook(1.0F);
+		Vec3 vec = entityplayer.getLookVec();
 		double d8 = 4D;
 		double d1 = this.posX + vec.xCoord * d8;
 		double d2 = this.posY + (double) (height / 4.0F);
@@ -489,10 +489,10 @@ public class EntityAirship extends EntityBoat implements IInventory {
 			this.setFireCountDown(20);
 		}
 		else if (!entityplayer.capabilities.isCreativeMode && shipHasArrows)
-				if 	(--this.cargoItems[1].stackSize==0)
+			if 	(--this.cargoItems[1].stackSize==0)
 				this.setInventorySlotContents(1, (ItemStack)null);
 		else if (!entityplayer.capabilities.isCreativeMode && playerHasArrows)
-				entityplayer.inventory.consumeInventoryItem(Item.arrow.itemID);
+			entityplayer.inventory.consumeInventoryItem(Item.arrow.itemID);
 		}
     }
     @Override
