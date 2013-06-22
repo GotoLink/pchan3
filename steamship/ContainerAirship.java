@@ -48,11 +48,10 @@ public class ContainerAirship extends Container {
 		    	this.mergeItemStack(itemstack1, 1, 2, true);//Put arrows into arrow slot
 		    else if (i < this.airship.getSizeInventory()) //From airship inventory to player inventory
 		    { 
-		    	if(!this.mergeItemStack(itemstack1, this.airship.getSizeInventory(), this.inventorySlots.size(), true))
-		    		return null;
+		    	this.mergeItemStack(itemstack1, this.airship.getSizeInventory(), this.inventorySlots.size(), true);
 		    } 	    
-		    else if (!this.mergeItemStack(itemstack1, 2, this.airship.getSizeInventory(), false))
-		    	return null;
+		    else
+		    	this.mergeItemStack(itemstack1, 2, this.airship.getSizeInventory(), false);
 		    
 		    if (itemstack1.stackSize == 0) 
 		    {

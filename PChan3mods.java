@@ -91,7 +91,7 @@ public class PChan3Mods{
 			// Engine
 			engine = new Item(engineItemID).setUnlocalizedName("pchan3:Engine").setCreativeTab(CreativeTabs.tabTransport);
 			LanguageRegistry.addName(engine, "Engine");
-			GameRegistry.addRecipe(new ItemStack(engine, 1), new Object[]{
+			GameRegistry.addRecipe(new ItemStack(engine), new Object[]{
 			    "###",
 			    "#X#",
 			    "###",
@@ -101,7 +101,7 @@ public class PChan3Mods{
 		  // Balloon
 			balloon = new Item(balloonItemID).setUnlocalizedName("pchan3:Balloon").setCreativeTab(CreativeTabs.tabTransport);
 			LanguageRegistry.addName(balloon, "Balloon");
-			GameRegistry.addRecipe(new ItemStack(balloon, 1), new Object[]{
+			GameRegistry.addRecipe(new ItemStack(balloon), new Object[]{
 			    "###",
 			    "###",
 			    "L L",
@@ -112,18 +112,15 @@ public class PChan3Mods{
 		    airShip = new ItemAirship(airshipItemID).setUnlocalizedName("pchan3:Airship");
 			LanguageRegistry.addName(airShip, "Airship");
 			EntityRegistry.registerModEntity(EntityAirship.class, "Airship", 1, this, 40, 1, true);
-			GameRegistry.addRecipe(new ItemStack(airShip, 1), new Object[]{
+			GameRegistry.addRecipe(new ItemStack(airShip), new Object[]{
 			    "XBX",
 			    "EFE",
 			    "XDX",
 			    Character.valueOf('X'), Item.silk,
 			    Character.valueOf('B'), balloon,
-			    //Character.valueOf('C'), Block.chest,
 			    Character.valueOf('E'), engine,
-			    //Character.valueOf('L'), Block.dispenser,
 			    Character.valueOf('D'), Item.boat,
 			    Character.valueOf('F'), Block.furnaceIdle});
-			
 		}
 		//Boat
 	     if (ENABLE_STEAMBOAT)
@@ -131,7 +128,7 @@ public class PChan3Mods{
 			steamBoat = new ItemSteamBoat(steamboatItemID).setUnlocalizedName("pchan3:Steamboat");
 			LanguageRegistry.addName(steamBoat, "Steam Boat");
 			EntityRegistry.registerModEntity(EntitySteamBoat.class, "SteamBoat", 2,this,40,1,false);
-			GameRegistry.addRecipe(new ItemStack(steamBoat, 1), new Object[] {
+			GameRegistry.addRecipe(new ItemStack(steamBoat), new Object[] {
 		        "#X#",
 		        "###",
 		        Character.valueOf('#'), Block.planks,
