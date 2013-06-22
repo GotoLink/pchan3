@@ -228,7 +228,7 @@ public class EntityAirship extends EntityBoat implements IInventory {
 	if (this.worldObj.isRemote && this.field_70279_a) {
 	    if (this.airshipPosRotationIncrements > 0) {
 			d1 = this.posX + (this.airShipX - this.posX)/ (double) this.airshipPosRotationIncrements;
-			double d5 = this.posY + (this.airShipY - this.posY)/ (double) this.airshipPosRotationIncrements;
+			double d5 = this.posY;// + (this.airShipY - this.posY)/ (double) this.airshipPosRotationIncrements;
 			double d9 = this.posZ + (this.airShipZ - this.posZ)/ (double) this.airshipPosRotationIncrements;
 			double d12 = MathHelper.wrapAngleTo180_double(this.airshipYaw - (double)this.rotationYaw);
 		
@@ -298,25 +298,25 @@ public class EntityAirship extends EntityBoat implements IInventory {
 			this.motionZ = d7;
 		if (this.onGround||this.getFuelTime() == 0) {
 			this.motionX *= 0.5D;
-			this.motionY *= 0.5D;
+			//this.motionY *= 0.5D;
 			this.motionZ *= 0.5D;
+		}
+		
+		double d11 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
+		if (!(isCollidedHorizontally && d11 > 0.14999999999999999D)) {
+			this.motionX *= 0.99000000953674316D;
+			this.motionY *= 0.94999998807907104D;
+			this.motionZ *= 0.99000000953674316D;
 		}
 		moveEntity(this.motionX, this.motionY, this.motionZ);
 	
-		double d11 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
 		if (d11 > 0.14999999999999999D) {
 			PChan3Mods.instance.proxy.displaySplashEffect(this,d11);
 		}
 		if (PChan3Mods.instance.SHOW_BOILER && this.getFuelTime()!=0) {
 			PChan3Mods.instance.proxy.displaySmoke(this);
 		}
-
-		if (isCollidedHorizontally && d11 > 0.14999999999999999D) {
-		} else {
-			this.motionX *= 0.99000000953674316D;
-			this.motionY *= 0.94999998807907104D;
-			this.motionZ *= 0.99000000953674316D;
-		}
+		
 		this.rotationPitch = 0.0F;
 		double d14 = (double)this.rotationYaw;
 		double d16 = this.prevPosX - this.posX;
