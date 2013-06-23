@@ -98,7 +98,7 @@ public class EntityAirship extends EntityBoat implements IInventory {
 	super.setDead();
     }
 	@Override
-	protected void updateFallState(double par1, boolean par3){  }
+	protected void fall(float par1){  }
 	@Override
     public String getInvName() {
 	return "Airship";
@@ -221,14 +221,14 @@ public class EntityAirship extends EntityBoat implements IInventory {
 	    AxisAlignedBB axisalignedbb = AxisAlignedBB.getBoundingBox(this.boundingBox.minX, d5, this.boundingBox.minZ, this.boundingBox.maxX, d9, this.boundingBox.maxZ);
 	    if (this.worldObj.isAABBInMaterial(axisalignedbb, Material.water)) 
 	    {
-		d += 1.0D / (double) i;
+	    	d += 1.0D / (double) i;
 	    }
 	}
 	double d1;
 	if (this.worldObj.isRemote && this.field_70279_a) {
 	    if (this.airshipPosRotationIncrements > 0) {
 			d1 = this.posX + (this.airShipX - this.posX)/ (double) this.airshipPosRotationIncrements;
-			double d5 = this.posY;// + (this.airShipY - this.posY)/ (double) this.airshipPosRotationIncrements;
+			double d5 = this.posY + (this.airShipY - this.posY)/ (double) this.airshipPosRotationIncrements;
 			double d9 = this.posZ + (this.airShipZ - this.posZ)/ (double) this.airshipPosRotationIncrements;
 			double d12 = MathHelper.wrapAngleTo180_double(this.airshipYaw - (double)this.rotationYaw);
 		
@@ -244,48 +244,46 @@ public class EntityAirship extends EntityBoat implements IInventory {
 			double d10 = this.posZ + this.motionZ;
 			this.setPosition(d1, d6, d10);
 	
-			if (this.onGround) {
+			if (this.onGround||this.getFuelTime() == 0) {
 				this.motionX *= 0.5D;
 				this.motionY *= 0.5D;
 				this.motionZ *= 0.5D;
-				this.posY += 3D;
 			}
 			this.motionX *= 0.99000000953674316D;
 			this.motionY *= 0.94999998807907104D;
 			this.motionZ *= 0.99000000953674316D;
 		    }
-		    //return;
 	}
 	else{
 		if (this.riddenByEntity != null) {
 			this.motionX += this.riddenByEntity.motionX * 0.25000000000000001D;
 			this.motionZ += this.riddenByEntity.motionZ * 0.25000000000000001D;
-			if ( this.isGoingUp) {
-		    	//this.setVelocity(this.motionX, this.riddenByEntity.motionY * 0.04000000000000001D,this.motionZ);
-				this.motionY -= this.riddenByEntity.motionY * 0.04000000000000001D;
-			 }
-		    else if ( this.isGoingDown) {
-		    	for (int j = 0; j < i; j++) {
-				    double d4 = (this.boundingBox.minY + ((this.boundingBox.maxY - this.boundingBox.minY) * (double) (j - 2))
-					    / (double) i) - 0.125D;
-				    double d8 = (this.boundingBox.minY + ((this.boundingBox.maxY - this.boundingBox.minY) * (double) (j - 4))
-					    / (double) i) - 0.125D;
-				    AxisAlignedBB axisalignedbb = AxisAlignedBB
-					    .getBoundingBox(this.boundingBox.minX, d4,
-					    		this.boundingBox.minZ, this.boundingBox.maxX, d8,
-					    		this.boundingBox.maxZ);
-				    if (!this.worldObj.isAABBInMaterial(axisalignedbb, Material.water)) {
-				    	this.motionY += this.riddenByEntity.motionY * 0.01000000000000001D;
-					//this.setVelocity(this.motionX, this.motionY,this.motionZ);
-				    } else {
-				    	this.posY += 5D;
-				    	this.motionY = 0;
-				    }
-				}
-		    }
 		}
+		if ( this.isGoingUp) {
+	    	//this.setVelocity(this.motionX, this.riddenByEntity.motionY * 0.04000000000000001D,this.motionZ);
+			this.motionY += 0.05D;
+		 }
+	    else if ( this.isGoingDown) {
+	    	for (int j = 0; j < i; j++) {
+			    double d4 = (this.boundingBox.minY + ((this.boundingBox.maxY - this.boundingBox.minY) * (double) (j - 2))
+				    / (double) i) - 0.125D;
+			    double d8 = (this.boundingBox.minY + ((this.boundingBox.maxY - this.boundingBox.minY) * (double) (j - 4))
+				    / (double) i) - 0.125D;
+			    AxisAlignedBB axisalignedbb = AxisAlignedBB
+				    .getBoundingBox(this.boundingBox.minX, d4,
+				    		this.boundingBox.minZ, this.boundingBox.maxX, d8,
+				    		this.boundingBox.maxZ);
+			    if (!this.worldObj.isAABBInMaterial(axisalignedbb, Material.water)) {
+			    	this.motionY -= 0.05D;
+				//this.setVelocity(this.motionX, this.motionY,this.motionZ);
+			    } else {
+			    	this.posY += 5D;
+			    	this.motionY = 0D;
+			    }
+			}
+	    }
 		if (this.getFuelTime() == 0 && !this.onGround) {
-		    this.motionY -= (0.01D * 10) / 15; // Gravity :P
+		    this.motionY -=(double) (0.01D * 10) / 15; // Gravity :P
 		}
 		double d7 = 1D;
 		if (this.motionX < -d7) 
@@ -298,7 +296,7 @@ public class EntityAirship extends EntityBoat implements IInventory {
 			this.motionZ = d7;
 		if (this.onGround||this.getFuelTime() == 0) {
 			this.motionX *= 0.5D;
-			//this.motionY *= 0.5D;
+			this.motionY *= 0.5D;
 			this.motionZ *= 0.5D;
 		}
 		
