@@ -1,4 +1,4 @@
-package mods.pchan3;
+package assets.pchan3;
 
 import net.minecraft.client.model.PositionTextureVertex;
 import net.minecraft.client.renderer.Tessellator;
@@ -76,6 +76,5 @@ public class CustomTexturedQuad
     public PositionTextureVertex field_1195_a[];
     public int field_1194_b;
     private boolean field_1196_c;
-    private int texWidth;
-    private int texHeight;
+    private int texWidth,texHeight;
 }

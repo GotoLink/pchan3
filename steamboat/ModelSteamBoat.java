@@ -1,8 +1,8 @@
-package mods.pchan3.steamboat;
+package assets.pchan3.steamboat;
 
-import mods.pchan3.CustomModelRenderer;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.entity.Entity;
+import assets.pchan3.CustomModelRenderer;
 
 public class ModelSteamBoat extends ModelBase
 {

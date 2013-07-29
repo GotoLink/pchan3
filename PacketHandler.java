@@ -1,14 +1,17 @@
-package mods.pchan3;
+package assets.pchan3;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 
-import mods.pchan3.steamship.EntityAirship;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetworkManager;
+import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet250CustomPayload;
+import assets.pchan3.steamship.EntityAirship;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.Player;
 
@@ -18,10 +21,11 @@ import cpw.mods.fml.common.network.Player;
  */
 public class PacketHandler implements IPacketHandler
 {
+	public static String CHANNEL = "Steamship";
     @Override
     public void onPacketData(INetworkManager manager, Packet250CustomPayload payload, Player player)
     {
-    	if (payload.channel.equals("Steamship")) {
+    	if (payload.channel.equals(CHANNEL)) {
             this.handle(payload,player);
     }
     }
@@ -46,5 +50,20 @@ public class PacketHandler implements IPacketHandler
 			case 6: ((EntityAirship)ent).isFiring=false;break;
 			}		
 		}
+	}
+	
+	public static Packet getPacket(int i) {
+		ByteArrayOutputStream bos = new ByteArrayOutputStream(2);
+		DataOutputStream outputStream = new DataOutputStream(bos);
+		try {
+			outputStream.writeShort(i);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		Packet250CustomPayload packet = new Packet250CustomPayload();
+		packet.channel = CHANNEL;
+		packet.data = bos.toByteArray();
+		packet.length = bos.size();
+		return packet;
 	}
 }

@@ -1,82 +1,89 @@
-package mods.pchan3.steamship;
+package assets.pchan3.steamship;
 
 import java.util.EnumSet;
 
-import mods.pchan3.PChan3Mods;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import assets.pchan3.PChan3Mods;
+import assets.pchan3.PacketHandler;
 import cpw.mods.fml.client.registry.KeyBindingRegistry.KeyHandler;
 import cpw.mods.fml.common.TickType;
 
 public class AirshipKeyHandler extends KeyHandler {
 	
-	static GuiAirship gui;
-    
+    public static final String chestKeyDesc = "OpenAirshipChest";
+    public static final String upKeyDesc = "AirshipUp";
+    public static final String downKeyDesc = "AirshipDown";
+    public static final String fireKeyDesc = "AirshipFire";
+    public Minecraft client = Minecraft.getMinecraft();
+	
     public AirshipKeyHandler(int CHEST_KEY, int UP_KEY, int DOWN_KEY, int FIRE_KEY) 
     {                
-    	super(new KeyBinding[]{new KeyBinding("OpenAirshipChest",CHEST_KEY),new KeyBinding("AirshipUp",UP_KEY),new KeyBinding("AirshipDown",DOWN_KEY),new KeyBinding("AirshipFire",FIRE_KEY)}, new boolean[]{false,false,false,false});       
+    	super(new KeyBinding[]{new KeyBinding(chestKeyDesc,CHEST_KEY),new KeyBinding(upKeyDesc,UP_KEY),new KeyBinding(downKeyDesc,DOWN_KEY),new KeyBinding(fireKeyDesc,FIRE_KEY)}, new boolean[]{false,false,false,false});       
     }
     
     @Override
-    public void keyDown(EnumSet<TickType> es, KeyBinding kb, boolean bln, boolean bln1) {
-    	Minecraft client = Minecraft.getMinecraft();
-		if (client != null && client.thePlayer != null)
+    public void keyDown(EnumSet<TickType> es, KeyBinding kb, boolean endTick, boolean repeat) {
+    	
+		if (client != null && client.thePlayer != null && endTick)
 		{
 	    	Entity ent=client.thePlayer.ridingEntity;
 	    	if (ent!=null && ent instanceof EntityAirship){
 	    		
-				if (kb.keyDescription=="OpenAirshipChest" && gui==null )
+				if (kb.keyDescription.equals(chestKeyDesc) && client.currentScreen == null)
 				{
-			    ((EntityPlayer) ent.riddenByEntity).openGui(PChan3Mods.instance, PChan3Mods.instance.GUI_ID, ent.worldObj, ent.serverPosX, ent.serverPosY, ent.serverPosZ);
+					((EntityPlayer) ent.riddenByEntity).openGui(PChan3Mods.instance, PChan3Mods.instance.GUI_ID, ent.worldObj, ent.serverPosX, ent.serverPosY, ent.serverPosZ);
 				}
-				else if (kb.keyDescription=="AirshipUp" && ((EntityAirship) ent).getFuelTime()!=0)
+				else if (kb.keyDescription.equals(upKeyDesc) && ((EntityAirship) ent).getFuelTime()!=0)
 				{	
-					PChan3Mods.instance.proxy.sendPacket(1,ent.riddenByEntity);	
+					client.getNetHandler().addToSendQueue(PacketHandler.getPacket(1));
 				}
-				else if (kb.keyDescription=="AirshipDown")
+				else if (kb.keyDescription.equals(downKeyDesc))
 				{ 
-					PChan3Mods.instance.proxy.sendPacket(2,ent.riddenByEntity);
+					client.getNetHandler().addToSendQueue(PacketHandler.getPacket(2));
 				}
-				else if (kb.keyDescription=="AirshipFire" && ((EntityAirship) ent).getFireCountDown()==0)
+				else if (kb.keyDescription.equals(fireKeyDesc) && ((EntityAirship) ent).getFireCountDown()==0)
 				{			
-					PChan3Mods.instance.proxy.sendPacket(3,ent.riddenByEntity);
+					client.getNetHandler().addToSendQueue(PacketHandler.getPacket(3));
 				}	
 			}	
 		}
     }
     @Override
-    public void keyUp(EnumSet<TickType> es, KeyBinding kb, boolean bln) {
-    	Minecraft client = Minecraft.getMinecraft();
-		if (client != null && client.thePlayer != null)
+    public void keyUp(EnumSet<TickType> es, KeyBinding kb, boolean tickEnd) 
+    {
+    	if (client != null && client.thePlayer != null && tickEnd)
 		{
 	    	Entity ent=client.thePlayer.ridingEntity;
 	    	if (ent!=null && ent instanceof EntityAirship){
-	    		if (kb.keyDescription=="AirshipUp")
+	    		if (kb.keyDescription.equals(upKeyDesc))
 				{	
-					PChan3Mods.instance.proxy.sendPacket(4,ent.riddenByEntity);	
+	    			client.getNetHandler().addToSendQueue(PacketHandler.getPacket(4));
 				}
-				else if (kb.keyDescription=="AirshipDown")
+				if (kb.keyDescription.equals(downKeyDesc))
 				{ 
-					PChan3Mods.instance.proxy.sendPacket(5,ent.riddenByEntity);
+					client.getNetHandler().addToSendQueue(PacketHandler.getPacket(5));
 				}
-				else if (kb.keyDescription=="AirshipFire")
+				if (kb.keyDescription.equals(fireKeyDesc))
 				{			
-					PChan3Mods.instance.proxy.sendPacket(6,ent.riddenByEntity);
+					client.getNetHandler().addToSendQueue(PacketHandler.getPacket(6));
 				}	
 			}	
 		}
     }
 
     @Override
-    public EnumSet<TickType> ticks() {
-	return EnumSet.of(TickType.CLIENT);
+    public EnumSet<TickType> ticks() 
+    {
+    	return EnumSet.of(TickType.CLIENT);
     }
 
     @Override
-    public String getLabel() {
-	return "Airship KeyHandler";
+    public String getLabel() 
+    {
+    	return "Airship KeyHandler";
     }
     
 }

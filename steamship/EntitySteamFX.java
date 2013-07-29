@@ -1,4 +1,4 @@
-package mods.pchan3.steamship;
+package assets.pchan3.steamship;
 
 import net.minecraft.client.particle.EntityFX;
 import net.minecraft.client.renderer.Tessellator;

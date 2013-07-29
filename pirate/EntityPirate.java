@@ -1,33 +1,24 @@
-package mods.pchan3.pirate;
+package assets.pchan3.pirate;
 
 import java.util.Random;
 
-
-import mods.pchan3.EntitySteamExplode;
-import mods.pchan3.PChan3Mods;
-import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityFlying;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IRangedAttackMob;
 import net.minecraft.entity.ai.EntityAIArrowAttack;
-import net.minecraft.entity.ai.EntityAIHurtByTarget;
 import net.minecraft.entity.ai.EntityAILookIdle;
-import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import assets.pchan3.PChan3Mods;
 
 public class EntityPirate extends EntityFlying implements IMob,IRangedAttackMob {
 	public int courseChangeCooldown=0;
@@ -40,14 +31,12 @@ public class EntityPirate extends EntityFlying implements IMob,IRangedAttackMob 
 		super(world);
 		this.setSize(4F, 4F);
 		this.isImmuneToFire = false;
-		this.texture = "/mods/pchan3/textures/models/pirateairship.png";
-		this.health = 60;
 		this.experienceValue = 5;
 		this.tasks.addTask(1, new EntityAIArrowAttack(this, 0.25F, 60, 10.0F));
 		this.tasks.addTask(2, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
         this.tasks.addTask(2, new EntityAILookIdle(this));
-		this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
-	    this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, 16.0F, 0, true));
+		//this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
+	    //this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, 16.0F, 0, true));
 
 	}
 	@Override
@@ -55,12 +44,7 @@ public class EntityPirate extends EntityFlying implements IMob,IRangedAttackMob 
     {
         return true;
     }
-	@Override
-	public void initCreature()//added, not sure if held item will render or not
-    {
-		/*this.setCurrentItemOrArmor(0, new ItemStack(Item.bow));
-		this.func_82162_bC();//add some enchantment*/
-    }
+	
 	protected void updateEntityActionState() {
 		if (!this.worldObj.isRemote && this.worldObj.difficultySetting == 0)
         {
@@ -188,6 +172,11 @@ public class EntityPirate extends EntityFlying implements IMob,IRangedAttackMob 
 		return "mob.pirate.avastyescurvydog";
 	}
 	@Override
+	public boolean getCanSpawnHere()
+	{
+	    return this.rand.nextInt(15) == 0 && super.getCanSpawnHere() && this.worldObj.difficultySetting > 0;
+	}
+	@Override
 	protected void dropFewItems(boolean par1, int par2) {
 		if (par1){
 		Random rand = new Random();
@@ -216,21 +205,12 @@ public class EntityPirate extends EntityFlying implements IMob,IRangedAttackMob 
 		super.setDead();
 	}
 	@Override
-	public boolean getCanSpawnHere()
-    {
-        return this.rand.nextInt(15) == 0 && super.getCanSpawnHere() && this.worldObj.difficultySetting > 0;
-    }
-	@Override
 	public int getMaxSpawnedInChunk() {
 		return 1;
 	}
-	@Override
-	public int getMaxHealth() {
-		return 10;
-	}
 
 	@Override
-	public void attackEntityWithRangedAttack(EntityLiving par1EntityLiving,float f) {
+	public void attackEntityWithRangedAttack(EntityLivingBase par1EntityLiving,float f) {
 		EntityArrow arrow = new EntityArrow(this.worldObj, this, par1EntityLiving, 1.6F, (float)(14 - this.worldObj.difficultySetting * 4));
         int i = EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, this.getHeldItem());
         int j = EnchantmentHelper.getEnchantmentLevel(Enchantment.punch.effectId, this.getHeldItem());

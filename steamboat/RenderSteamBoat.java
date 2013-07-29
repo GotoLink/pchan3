@@ -1,9 +1,10 @@
-package mods.pchan3.steamboat;
+package assets.pchan3.steamboat;
 
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 
@@ -12,7 +13,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class RenderSteamBoat extends Render
 {
-
+    protected ModelBase model;
+	private static final ResourceLocation boat = new ResourceLocation("pchan3","/textures/models/steamboat.png");
     public RenderSteamBoat()
     {
         shadowSize = 0.5F;
@@ -35,21 +37,25 @@ public class RenderSteamBoat extends Render
         {
             GL11.glRotatef(((MathHelper.sin(f2) * f2 * f3) / 10F) * (float)entityboat.getForwardDirection(), 1.0F, 0.0F, 0.0F);
         }
-        loadTexture("/terrain.png");
+        //loadTexture("/terrain.png");
         float f4 = 0.75F;
         GL11.glScalef(f4, f4, f4);
         GL11.glScalef(1.0F / f4, 1.0F / f4, 1.0F / f4);
-        loadTexture("/mods/pchan3/textures/models/steamboat.png");
+        //loadTexture("/assets/pchan3/textures/models/steamboat.png");
+        func_110777_b(entityboat);
         GL11.glScalef(-1F, -1F, 1.0F);
         model.render(entityboat,0.0F, 0.0F, -0.1F, 0.0F, 0.0F, 0.0625F);
         GL11.glPopMatrix();
     }
     @Override
-    public void doRender(Entity entity, double d, double d1, double d2, 
-            float f, float f1)
+    public void doRender(Entity entity, double d, double d1, double d2, float f, float f1)
     {
         this.renderBoat((EntitySteamBoat)entity, d, d1, d2, f, f1);
     }
 
-    protected ModelBase model;
+	@Override
+	protected ResourceLocation func_110775_a(Entity entity) 
+	{
+		return boat;
+	}
 }

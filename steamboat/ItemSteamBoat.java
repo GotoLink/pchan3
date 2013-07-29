@@ -1,4 +1,4 @@
-package mods.pchan3.steamboat;
+package assets.pchan3.steamboat;
 
 import java.util.List;
 
@@ -17,11 +17,12 @@ import net.minecraft.world.World;
 
 public class ItemSteamBoat extends Item{
 
-	public ItemSteamBoat(int par1) {
+	public ItemSteamBoat(int par1) 
+	{
 		super(par1);
 		this.maxStackSize = 1;
         this.setCreativeTab(CreativeTabs.tabTransport);     
-		}
+	}
 	@Override
 	public ItemStack onItemRightClick(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer)
     {
@@ -40,7 +41,7 @@ public class ItemSteamBoat extends Item{
         float var20 = var14 * var16;
         double var21 = 5.0D;
         Vec3 var23 = var13.addVector((double)var18 * var21, (double)var17 * var21, (double)var20 * var21);
-        MovingObjectPosition var24 = par2World.rayTraceBlocks_do(var13, var23, true);
+        MovingObjectPosition var24 = par2World.clip(var13, var23, true);
 
         if (var24 == null)
         {

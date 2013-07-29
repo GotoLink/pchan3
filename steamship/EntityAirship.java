@@ -1,12 +1,11 @@
-package mods.pchan3.steamship;
+package assets.pchan3.steamship;
 
 import java.util.List;
 import java.util.Random;
 
-import mods.pchan3.PChan3Mods;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityBoat;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
@@ -21,25 +20,37 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+import assets.pchan3.PChan3Mods;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class EntityAirship extends EntityBoat implements IInventory {
+public class EntityAirship extends Entity implements IInventory {
 	private ItemStack cargoItems[];
     private int airshipPosRotationIncrements;
     private double airShipX,airShipY,airShipZ;
     private double airshipYaw,airshipPitch;
     public boolean isGoingUp, isGoingDown,isFiring;
 	private boolean field_70279_a;
+	@SideOnly(Side.CLIENT)
+    private double velocityX;
+    @SideOnly(Side.CLIENT)
+    private double velocityY;
+    @SideOnly(Side.CLIENT)
+    private double velocityZ;
+	private double speedMultiplier;
 	
-    public EntityAirship(World world) {
+    public EntityAirship(World world) 
+    {
 		super(world);
 		this.field_70279_a = true;
+		this.speedMultiplier = 0.07D;
+        this.preventEntitySpawning = true;
 	    this.setSize(1.5F, 1.7F);
 		this.yOffset = this.height / 2.0F;
 		this.cargoItems = new ItemStack[this.getSizeInventory()];
 	}
-    public EntityAirship(World world, double d, double d1, double d2) {
+    public EntityAirship(World world, double d, double d1, double d2) 
+    {
 		this(world);
 		this.setPosition(d, d1 + (double) yOffset, d2);
 		this.motionX = 0.0D;
@@ -50,92 +61,155 @@ public class EntityAirship extends EntityBoat implements IInventory {
 		this.prevPosZ = d2;
     }
     @Override
-	protected void entityInit() {
-    	super.entityInit();
+	protected void entityInit() 
+    {
+    	this.dataWatcher.addObject(17, new Integer(0));
+        this.dataWatcher.addObject(18, new Integer(1));
+        this.dataWatcher.addObject(19, new Float(0.0F));
         this.dataWatcher.addObject(30, new Integer(0));
         this.dataWatcher.addObject(31, new Integer(0));
 	}
     @Override
-    public void setDead() {
-    	 for (int var1 = 0; var1 < this.getSizeInventory(); ++var1)
+    public double getMountedYOffset()
+    {
+        return (double)this.height * 0.0D - 0.30000001192092896D;
+    }
+    @Override
+    public AxisAlignedBB getCollisionBox(Entity par1Entity)
+    {
+        return par1Entity.boundingBox;
+    }
+    @Override
+    public AxisAlignedBB getBoundingBox()
+    {
+        return this.boundingBox;
+    }
+    @Override
+    public boolean canBePushed()
+    {
+        return true;
+    }
+    @Override
+    public boolean canBeCollidedWith()
+    {
+        return !this.isDead;
+    }
+    @Override
+    public void setDead() 
+    {
+    	for (int var1 = 0; var1 < this.getSizeInventory(); ++var1)
+        {
+            ItemStack var2 = this.getStackInSlot(var1);
+
+            if (var2 != null)
             {
-                ItemStack var2 = this.getStackInSlot(var1);
+                float var3 = this.rand.nextFloat() * 0.8F + 0.1F;
+                float var4 = this.rand.nextFloat() * 0.8F + 0.1F;
+                float var5 = this.rand.nextFloat() * 0.8F + 0.1F;
 
-                if (var2 != null)
+                while (var2.stackSize > 0)
                 {
-                    float var3 = this.rand.nextFloat() * 0.8F + 0.1F;
-                    float var4 = this.rand.nextFloat() * 0.8F + 0.1F;
-                    float var5 = this.rand.nextFloat() * 0.8F + 0.1F;
+                    int var6 = this.rand.nextInt(21) + 10;
 
-                    while (var2.stackSize > 0)
+                    if (var6 > var2.stackSize)
                     {
-                        int var6 = this.rand.nextInt(21) + 10;
-
-                        if (var6 > var2.stackSize)
-                        {
-                            var6 = var2.stackSize;
-                        }
-
-                        var2.stackSize -= var6;
-                        EntityItem var7 = new EntityItem(this.worldObj, this.posX + (double)var3, this.posY + (double)var4, this.posZ + (double)var5, new ItemStack(var2.itemID, var6, var2.getItemDamage()));
-
-                        if (var2.hasTagCompound())
-                        {
-                            var7.getEntityItem().setTagCompound((NBTTagCompound)var2.getTagCompound().copy());
-                        }
-
-                        float var8 = 0.05F;
-                        var7.motionX = (double)((float)this.rand.nextGaussian() * var8);
-                        var7.motionY = (double)((float)this.rand.nextGaussian() * var8 + 0.2F);
-                        var7.motionZ = (double)((float)this.rand.nextGaussian() * var8);
-                        if (!this.worldObj.isRemote)
-                        this.worldObj.spawnEntityInWorld(var7);
+                        var6 = var2.stackSize;
                     }
+
+                    var2.stackSize -= var6;
+                    EntityItem var7 = new EntityItem(this.worldObj, this.posX + (double)var3, this.posY + (double)var4, this.posZ + (double)var5, new ItemStack(var2.itemID, var6, var2.getItemDamage()));
+
+                    if (var2.hasTagCompound())
+                    {
+                        var7.getEntityItem().setTagCompound((NBTTagCompound)var2.getTagCompound().copy());
+                    }
+
+                    float var8 = 0.05F;
+                    var7.motionX = (double)((float)this.rand.nextGaussian() * var8);
+                    var7.motionY = (double)((float)this.rand.nextGaussian() * var8 + 0.2F);
+                    var7.motionZ = (double)((float)this.rand.nextGaussian() * var8);
+                    if (!this.worldObj.isRemote)
+                    	this.worldObj.spawnEntityInWorld(var7);
                 }
             }
-    		 PChan3Mods.instance.proxy.displayExplodeFX(this);
-    
-	super.setDead();
+        }
+		PChan3Mods.instance.proxy.displayExplodeFX(this);
+		super.setDead();
     }
+    
 	@Override
 	protected void fall(float par1){  }
 	@Override
-    public String getInvName() {
-	return "Airship";
+    public String getInvName() 
+	{
+		return "Airship";
     }
 	@Override
     public void onInventoryChanged() {}
-
 	@Override
-    public boolean attackEntityFrom(DamageSource source, int i) {
-	if (this.isEntityInvulnerable())
-    {
-        return false;
-    }
-    else if (!this.worldObj.isRemote && !this.isDead)
-    {
-    	this.setForwardDirection(-this.getForwardDirection());
-    	this.setTimeSinceHit(2);
-    	this.setDamageTaken(this.getDamageTaken()+ i * 10);
-    	this.setBeenAttacked();
-	if (source.getEntity() instanceof EntityPlayer && ((EntityPlayer)source.getEntity()).capabilities.isCreativeMode)
-    {
-        this.setDamageTaken(200);
-    }
-	if (this.getDamageTaken() > 100) {
-		if (this.riddenByEntity != null)
-        {
-            this.riddenByEntity.mountEntity(this);
-        }
-	    this.dropItemWithOffset(PChan3Mods.instance.airShip.itemID, 1, 0.0F);
-	    this.setDead();
-	    PChan3Mods.instance.proxy.displayShipExplodeFX(source, this);
+    public boolean attackEntityFrom(DamageSource source, float i) 
+	{
+		if (this.isEntityInvulnerable())
+	    {
+	        return false;
+	    }
+	    else if (!this.worldObj.isRemote && !this.isDead)
+	    {
+	    	this.setForwardDirection(-this.getForwardDirection());
+	    	this.setTimeSinceHit(2);
+	    	this.setDamageTaken(this.getDamageTaken()+ i * 10);
+	    	this.setBeenAttacked();
+			if (source.getEntity() instanceof EntityPlayer && ((EntityPlayer)source.getEntity()).capabilities.isCreativeMode)
+		    {
+		        this.setDamageTaken(200);
+		    }
+			if (this.getDamageTaken() > 100)
+			{
+				if (this.riddenByEntity != null)
+		        {
+		            this.riddenByEntity.mountEntity(this);
+		        }
+			    this.dropItemWithOffset(PChan3Mods.instance.airShip.itemID, 1, 0.0F);
+			    this.setDead();
+			    PChan3Mods.instance.proxy.displayShipExplodeFX(source, this);
+			}
+			return true;
+		}
+		else 
+			return true;	    
 	}
-	return true;
-	}
-	else return true;	    
-}
-	
+	@Override
+	@SideOnly(Side.CLIENT)
+    public void performHurtAnimation()
+    {
+        this.setForwardDirection(-this.getForwardDirection());
+        this.setTimeSinceHit(10);
+        this.setDamageTaken(this.getDamageTaken() * 11.0F);
+    }
+	public void setDamageTaken(float par1)
+    {
+        this.dataWatcher.updateObject(19, Float.valueOf(par1));
+    }
+    public float getDamageTaken()
+    {
+        return this.dataWatcher.func_111145_d(19);
+    }
+    public void setTimeSinceHit(int par1)
+    {
+        this.dataWatcher.updateObject(17, Integer.valueOf(par1));
+    }
+    public int getTimeSinceHit()
+    {
+        return this.dataWatcher.getWatchableObjectInt(17);
+    }
+    public void setForwardDirection(int par1)
+    {
+        this.dataWatcher.updateObject(18, Integer.valueOf(par1));
+    }
+    public int getForwardDirection()
+    {
+        return this.dataWatcher.getWatchableObjectInt(18);
+    }
 	public int getFuelTime()
 	{
 	return this.dataWatcher.getWatchableObjectInt(30);	
@@ -152,6 +226,7 @@ public class EntityAirship extends EntityBoat implements IInventory {
 	{
 		this.dataWatcher.updateObject(31, Integer.valueOf(par1));
 	}
+	@Override
 	@SideOnly(Side.CLIENT)
     public void setPositionAndRotation2(double x, double y, double z, float f, float f1, int i) {	
 		if (this.field_70279_a)
@@ -177,208 +252,246 @@ public class EntityAirship extends EntityBoat implements IInventory {
 		this.airShipZ = z;
 		this.airshipYaw = f;
 		this.airshipPitch = f1;
+        this.motionX = this.velocityX;
+        this.motionY = this.velocityY;
+        this.motionZ = this.velocityZ;
     }
-	
-    public int getFuelScaled(int i) {
-	return (this.getFuelTime() * i) / 600;
+	@Override
+	@SideOnly(Side.CLIENT)
+    public void setVelocity(double par1, double par3, double par5)
+    {
+        this.velocityX = this.motionX = par1;
+        this.velocityY = this.motionY = par3;
+        this.velocityZ = this.motionZ = par5;
+    }
+    public int getFuelScaled(int i) 
+    {
+    	return (this.getFuelTime() * i) / 600;
     }
     @Override
-    public void onUpdate() {	
-	super.onEntityUpdate();
-	
-	if (this.getFuelTime() > 0) 
-	    this.setFuelTime(this.getFuelTime()-1);
-	if (this.getFireCountDown() > 0) 
-	    this.setFireCountDown(this.getFireCountDown()-1);
-	if (this.getTimeSinceHit() > 0) 
-	    this.setTimeSinceHit(this.getTimeSinceHit()-1);
-	if (this.getDamageTaken() > 0) 
-	    this.setDamageTaken(this.getDamageTaken()-1);
-	
-	
-	if (this.getFuelTime() == 0 && this.riddenByEntity != null) {
-			if (this.getStackInSlot(0)!=null && this.getStackInSlot(0).itemID==Item.coal.itemID){
+    public void onUpdate() 
+    {	
+    	super.onUpdate();
+		if (this.getFuelTime() > 0) 
+		    this.setFuelTime(this.getFuelTime()-1);
+		if (this.getFireCountDown() > 0) 
+		    this.setFireCountDown(this.getFireCountDown()-1);
+		if (this.getTimeSinceHit() > 0) 
+		    this.setTimeSinceHit(this.getTimeSinceHit()-1);
+		if (this.getDamageTaken() > 0) 
+		    this.setDamageTaken(this.getDamageTaken()-1);
+		
+		if (this.getFuelTime() == 0 && this.riddenByEntity != null) 
+		{
+			if (this.getStackInSlot(0)!=null && this.getStackInSlot(0).itemID==Item.coal.itemID)
+			{
 				this.setFuelTime(1600);
-				if (this.worldObj.isRemote){
-				if (--this.cargoItems[0].stackSize==0)
-					this.setInventorySlotContents(0, (ItemStack)null);
+				if (this.worldObj.isRemote)
+				{
+					if (--this.cargoItems[0].stackSize==0)
+						this.setInventorySlotContents(0, (ItemStack)null);
 				}
 			}
-			else if (((EntityPlayer) this.riddenByEntity).inventory.hasItem(Item.coal.itemID)) {
+			else if (((EntityPlayer) this.riddenByEntity).inventory.hasItem(Item.coal.itemID)) 
+			{
 		    	this.setFuelTime(1600);
-		    	if (this.worldObj.isRemote)
-			((EntityPlayer) this.riddenByEntity).inventory.consumeInventoryItem(Item.coal.itemID);
+		    	if (!this.worldObj.isRemote)
+		    		((EntityPlayer) this.riddenByEntity).inventory.consumeInventoryItem(Item.coal.itemID);
 		    }		
-	}
-	this.prevPosX = this.posX;
-	this.prevPosY = this.posY;
-	this.prevPosZ = this.posZ;
-	int i = 5;
-	double d = 0.0D;
-	for (int j = 0; j < i; j++) {
-	    double d5 = (this.boundingBox.minY + ((this.boundingBox.maxY - this.boundingBox.minY) * (double) (j + 0)) / (double) i) - 0.125D;
-	    double d9 = (this.boundingBox.minY + ((this.boundingBox.maxY - this.boundingBox.minY) * (double) (j + 1)) / (double) i) - 0.125D;
-	    AxisAlignedBB axisalignedbb = AxisAlignedBB.getBoundingBox(this.boundingBox.minX, d5, this.boundingBox.minZ, this.boundingBox.maxX, d9, this.boundingBox.maxZ);
-	    if (this.worldObj.isAABBInMaterial(axisalignedbb, Material.water)) 
-	    {
-	    	d += 1.0D / (double) i;
-	    }
-	}
-	double d1;
-	if (this.worldObj.isRemote && this.field_70279_a) {
-	    if (this.airshipPosRotationIncrements > 0) {
-			d1 = this.posX + (this.airShipX - this.posX)/ (double) this.airshipPosRotationIncrements;
-			double d5 = this.posY + (this.airShipY - this.posY)/ (double) this.airshipPosRotationIncrements;
-			double d9 = this.posZ + (this.airShipZ - this.posZ)/ (double) this.airshipPosRotationIncrements;
-			double d12 = MathHelper.wrapAngleTo180_double(this.airshipYaw - (double)this.rotationYaw);
-		
-			this.rotationYaw = (float) ((double)this.rotationYaw + d12 / (double) this.airshipPosRotationIncrements);
-			this.rotationPitch = (float) ((double)this.rotationPitch +(airshipPitch - (double) rotationPitch)/ (double) this.airshipPosRotationIncrements);
-			--this.airshipPosRotationIncrements;
-			this.setPosition(d1, d5, d9);
-			this.setRotation(this.rotationYaw, this.rotationPitch);
-
-	    } else {
-			d1 = this.posX + this.motionX;
-			double d6 = this.posY + this.motionY;
-			double d10 = this.posZ + this.motionZ;
-			this.setPosition(d1, d6, d10);
+		}
+		this.prevPosX = this.posX;
+		this.prevPosY = this.posY;
+		this.prevPosZ = this.posZ;
+		int i = 5;
+		double d = 0.0D;
+		for (int j = 0; j < i; j++) 
+		{
+		    double d5 = (this.boundingBox.minY + ((this.boundingBox.maxY - this.boundingBox.minY) * (double) (j + 0)) / (double) i) - 0.125D;
+		    double d9 = (this.boundingBox.minY + ((this.boundingBox.maxY - this.boundingBox.minY) * (double) (j + 1)) / (double) i) - 0.125D;
+		    AxisAlignedBB axisalignedbb = AxisAlignedBB.getBoundingBox(this.boundingBox.minX, d5, this.boundingBox.minZ, this.boundingBox.maxX, d9, this.boundingBox.maxZ);
+		    if (this.worldObj.isAABBInMaterial(axisalignedbb, Material.water)) 
+		    {
+		    	d += 1.0D / (double) i;
+		    }
+		}
+		double d3 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
+		double d1;
+		if (this.worldObj.isRemote && this.field_70279_a) {
+		    if (this.airshipPosRotationIncrements > 0) {
+				d1 = this.posX + (this.airShipX - this.posX)/ (double) this.airshipPosRotationIncrements;
+				double d5 = this.posY + (this.airShipY - this.posY)/ (double) this.airshipPosRotationIncrements;
+				double d9 = this.posZ + (this.airShipZ - this.posZ)/ (double) this.airshipPosRotationIncrements;
+				double d12 = MathHelper.wrapAngleTo180_double(this.airshipYaw - (double)this.rotationYaw);
+			
+				this.rotationYaw = (float) ((double)this.rotationYaw + d12 / (double) this.airshipPosRotationIncrements);
+				this.rotationPitch = (float) ((double)this.rotationPitch +(airshipPitch - (double) rotationPitch)/ (double) this.airshipPosRotationIncrements);
+				--this.airshipPosRotationIncrements;
+				this.setPosition(d1, d5, d9);
+				this.setRotation(this.rotationYaw, this.rotationPitch);
 	
-			if (this.onGround||this.getFuelTime() == 0) {
+		    } else {
+				d1 = this.posX + this.motionX;
+				double d6 = this.posY + this.motionY;
+				double d10 = this.posZ + this.motionZ;
+				this.setPosition(d1, d6, d10);
+		
+				if (this.getFuelTime() == 0) 
+				{
+					this.motionX *= 0.5D;
+					this.motionY *= 0.5D;
+					this.motionZ *= 0.5D;
+				}
+				this.motionX *= 0.99D;
+                this.motionY *= 0.95D;
+                this.motionZ *= 0.99D;
+			    }
+		}
+		else{
+			double d5;
+			if (this.riddenByEntity != null && this.riddenByEntity instanceof EntityLivingBase)
+            {
+                double d4 = (double)((EntityLivingBase)this.riddenByEntity).moveForward;
+                if (d4 > 0.0D)
+                {
+                    d5 = -Math.sin((double)(this.riddenByEntity.rotationYaw * (float)Math.PI / 180.0F));
+                    double d11 = Math.cos((double)(this.riddenByEntity.rotationYaw * (float)Math.PI / 180.0F));
+                    this.motionX += d5* this.speedMultiplier* 0.05000000074505806D;
+                    this.motionZ += d11 * this.speedMultiplier* 0.05000000074505806D;
+                }
+			}
+			double d4 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
+
+            if (d4 > 0.35D)
+            {
+                d5 = 0.35D / d4;
+                this.motionX *= d5;
+                this.motionZ *= d5;
+            }
+			if (this.isGoingUp)
+			{
+		    	this.motionY += 0.05D;
+			 }
+		    else if ( this.isGoingDown) {
+		    	for (int j = 0; j < i; j++) {
+				    double d41 = (this.boundingBox.minY + ((this.boundingBox.maxY - this.boundingBox.minY) * (double) (j - 2))
+					    / (double) i) - 0.125D;
+				    double d8 = (this.boundingBox.minY + ((this.boundingBox.maxY - this.boundingBox.minY) * (double) (j - 4))
+					    / (double) i) - 0.125D;
+				    AxisAlignedBB axisalignedbb = AxisAlignedBB
+					    .getBoundingBox(this.boundingBox.minX, d41,
+					    		this.boundingBox.minZ, this.boundingBox.maxX, d8,
+					    		this.boundingBox.maxZ);
+				    if (!this.worldObj.isAABBInMaterial(axisalignedbb, Material.water)) {
+				    	this.motionY -= 0.05D;
+				    } else {
+				    	this.posY += 5D;
+				    	this.motionY = 0D;
+				    }
+				}
+		    }
+			if (this.getFuelTime() == 0 && !this.onGround) 
+			{
+			    this.motionY -=(double) (0.01D * 10) / 15; // Gravity :P
+			}
+			double d7 = 1D;
+			if (this.motionX < -d7) 
+				this.motionX = -d7;
+			if (this.motionX > d7) 
+				this.motionX = d7;
+			if (this.motionZ < -d7) 
+				this.motionZ = -d7;
+			if (this.motionZ > d7) 
+				this.motionZ = d7;
+			if (this.getFuelTime() == 0) 
+			{
 				this.motionX *= 0.5D;
 				this.motionY *= 0.5D;
 				this.motionZ *= 0.5D;
 			}
-			this.motionX *= 0.99000000953674316D;
-			this.motionY *= 0.94999998807907104D;
-			this.motionZ *= 0.99000000953674316D;
-		    }
-	}
-	else{
-		if (this.riddenByEntity != null) {
-			this.motionX += this.riddenByEntity.motionX * 0.25000000000000001D;
-			this.motionZ += this.riddenByEntity.motionZ * 0.25000000000000001D;
-		}
-		if ( this.isGoingUp) {
-	    	//this.setVelocity(this.motionX, this.riddenByEntity.motionY * 0.04000000000000001D,this.motionZ);
-			this.motionY += 0.05D;
-		 }
-	    else if ( this.isGoingDown) {
-	    	for (int j = 0; j < i; j++) {
-			    double d4 = (this.boundingBox.minY + ((this.boundingBox.maxY - this.boundingBox.minY) * (double) (j - 2))
-				    / (double) i) - 0.125D;
-			    double d8 = (this.boundingBox.minY + ((this.boundingBox.maxY - this.boundingBox.minY) * (double) (j - 4))
-				    / (double) i) - 0.125D;
-			    AxisAlignedBB axisalignedbb = AxisAlignedBB
-				    .getBoundingBox(this.boundingBox.minX, d4,
-				    		this.boundingBox.minZ, this.boundingBox.maxX, d8,
-				    		this.boundingBox.maxZ);
-			    if (!this.worldObj.isAABBInMaterial(axisalignedbb, Material.water)) {
-			    	this.motionY -= 0.05D;
-				//this.setVelocity(this.motionX, this.motionY,this.motionZ);
-			    } else {
-			    	this.posY += 5D;
-			    	this.motionY = 0D;
-			    }
+			
+			double d11 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
+			if (!(isCollidedHorizontally && d11 > 0.15D)) {
+				this.motionX *= 0.99D;
+				this.motionY *= 0.95D;
+				this.motionZ *= 0.99D;
 			}
-	    }
-		if (this.getFuelTime() == 0 && !this.onGround) {
-		    this.motionY -=(double) (0.01D * 10) / 15; // Gravity :P
-		}
-		double d7 = 1D;
-		if (this.motionX < -d7) 
-			this.motionX = -d7;
-		if (this.motionX > d7) 
-			this.motionX = d7;
-		if (this.motionZ < -d7) 
-			this.motionZ = -d7;
-		if (this.motionZ > d7) 
-			this.motionZ = d7;
-		if (this.onGround||this.getFuelTime() == 0) {
-			this.motionX *= 0.5D;
-			this.motionY *= 0.5D;
-			this.motionZ *= 0.5D;
-		}
+			moveEntity(this.motionX, this.motionY, this.motionZ);
 		
-		double d11 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
-		if (!(isCollidedHorizontally && d11 > 0.14999999999999999D)) {
-			this.motionX *= 0.99000000953674316D;
-			this.motionY *= 0.94999998807907104D;
-			this.motionZ *= 0.99000000953674316D;
-		}
-		moveEntity(this.motionX, this.motionY, this.motionZ);
-	
-		if (d11 > 0.14999999999999999D) {
-			PChan3Mods.instance.proxy.displaySplashEffect(this,d11);
-		}
-		if (PChan3Mods.instance.SHOW_BOILER && this.getFuelTime()!=0) {
-			PChan3Mods.instance.proxy.displaySmoke(this);
-		}
-		
-		this.rotationPitch = 0.0F;
-		double d14 = (double)this.rotationYaw;
-		double d16 = this.prevPosX - this.posX;
-		double d17 = this.prevPosZ - this.posZ;
-		if (d16 * d16 + d17 * d17 > 0.001D) {
-		    d14 = (double) ((float)(Math.atan2(d17, d16) * 180D / Math.PI));
-		}
-		double d19= MathHelper.wrapAngleTo180_double(d14 - (double)this.rotationYaw);
-		if (d19 > 20D) {
-		    d19 = 20D;
-		}
-		if (d19 < -20D) {
-		    d19 = -20D;
-		}
-		this.rotationYaw = (float)((double)this.rotationYaw + d19);
-		setRotation(this.rotationYaw, this.rotationPitch);
-		if (!this.worldObj.isRemote){
-			List<?> list = worldObj.getEntitiesWithinAABBExcludingEntity(this,
-				this.boundingBox.expand(0.20000000298023224D, 0.0D, 0.20000000298023224D));
-			if (list != null && list.size() > 0) {
-			    for (int j1 = 0; j1 < list.size(); j1++) {
-					Entity entity = (Entity) list.get(j1);
-					if (entity != this.riddenByEntity && entity.canBePushed() && (entity instanceof EntityAirship))
-					{
-					    entity.applyEntityCollision(this);
-					}
-			    }
+			if (d11 > 0.15D) 
+			{
+				PChan3Mods.instance.proxy.displaySplashEffect(this,d11);
 			}
-			if (this.riddenByEntity != null && this.riddenByEntity.isDead) {
-				this.riddenByEntity = null;
+			if (PChan3Mods.instance.SHOW_BOILER && this.getFuelTime()!=0) 
+			{
+				PChan3Mods.instance.proxy.displaySmoke(this);
 			}
-		}
-		if (this.isFiring && this.getFireCountDown()==0) {
-			    this.FireArrow((EntityPlayer) this.riddenByEntity);    
-			} 
-		}
+			
+			this.rotationPitch = 0.0F;
+			double d14 = (double)this.rotationYaw;
+			double d16 = this.prevPosX - this.posX;
+			double d17 = this.prevPosZ - this.posZ;
+			if (d16 * d16 + d17 * d17 > 0.001D) {
+			    d14 = (double) ((float)(Math.atan2(d17, d16) * 180D / Math.PI));
+			}
+			double d19= MathHelper.wrapAngleTo180_double(d14 - (double)this.rotationYaw);
+			if (d19 > 20D) {
+			    d19 = 20D;
+			}
+			if (d19 < -20D) {
+			    d19 = -20D;
+			}
+			this.rotationYaw = (float)((double)this.rotationYaw + d19);
+			setRotation(this.rotationYaw, this.rotationPitch);
+			if (!this.worldObj.isRemote){
+				List<?> list = worldObj.getEntitiesWithinAABBExcludingEntity(this,
+					this.boundingBox.expand(0.2D, 0.0D, 0.2D));
+				if (list != null && list.size() > 0) {
+				    for (int j1 = 0; j1 < list.size(); j1++) {
+						Entity entity = (Entity) list.get(j1);
+						if (entity != this.riddenByEntity && entity.canBePushed() && (entity instanceof EntityAirship))
+						{
+						    entity.applyEntityCollision(this);
+						}
+				    }
+				}
+				if (this.riddenByEntity != null && this.riddenByEntity.isDead) {
+					this.riddenByEntity = null;
+				}
+			}
+			if (this.isFiring && this.getFireCountDown()==0) {
+				    this.FireArrow((EntityPlayer) this.riddenByEntity);    
+				} 
+			}
     }
     @Override
-    protected void writeEntityToNBT(NBTTagCompound par1NBTTagCompound) {
-    		NBTTagList tags = new NBTTagList();  
-    		for (int id = 0; id < this.cargoItems.length; ++id) 
-    		{
-    			if (this.cargoItems[id] != null) 
-    			{
-    				NBTTagCompound var4 = new NBTTagCompound();
-    				var4.setByte("Slot", (byte) id);
-    				this.cargoItems[id].writeToNBT(var4);
-    				tags.appendTag(var4);
-    			}
-    		}
-    		par1NBTTagCompound.setTag("Items", tags);
+    protected void writeEntityToNBT(NBTTagCompound par1NBTTagCompound) 
+    {
+		NBTTagList tags = new NBTTagList();  
+		for (int id = 0; id < this.cargoItems.length; ++id) 
+		{
+			if (this.cargoItems[id] != null) 
+			{
+				NBTTagCompound var4 = new NBTTagCompound();
+				var4.setByte("Slot", (byte) id);
+				this.cargoItems[id].writeToNBT(var4);
+				tags.appendTag(var4);
+			}
+		}
+		par1NBTTagCompound.setTag("Items", tags);
     }
     @Override
-    protected void readEntityFromNBT(NBTTagCompound par1NBTTagCompound) {
-    		NBTTagList itemTags = par1NBTTagCompound.getTagList("Items");
-    		this.cargoItems = new ItemStack[this.getSizeInventory()];
-    		for (int id = 0; id < itemTags.tagCount(); ++id) 
-    		{
-    			NBTTagCompound var4 = (NBTTagCompound) itemTags.tagAt(id);
-    			int var5 = var4.getByte("Slot") & 255;
-    			if (var5 >= 0 && var5 < this.cargoItems.length) {
-    				this.cargoItems[var5] = ItemStack.loadItemStackFromNBT(var4);
-    			}
-    		}
+    protected void readEntityFromNBT(NBTTagCompound par1NBTTagCompound) 
+    {
+		NBTTagList itemTags = par1NBTTagCompound.getTagList("Items");
+		this.cargoItems = new ItemStack[this.getSizeInventory()];
+		for (int id = 0; id < itemTags.tagCount(); ++id) 
+		{
+			NBTTagCompound var4 = (NBTTagCompound) itemTags.tagAt(id);
+			int var5 = var4.getByte("Slot") & 255;
+			if (var5 >= 0 && var5 < this.cargoItems.length) {
+				this.cargoItems[var5] = ItemStack.loadItemStackFromNBT(var4);
+			}
+		}
     }
     @Override
     public int getSizeInventory() {
@@ -425,44 +538,57 @@ public class EntityAirship extends EntityBoat implements IInventory {
     public float getShadowSize() {
     	return 0.0F;
     }
-    @Override
-    public boolean interact(EntityPlayer entityplayer) {//TODO:Work on this
-
-	if (this.riddenByEntity != null && this.riddenByEntity instanceof EntityPlayer
-		&& this.riddenByEntity != entityplayer) {
-		//if (!this.worldObj.isRemote)
-			//entityplayer.openGui(PChan3Mods.instance, PChan3Mods.instance.GUI_ID, this.worldObj, 0, 0, 0);
-	    return true;
-	}
-	if (!this.worldObj.isRemote) 
-	{
-	    ItemStack itemstack = entityplayer.inventory.getCurrentItem();
-	    if (itemstack != null && itemstack.itemID == Item.coal.itemID){
-	    	if (--itemstack.stackSize == 0)
-            {
-                entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, (ItemStack)null);
-            }
-	    	if (this.getFuelTime()==0) 
-	    		this.setFuelTime(1600);
-	    	else if (this.getStackInSlot(0)!=null && this.getStackInSlot(0).itemID==Item.coal.itemID) 
-	    		{
-	    		 this.cargoItems[0].stackSize++;	
-	    		 this.onInventoryChanged();
-	    		}
-	    	else if (this.getStackInSlot(0)==null) this.setInventorySlotContents(0, new ItemStack(Item.coal));
-	    		
-	    }
-	    else entityplayer.mountEntity(this);	    
-	}
-		return true;	
-	}
     
     @Override
-    public boolean isUseableByPlayer(EntityPlayer entityPlayer) {
+    public boolean func_130002_c(EntityPlayer entityplayer) 
+    {
+		if (this.riddenByEntity != null && this.riddenByEntity instanceof EntityPlayer && this.riddenByEntity != entityplayer) {
+			return true;
+		}
+		else if (!this.worldObj.isRemote) 
+		{
+		    ItemStack itemstack = entityplayer.inventory.getCurrentItem();
+		    if (itemstack != null && itemstack.itemID == Item.coal.itemID){
+		    	if (--itemstack.stackSize == 0)
+	            {
+	                entityplayer.destroyCurrentEquippedItem();
+	            }
+		    	if (this.getFuelTime()==0) 
+		    		this.setFuelTime(1600);
+		    	else if (this.getStackInSlot(0)==null) 
+		    		this.setInventorySlotContents(0, new ItemStack(Item.coal));	
+		    	else if (this.getStackInSlot(0).itemID==Item.coal.itemID)
+	    		{
+		    		 this.cargoItems[0].stackSize++;	
+		    		 this.onInventoryChanged();
+	    		}
+		    }
+		    else 
+		    {
+		    	entityplayer.mountEntity(this);
+				return true;
+		    }
+		}
+		return false;
+	}
+    @Override
+    public void updateRiderPosition()
+    {
+        if (this.riddenByEntity != null)
+        {
+            double d0 = Math.cos((double)this.rotationYaw * Math.PI / 180.0D) * 0.4D;
+            double d1 = Math.sin((double)this.rotationYaw * Math.PI / 180.0D) * 0.4D;
+            this.riddenByEntity.setPosition(this.posX + d0, this.posY + this.getMountedYOffset() + this.riddenByEntity.getYOffset(), this.posZ + d1);
+        }
+    }
+    @Override
+    public boolean isUseableByPlayer(EntityPlayer entityPlayer) 
+    {
     	return this.isDead ? false : entityPlayer.getDistanceSqToEntity(this) <= 64.0D;
     }
 
-    public void FireArrow(EntityPlayer entityplayer) {
+    public void FireArrow(EntityPlayer entityplayer) 
+    {
 
 		boolean playerHasArrows = entityplayer.inventory.hasItem(Item.arrow.itemID); 
 		boolean shipHasArrows = this.getStackInSlot(1)!=null && this.getStackInSlot(1).itemID==Item.arrow.itemID;	
@@ -506,11 +632,12 @@ public class EntityAirship extends EntityBoat implements IInventory {
     @Override
     public void closeChest() {}
 	@Override
-	public boolean isInvNameLocalized() {
+	public boolean isInvNameLocalized() 
+	{
 		return true;
 	}
 	@Override
-	public boolean isStackValidForSlot(int i, ItemStack itemstack) {
+	public boolean isItemValidForSlot(int i, ItemStack itemstack) {
 		return i>2 || (itemstack.getItem() instanceof ItemCoal && i==0) || (itemstack.itemID==Item.arrow.itemID && i==1 );
 	}
 	@SideOnly(Side.CLIENT)
@@ -518,4 +645,5 @@ public class EntityAirship extends EntityBoat implements IInventory {
     {
         this.field_70279_a = par1;
     }
+	
 }

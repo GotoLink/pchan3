@@ -1,22 +1,22 @@
-package mods.pchan3;
+package assets.pchan3;
 
 import java.util.Random;
 
-import mods.pchan3.pirate.EntityPirate;
-import mods.pchan3.pirate.ModelPirate;
-import mods.pchan3.pirate.RenderPirate;
-import mods.pchan3.steamboat.EntitySteamBoat;
-import mods.pchan3.steamboat.RenderSteamBoat;
-import mods.pchan3.steamship.AirshipKeyHandler;
-import mods.pchan3.steamship.EntityAirship;
-import mods.pchan3.steamship.EntitySteamFX;
-import mods.pchan3.steamship.ModelAirship;
-import mods.pchan3.steamship.ModelBalloon;
-import mods.pchan3.steamship.RenderAirship;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
+import assets.pchan3.pirate.EntityPirate;
+import assets.pchan3.pirate.ModelPirate;
+import assets.pchan3.pirate.RenderPirate;
+import assets.pchan3.steamboat.EntitySteamBoat;
+import assets.pchan3.steamboat.RenderSteamBoat;
+import assets.pchan3.steamship.AirshipKeyHandler;
+import assets.pchan3.steamship.EntityAirship;
+import assets.pchan3.steamship.EntitySteamFX;
+import assets.pchan3.steamship.ModelAirship;
+import assets.pchan3.steamship.ModelBalloon;
+import assets.pchan3.steamship.RenderAirship;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.KeyBindingRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
@@ -29,11 +29,11 @@ public class ClientProxy extends CommonProxy{
     @Override
     public void registerRenderInformation() 
     { 
-	RenderingRegistry.registerEntityRenderingHandler(EntityAirship.class, new RenderAirship(new ModelAirship(),new ModelBalloon(), 3.0f));
-	RenderingRegistry.registerEntityRenderingHandler(EntityPirate.class, new RenderPirate(new ModelPirate(),new ModelBalloon(), 1.0f));
-	RenderingRegistry.registerEntityRenderingHandler(EntitySteamBoat.class, new RenderSteamBoat());
-	KeyBindingRegistry.registerKeyBinding(new AirshipKeyHandler(PChan3Mods.instance.KEY_CHEST,PChan3Mods.instance.KEY_UP,PChan3Mods.instance.KEY_DOWN,PChan3Mods.instance.KEY_FIRE));
-    }  
+		RenderingRegistry.registerEntityRenderingHandler(EntityAirship.class, new RenderAirship(new ModelAirship(),new ModelBalloon(), 3.0f));
+		RenderingRegistry.registerEntityRenderingHandler(EntityPirate.class, new RenderPirate(new ModelPirate(),new ModelBalloon(), 1.0f));
+		RenderingRegistry.registerEntityRenderingHandler(EntitySteamBoat.class, new RenderSteamBoat());
+		KeyBindingRegistry.registerKeyBinding(new AirshipKeyHandler(PChan3Mods.instance.KEY_CHEST,PChan3Mods.instance.KEY_UP,PChan3Mods.instance.KEY_DOWN,PChan3Mods.instance.KEY_FIRE));
+	    }  
     @Override
     public void displayExplodeFX(Entity entity)
     {
@@ -62,15 +62,14 @@ public class ClientProxy extends CommonProxy{
     	double d1 = source.getEntity().posX - (source.getEntity().posX - entity.posX) / 2;
  		double d2 = source.getEntity().posY - (source.getEntity().posY - entity.posY) / 2;
  		double d3 = source.getEntity().posZ - (source.getEntity().posZ - entity.posZ) / 2;
- 		FMLClientHandler.instance().getClient().effectRenderer.addEffect(new EntitySteamExplode(entity.worldObj, d1, d2, d3, 0.0D, 0.0D, 0.0D));
- 		
+ 		FMLClientHandler.instance().getClient().effectRenderer.addEffect(new EntitySteamExplode(entity.worldObj, d1, d2, d3, 0.0D, 0.0D, 0.0D));	
     }
     @Override
  	public void displaySmoke(Entity entity)
     {
-    	 Random rand=new Random();
-    	 double smoke = rand.nextFloat() * 2.0f - 1.0f;
-         if (smoke > 0.65f) {
+    	 double smoke = new Random().nextFloat() * 2.0f - 1.0f;
+         if (smoke > 0.65f) 
+         {
          	FMLClientHandler.instance().getClient().effectRenderer.addEffect(new EntitySteamFX(entity.worldObj, entity.posX,
          			entity.posY + 0.9D, entity.posZ, 0.0D, 0.0D, 0.0D));
          }
@@ -94,17 +93,21 @@ public class ClientProxy extends CommonProxy{
 	 			.getBoundingBox(entity.boundingBox.minX, d4, entity.boundingBox.minZ, entity.boundingBox.maxX, d8,
 	 					entity.boundingBox.maxZ);
 	
-	 		if (rand.nextBoolean()) {
+	 		if (rand.nextBoolean()) 
+	 		{
 	 		    double d21 = (entity.posX - d13 * d18 * 0.8D)+ d15 * d20;
 	 		    double d23 = entity.posZ - d15 * d18 * 0.8D - d13 * d20;
 	
-	 		    if (entity.worldObj.isAABBInMaterial(axisalignedbb, Material.water)) {
+	 		    if (entity.worldObj.isAABBInMaterial(axisalignedbb, Material.water)) 
+	 		    {
 	 		    	entity.worldObj.spawnParticle("splash", d21, entity.posY - 0.125D, d23, entity.motionX, entity.motionY, entity.motionZ);
 	 		    }
-	 		} else {
+	 		} else 
+	 		{
 	 		    double d22 = entity.posX + d13 + d15 * d18 * 0.69999999999999996D;
 	 		    double d24 = (entity.posZ + d15) - d13 * d18 * 0.69999999999999996D;
-	 		    if (entity.worldObj.isAABBInMaterial(axisalignedbb, Material.water)) {
+	 		    if (entity.worldObj.isAABBInMaterial(axisalignedbb, Material.water)) 
+	 		    {
 	 		    	entity.worldObj.spawnParticle("splash", d22, entity.posY - 0.125D, d24, entity.motionX, entity.motionY, entity.motionZ);
 	 		    }
 	 		}

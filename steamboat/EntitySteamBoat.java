@@ -1,23 +1,24 @@
-package mods.pchan3.steamboat;
+package assets.pchan3.steamboat;
  
 import java.util.List;
 
-import mods.pchan3.PChan3Mods;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityBoat;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+import assets.pchan3.PChan3Mods;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class EntitySteamBoat extends EntityBoat
+public class EntitySteamBoat extends Entity
 {
 	private int boatPosRotationIncrements;
     private double boatX,boatY,boatZ;
@@ -35,9 +36,11 @@ public class EntitySteamBoat extends EntityBoat
     public EntitySteamBoat(World world)
     {
     	super(world);
-    	this.field_70279_a = true;
-        this.speedMultiplier = 0.07D;
+        this.field_70279_a = true;
+        this.speedMultiplier = 0.14D;
+        this.preventEntitySpawning = true;
         this.setSize(1.5F, 0.6F);
+        this.yOffset = this.height / 2.0F;
     }
     public EntitySteamBoat(World world, double par2, double par4, double par6)
     {
@@ -51,13 +54,45 @@ public class EntitySteamBoat extends EntityBoat
         this.prevPosZ = par6;
     }
     @Override
-    protected void entityInit()
-    {     
-    	super.entityInit();
-        this.dataWatcher.addObject(25, new Integer(0)); 	
+    protected boolean canTriggerWalking()
+    {
+        return false;
     }
     @Override
-    public boolean attackEntityFrom(DamageSource par1DamageSource, int par2)
+    public double getMountedYOffset()
+    {
+        return (double)this.height * 0.0D - 0.30000001192092896D;
+    }
+    @Override
+    protected void entityInit()
+    {
+        this.dataWatcher.addObject(25, new Integer(0)); 	
+        this.dataWatcher.addObject(17, new Integer(0));
+        this.dataWatcher.addObject(18, new Integer(1));
+        this.dataWatcher.addObject(19, new Float(0.0F));
+    }
+    @Override
+    public AxisAlignedBB getCollisionBox(Entity par1Entity)
+    {
+        return par1Entity.boundingBox;
+    }
+    @Override
+    public AxisAlignedBB getBoundingBox()
+    {
+        return this.boundingBox;
+    }
+    @Override
+    public boolean canBePushed()
+    {
+        return true;
+    }
+    @Override
+    public boolean canBeCollidedWith()
+    {
+        return !this.isDead;
+    }
+    @Override
+    public boolean attackEntityFrom(DamageSource par1DamageSource, float par2)
     {
     	if (this.isEntityInvulnerable())
 	    {
@@ -102,7 +137,14 @@ public class EntitySteamBoat extends EntityBoat
 	        return true;
 	    }           
     }
-    
+    @Override
+	@SideOnly(Side.CLIENT)
+    public void performHurtAnimation()
+    {
+        this.setForwardDirection(-this.getForwardDirection());
+        this.setTimeSinceHit(10);
+        this.setDamageTaken(this.getDamageTaken() * 11.0F);
+    }
     @SideOnly(Side.CLIENT)
     public void setPositionAndRotation2(double par1, double par3, double par5, float par7, float par8, int par9)
     {
@@ -145,8 +187,7 @@ public class EntitySteamBoat extends EntityBoat
     @Override
     public void onUpdate()
     {
-        super.onEntityUpdate();
-        
+        super.onUpdate();
         if (this.getTimeSinceHit() > 0)
             this.setTimeSinceHit(this.getTimeSinceHit() - 1);
         if (this.getDamageTaken() > 0)
@@ -182,7 +223,7 @@ public class EntitySteamBoat extends EntityBoat
         double var6;
         double var8;
 
-        if ( var24 > 0.26249999999999996D)
+        if ( var24 > 0.2625D)
         {
            PChan3Mods.instance.proxy.displaySplashEffect(this, var24);
         }
@@ -220,17 +261,16 @@ public class EntitySteamBoat extends EntityBoat
                     this.motionZ *= 0.5D;
                 }
 
-                this.motionX *= 0.9900000095367432D;
-                this.motionY *= 0.949999988079071D;
-                this.motionZ *= 0.9900000095367432D;
+                this.motionX *= 0.99D;
+                this.motionY *= 0.95D;
+                this.motionZ *= 0.99D;
             }
         }
         else
         {
             if (var2 < 1.0D)
             {
-                var6 = var2 * 2.0D - 1.0D;
-                this.motionY += 0.03999999910593033D * var6;
+                this.motionY += 0.040D * (var2 * 2.0D - 1.0D);
             }
             else
             {
@@ -239,13 +279,20 @@ public class EntitySteamBoat extends EntityBoat
                     this.motionY /= 2.0D;
                 }
 
-                this.motionY += 0.007000000216066837D;
+                this.motionY += 0.007D;
             }
 
-            if (this.riddenByEntity != null)
+            if (this.riddenByEntity != null && this.riddenByEntity instanceof EntityLivingBase)
             {
-                this.motionX += this.riddenByEntity.motionX * this.speedMultiplier;
-                this.motionZ += this.riddenByEntity.motionZ * this.speedMultiplier;
+                var6 = (double)((EntityLivingBase)this.riddenByEntity).moveForward;
+
+                if (var6 > 0.0D)
+                {
+                    var8 = -Math.sin((double)(this.riddenByEntity.rotationYaw * (float)Math.PI / 180.0F));
+                    var26 = Math.cos((double)(this.riddenByEntity.rotationYaw * (float)Math.PI / 180.0F));
+                    this.motionX += var8 * this.speedMultiplier * 0.05000000074505806D;
+                    this.motionZ +=var26 * this.speedMultiplier * 0.05000000074505806D;
+                }
             }
 
             var6 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
@@ -269,11 +316,11 @@ public class EntitySteamBoat extends EntityBoat
             }
             else
             {
-                this.speedMultiplier -= (this.speedMultiplier - 0.07D) / 35.0D;
+                this.speedMultiplier -= (this.speedMultiplier - 0.14D) / 35.0D;
 
-                if (this.speedMultiplier < 0.07D)
+                if (this.speedMultiplier < 0.14D)
                 {
-                    this.speedMultiplier = 0.07D;
+                    this.speedMultiplier = 0.14D;
                 }
             }
 
@@ -288,15 +335,13 @@ public class EntitySteamBoat extends EntityBoat
 
             if (this.isCollidedHorizontally && var24 > 0.4D)
             {
-                if (!this.worldObj.isRemote)
+                if (!this.worldObj.isRemote && !this.isDead)
                 {
                     this.setDead();
-                    int var25;
                     for(int k = 0; k < 5; k++)
                     {
                     	this.dropItemWithOffset(Block.planks.blockID, 1, 0.0F);
                     }
-
                     for(int l = 0; l < 1; l++)
                     {
                     	this.dropItemWithOffset(Item.ingotIron.itemID, 1, 0.0F);
@@ -305,9 +350,9 @@ public class EntitySteamBoat extends EntityBoat
             }
             else
             {
-                this.motionX *= 0.9900000095367432D;
-                this.motionY *= 0.949999988079071D;
-                this.motionZ *= 0.9900000095367432D;
+                this.motionX *= 0.99D;
+                this.motionY *= 0.95D;
+                this.motionZ *= 0.99D;
             }
 
             this.rotationPitch = 0.0F;
@@ -383,41 +428,86 @@ public class EntitySteamBoat extends EntityBoat
     }
 	
     @Override
-    public boolean interact(EntityPlayer par1EntityPlayer)
+    public boolean func_130002_c(EntityPlayer par1EntityPlayer)
     {
         if (this.riddenByEntity != null && this.riddenByEntity instanceof EntityPlayer && this.riddenByEntity != par1EntityPlayer)
         {
             return true;
         }
-        else {
-        ItemStack var2 = par1EntityPlayer.getCurrentEquippedItem();
-
-        if (var2 != null && var2.itemID == Item.coal.itemID)
-        {
-            if (--var2.stackSize == 0)
-            {
-                par1EntityPlayer.destroyCurrentEquippedItem();
-            }
-            if (!this.worldObj.isRemote)
+        else if (!this.worldObj.isRemote)
+    	{
+        	ItemStack var2 = par1EntityPlayer.getCurrentEquippedItem();
+	        if (var2 != null && var2.itemID == Item.coal.itemID)
+	        {
+	            if (--var2.stackSize == 0)
+	            {
+	                par1EntityPlayer.destroyCurrentEquippedItem();
+	            }
             	this.setFuelTime(1600);
+	        }
+	        else 
+	        {
+	            par1EntityPlayer.mountEntity(this);
+	            return true;
+	        }
+    	}
+		return false;
+    }
+    @Override
+    public void updateRiderPosition()
+    {
+        if (this.riddenByEntity != null)
+        {
+            double d0 = Math.cos((double)this.rotationYaw * Math.PI / 180.0D) * 0.4D;
+            double d1 = Math.sin((double)this.rotationYaw * Math.PI / 180.0D) * 0.4D;
+            this.riddenByEntity.setPosition(this.posX + d0, this.posY + this.getMountedYOffset() + this.riddenByEntity.getYOffset(), this.posZ + d1);
         }
-        else if (!this.worldObj.isRemote)   
-            par1EntityPlayer.mountEntity(this);       
-        }
-        return true;
+    }
+    @Override
+    protected void writeEntityToNBT(NBTTagCompound par1NBTTagCompound) {}
+    @Override
+    protected void readEntityFromNBT(NBTTagCompound par1NBTTagCompound) {}
+
+    @SideOnly(Side.CLIENT)
+    public float getShadowSize()
+    {
+        return 0.0F;
     }
     
     public int getFuelTime()
 	{
-	return this.dataWatcher.getWatchableObjectInt(25);	
+    	return this.dataWatcher.getWatchableObjectInt(25);	
 	}
-    
 	public void setFuelTime(int par1)
 	{
-	this.dataWatcher.updateObject(25, Integer.valueOf(par1));
+		this.dataWatcher.updateObject(25, Integer.valueOf(par1));
 	}
-	
-	@SideOnly(Side.CLIENT)
+	public void setDamageTaken(float par1)
+    {
+        this.dataWatcher.updateObject(19, Float.valueOf(par1));
+    }
+    public float getDamageTaken()
+    {
+        return this.dataWatcher.func_111145_d(19);
+    }
+    public void setTimeSinceHit(int par1)
+    {
+        this.dataWatcher.updateObject(17, Integer.valueOf(par1));
+    }
+    public int getTimeSinceHit()
+    {
+        return this.dataWatcher.getWatchableObjectInt(17);
+    }
+    public void setForwardDirection(int par1)
+    {
+        this.dataWatcher.updateObject(18, Integer.valueOf(par1));
+    }
+    public int getForwardDirection()
+    {
+        return this.dataWatcher.getWatchableObjectInt(18);
+    }
+
+    @SideOnly(Side.CLIENT)
     public void func_70270_d(boolean par1)
     {
         this.field_70279_a = par1;

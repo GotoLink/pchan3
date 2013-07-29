@@ -1,20 +1,10 @@
-package mods.pchan3;
+package assets.pchan3;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
 
-import mods.pchan3.pirate.EntityPirate;
-import mods.pchan3.steamboat.EntitySteamBoat;
-import mods.pchan3.steamboat.ItemSteamBoat;
-import mods.pchan3.steamship.EntityAirship;
-import mods.pchan3.steamship.ItemAirship;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EnumCreatureType;
@@ -22,18 +12,18 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.SpawnListEntry;
-import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.Configuration;
 
 import org.lwjgl.input.Keyboard;
 
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.FMLCommonHandler;
+import assets.pchan3.pirate.EntityPirate;
+import assets.pchan3.steamboat.EntitySteamBoat;
+import assets.pchan3.steamboat.ItemSteamBoat;
+import assets.pchan3.steamship.EntityAirship;
+import assets.pchan3.steamship.ItemAirship;
 import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.Init;
+import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.Mod.PostInit;
-import cpw.mods.fml.common.Mod.PreInit;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
@@ -43,18 +33,17 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
-import cpw.mods.fml.relauncher.Side;
 /**
 *
 * @author pchan3
 */
-@Mod(modid = "pchan3", name = "PChan3 mods", version = "0.6")
+@Mod(modid = "pchan3", name = "PChan3 mods", version = "0.7")
 @NetworkMod(clientSideRequired = true, serverSideRequired = false,channels = {"Steamship" },
 		packetHandler = PacketHandler.class)
 public class PChan3Mods{
 	@Instance("pchan3")
 	public static PChan3Mods instance;
-	@SidedProxy(clientSide="mods.pchan3.ClientProxy", serverSide="mods.pchan3.CommonProxy")
+	@SidedProxy(clientSide="assets.pchan3.ClientProxy", serverSide="assets.pchan3.CommonProxy")
 	public static CommonProxy proxy;
 	private static int steamboatItemID=12500,airshipItemID=12503,engineItemID=12502,balloonItemID=12501;
 	private static boolean  ENABLE_AIRSHIP=true,ENABLE_STEAMBOAT=true,ENABLE_PIRATE=true;
@@ -66,7 +55,7 @@ public class PChan3Mods{
     private static String[] SPAWNABLE_BIOMES=new String[]{"Ocean","Plains"};
 	private Configuration config;	
 	 
-	@PreInit
+	@EventHandler
 	public void preload(FMLPreInitializationEvent event){
 		instance=this;
 		// Read properties file.
@@ -83,13 +72,13 @@ public class PChan3Mods{
 		GUI_ID=config.get("item", "GUI_ID", GUI_ID).getInt();	   
 		
 	}
-	@Init
+	@EventHandler
     public void load(FMLInitializationEvent event) { 
 	  
 		if (ENABLE_AIRSHIP)
 		{
 			// Engine
-			engine = new Item(engineItemID).setUnlocalizedName("pchan3:Engine").setCreativeTab(CreativeTabs.tabTransport);
+			engine = new Item(engineItemID).setUnlocalizedName("pchan3:Engine").setCreativeTab(CreativeTabs.tabTransport).func_111206_d("pchan3:Engine");
 			LanguageRegistry.addName(engine, "Engine");
 			GameRegistry.addRecipe(new ItemStack(engine), new Object[]{
 			    "###",
@@ -99,7 +88,7 @@ public class PChan3Mods{
 			    Character.valueOf('X'), Block.pistonBase});
 		     
 		  // Balloon
-			balloon = new Item(balloonItemID).setUnlocalizedName("pchan3:Balloon").setCreativeTab(CreativeTabs.tabTransport);
+			balloon = new Item(balloonItemID).setUnlocalizedName("pchan3:Balloon").setCreativeTab(CreativeTabs.tabTransport).func_111206_d("pchan3:Balloon");
 			LanguageRegistry.addName(balloon, "Balloon");
 			GameRegistry.addRecipe(new ItemStack(balloon), new Object[]{
 			    "###",
@@ -109,7 +98,7 @@ public class PChan3Mods{
 			    Character.valueOf('L'), Item.silk});
 			
 			//AirShip
-		    airShip = new ItemAirship(airshipItemID).setUnlocalizedName("pchan3:Airship");
+		    airShip = new ItemAirship(airshipItemID).setUnlocalizedName("pchan3:Airship").func_111206_d("pchan3:Airship");
 			LanguageRegistry.addName(airShip, "Airship");
 			EntityRegistry.registerModEntity(EntityAirship.class, "Airship", 1, this, 40, 1, true);
 			GameRegistry.addRecipe(new ItemStack(airShip), new Object[]{
@@ -125,7 +114,7 @@ public class PChan3Mods{
 		//Boat
 	     if (ENABLE_STEAMBOAT)
 	 	{
-			steamBoat = new ItemSteamBoat(steamboatItemID).setUnlocalizedName("pchan3:Steamboat");
+			steamBoat = new ItemSteamBoat(steamboatItemID).setUnlocalizedName("pchan3:Steamboat").func_111206_d("pchan3:Steamboat");
 			LanguageRegistry.addName(steamBoat, "Steam Boat");
 			EntityRegistry.registerModEntity(EntitySteamBoat.class, "SteamBoat", 2,this,40,1,false);
 			GameRegistry.addRecipe(new ItemStack(steamBoat), new Object[] {
@@ -156,7 +145,7 @@ public class PChan3Mods{
 		  result.trimToSize();
 		  return (result.size()!=0 && !result.isEmpty())?(BiomeGenBase[]) result.toArray(new BiomeGenBase[result.size()]):null; 
 	}
-	@PostInit
+	@EventHandler
 	public void modsLoaded(FMLPostInitializationEvent event)
 	{
 	//Pirate

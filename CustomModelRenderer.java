@@ -1,4 +1,4 @@
-package mods.pchan3;
+package assets.pchan3;
 
 import net.minecraft.client.model.PositionTextureVertex;
 import net.minecraft.client.renderer.GLAllocation;
@@ -24,7 +24,7 @@ public class CustomModelRenderer
         texHeight = h;
     }
 
-    public void func_921_a(float f, float f1, float f2, int i, int j, int k)
+    public void addBox(float f, float f1, float f2, int i, int j, int k)
     {
         addBox(f, f1, f2, i, j, k, 0.0F);
     }
@@ -101,11 +101,7 @@ public class CustomModelRenderer
 
     public void render(float f)
     {
-        if(field_1402_i)
-        {
-            return;
-        }
-        if(!field_1403_h)
+        if(field_1402_i || !field_1403_h)
         {
             return;
         }
@@ -131,25 +127,23 @@ public class CustomModelRenderer
             }
             GL11.glCallList(displayList);
             GL11.glPopMatrix();
-        } else
-        if(offsetX != 0.0F || offsetY != 0.0F || offsetZ != 0.0F)
-        {
-            GL11.glTranslatef(offsetX * f, offsetY * f, offsetZ * f);
-            GL11.glCallList(displayList);
-            GL11.glTranslatef(-offsetX * f, -offsetY * f, -offsetZ * f);
-        } else
-        {
-            GL11.glCallList(displayList);
-        }
+        } 
+        else
+	        if(offsetX != 0.0F || offsetY != 0.0F || offsetZ != 0.0F)
+	        {
+	            GL11.glTranslatef(offsetX * f, offsetY * f, offsetZ * f);
+	            GL11.glCallList(displayList);
+	            GL11.glTranslatef(-offsetX * f, -offsetY * f, -offsetZ * f);
+	        } 
+	        else
+	        {
+	            GL11.glCallList(displayList);
+	        }
     }
 
     public void func_926_b(float f)
     {
-        if(field_1402_i)
-        {
-            return;
-        }
-        if(!field_1403_h)
+        if(field_1402_i || !field_1403_h)
         {
             return;
         }
@@ -172,11 +166,12 @@ public class CustomModelRenderer
             {
                 GL11.glRotatef(rotateAngleX * 57.29578F, 1.0F, 0.0F, 0.0F);
             }
-        } else
-        if(offsetX != 0.0F || offsetY != 0.0F || offsetZ != 0.0F)
-        {
-            GL11.glTranslatef(offsetX * f, offsetY * f, offsetZ * f);
         }
+        else
+	        if(offsetX != 0.0F || offsetY != 0.0F || offsetZ != 0.0F)
+	        {
+	            GL11.glTranslatef(offsetX * f, offsetY * f, offsetZ * f);
+	        }
     }
 
     private void compileDisplayList(float f)
@@ -195,19 +190,11 @@ public class CustomModelRenderer
 
     private PositionTextureVertex corners[];
     private CustomTexturedQuad faces[];
-    private int textureOffsetX;
-    private int textureOffsetY;
-    public float offsetX;
-    public float offsetY;
-    public float offsetZ;
-    public float rotateAngleX;
-    public float rotateAngleY;
-    public float rotateAngleZ;
+    private int textureOffsetX,textureOffsetY;
+    public float offsetX,offsetY,offsetZ;
+    public float rotateAngleX,rotateAngleY,rotateAngleZ;
     private boolean compiled;
     private int displayList;
-    public boolean mirror;
-    public boolean field_1403_h;
-    public boolean field_1402_i;
-    private int texWidth;
-    private int texHeight;
+    public boolean mirror,field_1403_h,field_1402_i;
+    private int texWidth,texHeight;
 }
