@@ -15,8 +15,8 @@ public class RenderAirship extends Render
 {
 	   protected ModelBase model;
 	   protected ModelBase renderPassModel;
-	   private static final ResourceLocation balloon = new ResourceLocation("pchan3","/textures/models/balloon.png");
-	   private static final ResourceLocation airship = new ResourceLocation("pchan3","/textures/models/airship.png");
+	   private static final ResourceLocation balloon = new ResourceLocation("pchan3","textures/models/balloon.png");
+	   private static final ResourceLocation airship = new ResourceLocation("pchan3","textures/models/airship.png");
     public RenderAirship(ModelBase modelbase, ModelBase modelbase1, float f)
     {     
         this(modelbase, f);

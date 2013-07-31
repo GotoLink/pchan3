@@ -347,19 +347,18 @@ public class EntityAirship extends Entity implements IInventory {
 			    }
 		}
 		else{
+			double d4;
 			double d5;
 			if (this.riddenByEntity != null && this.riddenByEntity instanceof EntityLivingBase)
             {
-                double d4 = (double)((EntityLivingBase)this.riddenByEntity).moveForward;
-                if (d4 > 0.0D)
-                {
-                    d5 = -Math.sin((double)(this.riddenByEntity.rotationYaw * (float)Math.PI / 180.0F));
-                    double d11 = Math.cos((double)(this.riddenByEntity.rotationYaw * (float)Math.PI / 180.0F));
-                    this.motionX += d5* this.speedMultiplier* 0.05000000074505806D;
-                    this.motionZ += d11 * this.speedMultiplier* 0.05000000074505806D;
-                }
+                d4 = (double)((EntityLivingBase)this.riddenByEntity).moveForward;//>0 for forward key, <0 for backward
+                d5 = (double)((EntityLivingBase)this.riddenByEntity).moveStrafing;//>0 for left key, <0 for right key
+            	double d0 = -Math.sin((double)(this.riddenByEntity.rotationYaw * (float)Math.PI / 180.0F));
+                double d11 = Math.cos((double)(this.riddenByEntity.rotationYaw * (float)Math.PI / 180.0F));
+                this.motionX += (d5*d11 + d0*d4)* this.speedMultiplier;
+                this.motionZ += (d4*d11 - d0*d5) * this.speedMultiplier;
 			}
-			double d4 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
+			d4 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
 
             if (d4 > 0.35D)
             {
@@ -369,8 +368,8 @@ public class EntityAirship extends Entity implements IInventory {
             }
 			if (this.isGoingUp)
 			{
-		    	this.motionY += 0.05D;
-			 }
+		    	this.motionY += 0.04D;
+			}
 		    else if ( this.isGoingDown) {
 		    	for (int j = 0; j < i; j++) {
 				    double d41 = (this.boundingBox.minY + ((this.boundingBox.maxY - this.boundingBox.minY) * (double) (j - 2))
@@ -494,12 +493,14 @@ public class EntityAirship extends Entity implements IInventory {
 		}
     }
     @Override
-    public int getSizeInventory() {
-	return 14;
+    public int getSizeInventory() 
+    {
+    	return 14;
     }
     @Override
-    public ItemStack getStackInSlot(int i) {
-	return this.cargoItems[i];
+    public ItemStack getStackInSlot(int i) 
+    {
+    	return this.cargoItems[i];
     }
     @Override
     public ItemStack decrStackSize(int i, int j) {
@@ -524,18 +525,21 @@ public class EntityAirship extends Entity implements IInventory {
 	    return stack;
 	}
     @Override
-    public void setInventorySlotContents(int i, ItemStack itemstack) {
+    public void setInventorySlotContents(int i, ItemStack itemstack) 
+    {
 		this.cargoItems[i] = itemstack;
 		if (itemstack != null && itemstack.stackSize > this.getInventoryStackLimit()) 
 		    itemstack.stackSize = this.getInventoryStackLimit();
 		this.onInventoryChanged();
     }
     @Override
-    public int getInventoryStackLimit() {
+    public int getInventoryStackLimit()
+    {
     	return 64;
     }
     @SideOnly(Side.CLIENT)
-    public float getShadowSize() {
+    public float getShadowSize()
+    {
     	return 0.0F;
     }
     
@@ -620,12 +624,9 @@ public class EntityAirship extends Entity implements IInventory {
 		}
     }
     @Override
-    public ItemStack getStackInSlotOnClosing(int slot) {
-        ItemStack stack = getStackInSlot(slot);
-        if (stack != null) {
-                this.setInventorySlotContents(slot, null);
-        }
-        return stack;
+    public ItemStack getStackInSlotOnClosing(int slot)
+    {
+		return null;
     }
     @Override
     public void openChest() {}
@@ -634,10 +635,11 @@ public class EntityAirship extends Entity implements IInventory {
 	@Override
 	public boolean isInvNameLocalized() 
 	{
-		return true;
+		return false;
 	}
 	@Override
-	public boolean isItemValidForSlot(int i, ItemStack itemstack) {
+	public boolean isItemValidForSlot(int i, ItemStack itemstack) 
+	{
 		return i>2 || (itemstack.getItem() instanceof ItemCoal && i==0) || (itemstack.itemID==Item.arrow.itemID && i==1 );
 	}
 	@SideOnly(Side.CLIENT)

@@ -10,8 +10,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class RenderPirate extends RenderLiving
 {
-	private static final ResourceLocation balloon =  new ResourceLocation("pchan3","/textures/models/pirateballoon.png");
-	private static final ResourceLocation body =  new ResourceLocation("pchan3","/textures/models/pirateairship.png");
+	private static final ResourceLocation balloon =  new ResourceLocation("pchan3","textures/models/pirateballoon.png");
+	private static final ResourceLocation body =  new ResourceLocation("pchan3","textures/models/pirateairship.png");
 	public RenderPirate(ModelBase modelbase, ModelBase modelbase1, float f)
     {
         super(modelbase, f);

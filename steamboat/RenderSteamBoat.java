@@ -14,7 +14,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class RenderSteamBoat extends Render
 {
     protected ModelBase model;
-	private static final ResourceLocation boat = new ResourceLocation("pchan3","/textures/models/steamboat.png");
+	private static final ResourceLocation boat = new ResourceLocation("pchan3","textures/models/steamboat.png");
     public RenderSteamBoat()
     {
         shadowSize = 0.5F;
