@@ -284,15 +284,12 @@ public class EntitySteamBoat extends Entity
 
             if (this.riddenByEntity != null && this.riddenByEntity instanceof EntityLivingBase)
             {
-                var6 = (double)((EntityLivingBase)this.riddenByEntity).moveForward;
-
-                if (var6 > 0.0D)
-                {
-                    var8 = -Math.sin((double)(this.riddenByEntity.rotationYaw * (float)Math.PI / 180.0F));
+                	var6 = (double)((EntityLivingBase)this.riddenByEntity).moveForward;//>0 for forward key, <0 for backward
+                	double var7 = (double)((EntityLivingBase)this.riddenByEntity).moveStrafing;//>0 for left key, <0 for right key
+            	    var8 = -Math.sin((double)(this.riddenByEntity.rotationYaw * (float)Math.PI / 180.0F));
                     var26 = Math.cos((double)(this.riddenByEntity.rotationYaw * (float)Math.PI / 180.0F));
-                    this.motionX += var8 * this.speedMultiplier * 0.05000000074505806D;
-                    this.motionZ +=var26 * this.speedMultiplier * 0.05000000074505806D;
-                }
+                    this.motionX += (var7*var26 + var8*var6)* this.speedMultiplier;
+                    this.motionZ += (var6*var26 - var8*var7) * this.speedMultiplier;
             }
 
             var6 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
