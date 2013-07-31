@@ -1,5 +1,6 @@
 package assets.pchan3.steamship;
 
+import assets.pchan3.PChan3Mods;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -9,15 +10,13 @@ import net.minecraft.item.ItemStack;
 
 public class ContainerAirship extends Container {
 	private EntityAirship airship;
-	private int numRows;
     public ContainerAirship(InventoryPlayer inventoryPlayer, EntityAirship air) 
     {
     	this.airship=air;
-        this.numRows = (air.getSizeInventory()-2)/ 4;
         this.addSlotToContainer(new Slot(air, 0, 134, 16));
         this.addSlotToContainer(new Slot(air, 1, 134, 52));
 
-		for (int k = 0; k < this.numRows; k++) 
+		for (int k = 0; k < 3; k++) 
 		{
 		    for (int l = 0; l < 4; l++) 
 		    {
@@ -43,7 +42,8 @@ public class ContainerAirship extends Container {
 	{
 		ItemStack itemstack = null;
 		Slot slot = (Slot) this.inventorySlots.get(i);
-		if (slot != null && slot.getHasStack()) {
+		if (slot != null && slot.getHasStack()) 
+		{
 		    ItemStack itemstack1 = slot.getStack();
 		    itemstack = itemstack1.copy();
 		    if (itemstack1.itemID==Item.coal.itemID && i!=0)
@@ -54,7 +54,7 @@ public class ContainerAirship extends Container {
 		    { 
 		    	this.mergeItemStack(itemstack1, this.airship.getSizeInventory(), this.inventorySlots.size(), true);
 		    } 	    
-		    else
+		    else 
 		    	this.mergeItemStack(itemstack1, 2, this.airship.getSizeInventory(), false);
 		    
 		    if (itemstack1.stackSize == 0) 
@@ -65,14 +65,15 @@ public class ContainerAirship extends Container {
 		    {
 		    	slot.onSlotChanged();
 		    }
-		    if (itemstack1.stackSize != itemstack.stackSize)
-		    {
-		    	slot.onPickupFromSlot(player, itemstack1);
-		    } 
-		    else 
-		    {
-		    	return null;
-		    }
+		    
+			if (itemstack1.stackSize != itemstack.stackSize)
+			{
+				slot.onPickupFromSlot(player, itemstack1);
+			}
+			else
+			{
+				return null;
+			}
 		}
 		return itemstack;
     }

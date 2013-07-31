@@ -12,7 +12,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class GuiAirship extends GuiContainer
 {
     private EntityAirship airship;
-    public static final ResourceLocation gui = new ResourceLocation("pchan3","/textures/gui/airshipgui.png");
+    public static final ResourceLocation gui = new ResourceLocation("pchan3","textures/gui/airshipgui.png");
     public GuiAirship(InventoryPlayer inventoryplayer,EntityAirship air)
     {
         super(new ContainerAirship(inventoryplayer, air));
