@@ -42,7 +42,7 @@ public class PacketHandler implements IPacketHandler
 		Entity ent = ((EntityPlayer)player).ridingEntity;
 		if (ent!=null && ent instanceof EntityAirship){	
 			switch(data){
-			case 0: ((EntityPlayer)player).openGui(PChan3Mods.instance, PChan3Mods.instance.GUI_ID, ent.worldObj, ent.serverPosX, ent.serverPosY, ent.serverPosZ);break;
+			case 0: ((EntityPlayer)player).openGui(PChan3Mods.instance, PChan3Mods.instance.GUI_ID, ent.worldObj, (int)ent.posX, (int)ent.posY, (int)ent.posZ);break;
 			case 1: ((EntityAirship)ent).isGoingUp=true;break;
 			case 2: ((EntityAirship)ent).isGoingDown=true;break;			
 			case 3: ((EntityAirship)ent).isFiring=true;break;	
