@@ -4,15 +4,10 @@ import java.util.Random;
 
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityFlying;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IRangedAttackMob;
-import net.minecraft.entity.ai.EntityAIArrowAttack;
-import net.minecraft.entity.ai.EntityAILookIdle;
-import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.monster.IMob;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.item.Item;
 import net.minecraft.util.AxisAlignedBB;
@@ -23,7 +18,7 @@ import assets.pchan3.PChan3Mods;
 public class EntityPirate extends EntityFlying implements IMob,IRangedAttackMob {
 	public int courseChangeCooldown=0;
 	public double waypointX,waypointY,waypointZ;
-	private Entity targetedEntity=null;
+	private EntityLivingBase targetedEntity=null;
 	private int aggroCooldown=0;
 	public int prevAttackCounter=0,attackCounter=0;
 	public boolean playedWeigh = false,playedPrep = false;
@@ -32,19 +27,9 @@ public class EntityPirate extends EntityFlying implements IMob,IRangedAttackMob 
 		this.setSize(4F, 4F);
 		this.isImmuneToFire = false;
 		this.experienceValue = 5;
-		this.tasks.addTask(1, new EntityAIArrowAttack(this, 0.25F, 60, 10.0F));
-		this.tasks.addTask(2, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
-        this.tasks.addTask(2, new EntityAILookIdle(this));
-		//this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
-	    //this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, 16.0F, 0, true));
 
 	}
 	@Override
-	protected boolean isAIEnabled()
-    {
-        return true;
-    }
-	
 	protected void updateEntityActionState() {
 		if (!this.worldObj.isRemote && this.worldObj.difficultySetting == 0)
         {
@@ -104,15 +89,14 @@ public class EntityPirate extends EntityFlying implements IMob,IRangedAttackMob 
 				}
 				
 				attackCounter++;
-				if (attackCounter == 60) 
+				if (attackCounter >= 60)
 				{
-					double b = targetedEntity.posX - posX + 1.200D;
+					/*double b = targetedEntity.posX - posX + 1.200D;
 					double b1 = targetedEntity.posZ - posZ + 1.200D;
 					
 						EntityArrow entityarrow = new EntityArrow(this.worldObj,this,1.0f);
-						entityarrow.posY += 1.3999999761581421D;
-						double b2 = targetedEntity.posY - 0.20000000298023224D
-								- entityarrow.posY;
+						entityarrow.posY += 1.4D;
+						double b2 = targetedEntity.posY - 0.2D - entityarrow.posY;
 						float f1 = MathHelper.sqrt_double(b * b + b1 * b1) * 0.3F;
 						
 						this.worldObj.playSoundAtEntity(this, "mob.pirate.fire", 10.0F,
@@ -120,8 +104,13 @@ public class EntityPirate extends EntityFlying implements IMob,IRangedAttackMob 
 						//if (!this.worldObj.isRemote)
 						this.worldObj.spawnEntityInWorld(entityarrow);
 						
-						entityarrow.setThrowableHeading(b, b2 + (double) f1, b1, 1.25F, 12F);
-						attackCounter = -80;	
+						entityarrow.setThrowableHeading(b, b2 + (double) f1, b1, 1.25F, 12F);*/
+					float charge = this.rand.nextFloat();
+					if(charge>0.1F)
+					{
+						this.attackEntityWithRangedAttack(targetedEntity, charge);
+						attackCounter = -80;
+					}
 				}
 			} 			
 			else if (attackCounter > 0) 
