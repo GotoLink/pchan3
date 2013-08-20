@@ -10,8 +10,6 @@ public class CustomTexturedQuad
 {
     public CustomTexturedQuad(PositionTextureVertex aPositionTextureVertex[])
     {
-        field_1194_b = 0;
-        field_1196_c = false;
         field_1195_a = aPositionTextureVertex;
         field_1194_b = aPositionTextureVertex.length;
     }
@@ -51,30 +49,22 @@ public class CustomTexturedQuad
         field_1195_a = aPositionTextureVertex;
     }
 
-    public void func_808_a(Tessellator tessellator, float f)
+    public void render(Tessellator tessellator, float f)
     {
         Vec3 vec3d = field_1195_a[1].vector3D.subtract(field_1195_a[0].vector3D);
         Vec3 vec3d1 = field_1195_a[1].vector3D.subtract(field_1195_a[2].vector3D);
         Vec3 vec3d2 = vec3d1.crossProduct(vec3d).normalize();
         tessellator.startDrawingQuads();
-        if(field_1196_c)
-        {
-            tessellator.setNormal(-(float)vec3d2.xCoord, -(float)vec3d2.yCoord, -(float)vec3d2.zCoord);
-        } else
-        {
-            tessellator.setNormal((float)vec3d2.xCoord, (float)vec3d2.yCoord, (float)vec3d2.zCoord);
-        }
+        tessellator.setNormal((float)vec3d2.xCoord, (float)vec3d2.yCoord, (float)vec3d2.zCoord); 
         for(int i = 0; i < 4; i++)
         {
             PositionTextureVertex PositionTextureVertex = field_1195_a[i];
             tessellator.addVertexWithUV((float)PositionTextureVertex.vector3D.xCoord * f, (float)PositionTextureVertex.vector3D.yCoord * f, (float)PositionTextureVertex.vector3D.zCoord * f, PositionTextureVertex.texturePositionX, PositionTextureVertex.texturePositionY);
         }
-
         tessellator.draw();
     }
 
     public PositionTextureVertex field_1195_a[];
     public int field_1194_b;
-    private boolean field_1196_c;
     private int texWidth,texHeight;
 }

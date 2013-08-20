@@ -15,9 +15,6 @@ public class CustomModelRenderer
     {
         compiled = false;
         displayList = 0;
-        mirror = false;
-        field_1403_h = true;
-        field_1402_i = false;
         textureOffsetX = i;
         textureOffsetY = j;
         texWidth = w;
@@ -42,12 +39,7 @@ public class CustomModelRenderer
         f4 += f3;
         f5 += f3;
         f6 += f3;
-        if(mirror)
-        {
-            float f7 = f4;
-            f4 = f;
-            f = f7;
-        }
+        
         PositionTextureVertex PositionTextureVertex = new PositionTextureVertex(f, f1, f2, 0.0F, 0.0F);
         PositionTextureVertex PositionTextureVertex1 = new PositionTextureVertex(f4, f1, f2, 0.0F, 8F);
         PositionTextureVertex PositionTextureVertex2 = new PositionTextureVertex(f4, f5, f2, 8F, 8F);
@@ -82,14 +74,6 @@ public class CustomModelRenderer
         faces[5] = new CustomTexturedQuad(new PositionTextureVertex[] {
             PositionTextureVertex4, PositionTextureVertex5, PositionTextureVertex6, PositionTextureVertex7
         }, textureOffsetX + k + i + k, textureOffsetY + k, textureOffsetX + k + i + k + i, textureOffsetY + k + j, texWidth, texHeight);
-        if(mirror)
-        {
-            for(int l = 0; l < faces.length; l++)
-            {
-                faces[l].func_809_a();
-            }
-
-        }
     }
 
     public void setPosition(float f, float f1, float f2)
@@ -101,10 +85,6 @@ public class CustomModelRenderer
 
     public void render(float f)
     {
-        if(field_1402_i || !field_1403_h)
-        {
-            return;
-        }
         if(!compiled)
         {
             compileDisplayList(f);
@@ -141,12 +121,8 @@ public class CustomModelRenderer
 	        }
     }
 
-    public void func_926_b(float f)
+    public void postRender(float f)
     {
-        if(field_1402_i || !field_1403_h)
-        {
-            return;
-        }
         if(!compiled)
         {
             compileDisplayList(f);
@@ -181,7 +157,7 @@ public class CustomModelRenderer
         Tessellator tessellator = Tessellator.instance;
         for(int i = 0; i < faces.length; i++)
         {
-            faces[i].func_808_a(tessellator, f);
+            faces[i].render(tessellator, f);
         }
 
         GL11.glEndList();
@@ -195,6 +171,5 @@ public class CustomModelRenderer
     public float rotateAngleX,rotateAngleY,rotateAngleZ;
     private boolean compiled;
     private int displayList;
-    public boolean mirror,field_1403_h,field_1402_i;
     private int texWidth,texHeight;
 }
