@@ -45,10 +45,10 @@ public class PChan3Mods{
 	public static PChan3Mods instance;
 	@SidedProxy(clientSide="assets.pchan3.ClientProxy", serverSide="assets.pchan3.CommonProxy")
 	public static CommonProxy proxy;
-	private static int steamboatItemID=12500,airshipItemID=12503,engineItemID=12502,balloonItemID=12501;
+	private static int steamboatItemID=12500,airshipItemID=12503,engineItemID=12502,balloonItemID=12501,anchorItemID=12504;
 	private static boolean  ENABLE_AIRSHIP=true,ENABLE_STEAMBOAT=true,ENABLE_PIRATE=true;
 	public static boolean SHOW_BOILER=true;
-    public static Item airShip,engine,balloon,steamBoat;  
+    public static Item airShip,engine,balloon,steamBoat,anchor;  
     public static int KEY_UP = Keyboard.KEY_NUMPAD8,KEY_DOWN = Keyboard.KEY_NUMPAD2;
     public static int KEY_CHEST = Keyboard.KEY_R,KEY_FIRE = Keyboard.KEY_NUMPAD5;
     public static int GUI_ID=100;
@@ -69,6 +69,7 @@ public class PChan3Mods{
 		engineItemID=config.get("item", "EngineID", engineItemID).getInt();
 		balloonItemID=config.get("item", "BalloonID", balloonItemID).getInt();
 		steamboatItemID=config.get("item", "SteamboatID", steamboatItemID).getInt();
+		anchorItemID=config.get("item", "AnchorID", anchorItemID).getInt();
 		GUI_ID=config.get("item", "GUI_ID", GUI_ID).getInt();	   
 		
 	}
@@ -110,6 +111,15 @@ public class PChan3Mods{
 			    Character.valueOf('E'), engine,
 			    Character.valueOf('D'), Item.boat,
 			    Character.valueOf('F'), Block.furnaceIdle});
+			//Anchor
+			anchor = new ItemAnchor(anchorItemID).setUnlocalizedName("pchan3:anchor").func_111206_d("lead");
+			LanguageRegistry.addName(anchor, "Anchor");
+			GameRegistry.addRecipe(new ItemStack(anchor), new Object[]{
+				" L ",
+				" L ",
+				"III",
+				Character.valueOf('L'), Item.silk,
+				Character.valueOf('I'), Item.ingotIron});
 		}
 		//Boat
 	     if (ENABLE_STEAMBOAT)

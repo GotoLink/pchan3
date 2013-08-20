@@ -5,8 +5,10 @@ import java.util.Random;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityHanging;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.inventory.IInventory;
@@ -15,11 +17,14 @@ import net.minecraft.item.ItemCoal;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.packet.Packet39AttachEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+import assets.pchan3.ItemAnchor;
 import assets.pchan3.PChan3Mods;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -38,6 +43,9 @@ public class EntityAirship extends Entity implements IInventory {
     @SideOnly(Side.CLIENT)
     private double velocityZ;
 	private double speedMultiplier;
+	public boolean isAnchor;
+	public Entity thrower;
+	private NBTTagCompound leash;
 	
     public EntityAirship(World world) 
     {
@@ -477,6 +485,27 @@ public class EntityAirship extends Entity implements IInventory {
 			}
 		}
 		par1NBTTagCompound.setTag("Items", tags);
+		par1NBTTagCompound.setBoolean("Leashed", this.isAnchor);
+
+        if (this.thrower != null)
+        {
+            par1NBTTagCompound = new NBTTagCompound("Leash");
+
+            if (this.thrower instanceof EntityLivingBase)
+            {
+                par1NBTTagCompound.setLong("UUIDMost", this.thrower.func_110124_au().getMostSignificantBits());
+                par1NBTTagCompound.setLong("UUIDLeast", this.thrower.func_110124_au().getLeastSignificantBits());
+            }
+            else if (this.thrower instanceof EntityHanging)
+            {
+                EntityHanging entityhanging = (EntityHanging)this.thrower;
+                par1NBTTagCompound.setInteger("X", entityhanging.xPosition);
+                par1NBTTagCompound.setInteger("Y", entityhanging.yPosition);
+                par1NBTTagCompound.setInteger("Z", entityhanging.zPosition);
+            }
+
+            par1NBTTagCompound.setTag("Leash", par1NBTTagCompound);
+        }
     }
     @Override
     protected void readEntityFromNBT(NBTTagCompound par1NBTTagCompound) 
@@ -491,6 +520,12 @@ public class EntityAirship extends Entity implements IInventory {
 				this.cargoItems[var5] = ItemStack.loadItemStackFromNBT(var4);
 			}
 		}
+		this.isAnchor = par1NBTTagCompound.getBoolean("Leashed");
+
+        if (this.isAnchor && par1NBTTagCompound.hasKey("Leash"))
+        {
+            this.leash = par1NBTTagCompound.getCompoundTag("Leash");
+        }
     }
     @Override
     public int getSizeInventory() 
@@ -552,30 +587,63 @@ public class EntityAirship extends Entity implements IInventory {
 		else if (!this.worldObj.isRemote) 
 		{
 		    ItemStack itemstack = entityplayer.inventory.getCurrentItem();
-		    if (itemstack != null && itemstack.itemID == Item.coal.itemID){
-		    	if (--itemstack.stackSize == 0)
-	            {
-	                entityplayer.destroyCurrentEquippedItem();
-	            }
-		    	if (this.getFuelTime()==0) 
-		    		this.setFuelTime(1600);
-		    	else if (this.getStackInSlot(0)==null) 
-		    		this.setInventorySlotContents(0, new ItemStack(Item.coal));	
-		    	else if (this.getStackInSlot(0).itemID==Item.coal.itemID)
-	    		{
-		    		 this.cargoItems[0].stackSize++;	
-		    		 this.onInventoryChanged();
-	    		}
-		    }
-		    else 
+		    if (itemstack != null)
 		    {
-		    	entityplayer.mountEntity(this);
-				return true;
+			    if(itemstack.getItem() instanceof ItemCoal)
+			    {
+			    	if (--itemstack.stackSize == 0)
+		            {
+		                entityplayer.destroyCurrentEquippedItem();
+		            }
+			    	if (this.getFuelTime()==0) 
+			    		this.setFuelTime(1600);
+			    	else if (this.getStackInSlot(0)==null) 
+			    		this.setInventorySlotContents(0, new ItemStack(itemstack.getItem()));	
+			    	else if (this.getStackInSlot(0).itemID==Item.coal.itemID)
+		    		{
+			    		 this.cargoItems[0].stackSize++;	
+			    		 this.onInventoryChanged();
+		    		}
+			    	return false;
+			    }
+			    else if(itemstack.getItem() instanceof ItemAnchor)
+			    {
+			    	if(!this.isAnchor)
+		            {
+	                    this.setAnchor(entityplayer, true);
+	                    --itemstack.stackSize;
+		            }
+			    	else if (this.thrower == entityplayer)
+			        {
+			            this.unsetAnchor(true, !entityplayer.capabilities.isCreativeMode);
+			        }
+			    	return false;
+			    }
 		    }
+	    	entityplayer.mountEntity(this);
+			return true;
 		}
 		return false;
 	}
-    @Override
+    private void unsetAnchor(boolean b, boolean c) 
+    {
+    	if (this.isAnchor)
+        {
+            this.isAnchor = false;
+            this.thrower = null;
+
+            if (!this.worldObj.isRemote && c)
+            {
+                this.dropItem(PChan3Mods.anchor.itemID, 1);
+            }
+
+            if (!this.worldObj.isRemote && b && this.worldObj instanceof WorldServer)
+            {
+                ((WorldServer)this.worldObj).getEntityTracker().sendPacketToAllPlayersTrackingEntity(this, new Packet39AttachEntity(1, this, (Entity)null));
+            }
+        }
+	}
+	@Override
     public void updateRiderPosition()
     {
         if (this.riddenByEntity != null)
@@ -593,7 +661,6 @@ public class EntityAirship extends Entity implements IInventory {
 
     public void FireArrow(EntityPlayer entityplayer) 
     {
-
 		boolean playerHasArrows = entityplayer.inventory.hasItem(Item.arrow.itemID); 
 		boolean shipHasArrows = this.getStackInSlot(1)!=null && this.getStackInSlot(1).itemID==Item.arrow.itemID;	
 		//if (this.getStackInSlot(1)!=null)
@@ -647,5 +714,14 @@ public class EntityAirship extends Entity implements IInventory {
     {
         this.field_70279_a = par1;
     }
-	
+	public void setAnchor(Entity par1Entity, boolean par2)
+    {
+        this.isAnchor = true;
+        this.thrower = par1Entity;
+
+        if (!this.worldObj.isRemote && par2 && this.worldObj instanceof WorldServer)
+        {
+            ((WorldServer)this.worldObj).getEntityTracker().sendPacketToAllPlayersTrackingEntity(this, new Packet39AttachEntity(1, this, this.thrower));
+        }
+    }
 }
