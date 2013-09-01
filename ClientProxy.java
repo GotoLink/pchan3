@@ -3,6 +3,7 @@ package assets.pchan3;
 import java.util.Random;
 
 import net.minecraft.block.material.Material;
+import net.minecraft.client.particle.EntitySmokeFX;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
@@ -13,7 +14,6 @@ import assets.pchan3.steamboat.EntitySteamBoat;
 import assets.pchan3.steamboat.RenderSteamBoat;
 import assets.pchan3.steamship.AirshipKeyHandler;
 import assets.pchan3.steamship.EntityAirship;
-import assets.pchan3.steamship.EntitySteamFX;
 import assets.pchan3.steamship.ModelAirship;
 import assets.pchan3.steamship.ModelBalloon;
 import assets.pchan3.steamship.RenderAirship;
@@ -42,17 +42,17 @@ public class ClientProxy extends CommonProxy{
  		    if (i % 2 == 0) {
  		    	FMLClientHandler.instance().getClient().effectRenderer.addEffect(new EntitySteamExplode(entity.worldObj,
  		    			entity.posX + (rand.nextInt(i) / 8), entity.posY, entity.posZ
- 				- (rand.nextInt(i) / 8), 0D, 0D, 0D));
+ 				- (rand.nextInt(i) / 8)));
  		    	FMLClientHandler.instance().getClient().effectRenderer.addEffect(new EntitySteamExplode(entity.worldObj,
  		    			entity.posX + (rand.nextInt(i) / 8), entity.posY, entity.posZ
- 				+ (rand.nextInt(i) / 8), 0D, 0D, 0D));
+ 				+ (rand.nextInt(i) / 8)));
  		    } else {
  		    	FMLClientHandler.instance().getClient().effectRenderer.addEffect(new EntitySteamExplode(entity.worldObj,
  		    			entity.posX - (rand.nextInt(i) / 8), entity.posY, entity.posZ
- 				+ (rand.nextInt(i) / 8), 0D, 0D, 0D));
+ 				+ (rand.nextInt(i) / 8)));
  		    	FMLClientHandler.instance().getClient().effectRenderer.addEffect(new EntitySteamExplode(entity.worldObj,
  		    			entity.posX - (rand.nextInt(i) / 8), entity.posY, entity.posZ
- 				- (rand.nextInt(i) / 8), 0D, 0D, 0D));
+ 				- (rand.nextInt(i) / 8)));
  		    }
  		}
     }
@@ -62,7 +62,7 @@ public class ClientProxy extends CommonProxy{
     	double d1 = source.getEntity().posX - (source.getEntity().posX - entity.posX) / 2;
  		double d2 = source.getEntity().posY - (source.getEntity().posY - entity.posY) / 2;
  		double d3 = source.getEntity().posZ - (source.getEntity().posZ - entity.posZ) / 2;
- 		FMLClientHandler.instance().getClient().effectRenderer.addEffect(new EntitySteamExplode(entity.worldObj, d1, d2, d3, 0.0D, 0.0D, 0.0D));	
+ 		FMLClientHandler.instance().getClient().effectRenderer.addEffect(new EntitySteamExplode(entity.worldObj, d1, d2, d3));	
     }
     @Override
  	public void displaySmoke(Entity entity)
@@ -70,8 +70,10 @@ public class ClientProxy extends CommonProxy{
     	 double smoke = new Random().nextFloat() * 2.0f - 1.0f;
          if (smoke > 0.65f) 
          {
-         	FMLClientHandler.instance().getClient().effectRenderer.addEffect(new EntitySteamFX(entity.worldObj, entity.posX,
-         			entity.posY + 0.9D, entity.posZ, 0.0D, 0.0D, 0.0D));
+        	EntitySmokeFX fx = new EntitySmokeFX(entity.worldObj, entity.posX,
+          			entity.posY + 0.9D, entity.posZ, 0.0D, 0.0D, 0.0D);
+        	fx.setRBGColorF(230, 230, 230);
+         	FMLClientHandler.instance().getClient().effectRenderer.addEffect(fx);
          }
     }
     @Override
