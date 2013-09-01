@@ -51,13 +51,12 @@ public class PChan3Mods{
     public static Item airShip,engine,balloon,steamBoat,anchor;  
     public static int KEY_UP = Keyboard.KEY_NUMPAD8,KEY_DOWN = Keyboard.KEY_NUMPAD2;
     public static int KEY_CHEST = Keyboard.KEY_R,KEY_FIRE = Keyboard.KEY_NUMPAD5;
-    public static int GUI_ID=100;
+    public static int GUI_ID=0;
     private static String[] SPAWNABLE_BIOMES=new String[]{"Ocean","Plains"};
 	private Configuration config;	
 	 
 	@EventHandler
 	public void preload(FMLPreInitializationEvent event){
-		instance=this;
 		// Read properties file.
 		config = new Configuration(event.getSuggestedConfigurationFile());
 		config.load();
@@ -65,13 +64,11 @@ public class PChan3Mods{
 		ENABLE_AIRSHIP=config.get("general", "Enable_Airship", true).getBoolean(true);
 		ENABLE_STEAMBOAT=config.get("general", "Enable_Steamboat", true).getBoolean(true);
 		ENABLE_PIRATE=config.get("general", "Enable_Pirate", true).getBoolean(true);
-		airshipItemID=config.get("item", "AirshipID", airshipItemID).getInt();
-		engineItemID=config.get("item", "EngineID", engineItemID).getInt();
-		balloonItemID=config.get("item", "BalloonID", balloonItemID).getInt();
-		steamboatItemID=config.get("item", "SteamboatID", steamboatItemID).getInt();
-		anchorItemID=config.get("item", "AnchorID", anchorItemID).getInt();
-		GUI_ID=config.get("item", "GUI_ID", GUI_ID).getInt();	   
-		
+		airshipItemID=config.getItem("AirshipID", airshipItemID).getInt();
+		engineItemID=config.getItem("EngineID", engineItemID).getInt();
+		balloonItemID=config.getItem("BalloonID", balloonItemID).getInt();
+		steamboatItemID=config.getItem("SteamboatID", steamboatItemID).getInt();
+		anchorItemID=config.getItem("AnchorID", anchorItemID).getInt();
 	}
 	@EventHandler
     public void load(FMLInitializationEvent event) { 
