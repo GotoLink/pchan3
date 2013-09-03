@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Logger;
 
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
@@ -53,10 +54,13 @@ public class PChan3Mods{
     public static int KEY_CHEST = Keyboard.KEY_R,KEY_FIRE = Keyboard.KEY_NUMPAD5;
     public static int GUI_ID=0;
     private static String[] SPAWNABLE_BIOMES=new String[]{"Ocean","Plains"};
-	private Configuration config;	
+    private int[] spawnChance = new int[]{2,1}, packSize = new int[]{1,2};
+	private Configuration config;
+	private Logger logger;
 	 
 	@EventHandler
 	public void preload(FMLPreInitializationEvent event){
+		logger = event.getModLog();
 		// Read properties file.
 		config = new Configuration(event.getSuggestedConfigurationFile());
 		config.load();
@@ -117,9 +121,10 @@ public class PChan3Mods{
 				"III",
 				Character.valueOf('L'), Item.silk,
 				Character.valueOf('I'), Item.ingotIron});
+			NetworkRegistry.instance().registerGuiHandler(this,proxy);
 		}
 		//Boat
-	     if (ENABLE_STEAMBOAT)
+	    if (ENABLE_STEAMBOAT)
 	 	{
 			steamBoat = new ItemSteamBoat(steamboatItemID).setUnlocalizedName("pchan3:Steamboat").func_111206_d("pchan3:Steamboat");
 			LanguageRegistry.addName(steamBoat, "Steam Boat");
@@ -159,26 +164,26 @@ public class PChan3Mods{
 		if (ENABLE_PIRATE)
 		{
 			SPAWNABLE_BIOMES=config.get("general", "Pirate_spawn_in_Biomes", SPAWNABLE_BIOMES).getStringList();
+			spawnChance = config.get("general", "Pirate_Spawn_Chance_per_biome", spawnChance).getIntList();
+			packSize = config.get("general", "Pirate_Max_Pack_Size_per_biome", packSize).getIntList();
 			if (SPAWNABLE_BIOMES!=null && SPAWNABLE_BIOMES.length!=0){		
 				EntityRegistry.registerModEntity(EntityPirate.class, "Pirate", 3, this, 80, 1, true);
 				BiomeGenBase[] biomes=getAvailableBiomes();
-				for(int i = 0; i < biomes.length ; i++)
+				for(int i=0; i<biomes.length && i<spawnChance.length && i<packSize.length; i++)
 				{
 					List spawns=null;
 					if( biomes[i]!=null)
 						spawns = biomes[i].getSpawnableList(EnumCreatureType.monster);
 					if (spawns!=null){
-						spawns.add(new SpawnListEntry(EntityPirate.class, 2, 1, 5));
-						System.out.println("Pirate added to biome "+biomes[i].biomeName);
+						spawns.add(new SpawnListEntry(EntityPirate.class, spawnChance[i], 1, packSize[i]));
+						logger.finest("Pirate added to biome "+biomes[i].biomeName);
 					}
 				}
-				
-				LanguageRegistry.instance().addStringLocalization("entity.Pirate.name", "en_US", "Pirate");
+				LanguageRegistry.instance().addStringLocalization("entity.pchan3.Pirate.name", "en_US", "Pirate");
 			}
 		}
 		if(config.hasChanged())
 			config.save();
 		proxy.registerRenderInformation();
-		NetworkRegistry.instance().registerGuiHandler(this,proxy);	  
 	}
 }
