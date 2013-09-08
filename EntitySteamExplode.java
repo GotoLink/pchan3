@@ -24,26 +24,7 @@ public class EntitySteamExplode extends EntityFX
     @Override
     public void onUpdate()
     {
-    	this.prevPosX = this.posX;
-        this.prevPosY = this.posY;
-        this.prevPosZ = this.posZ;
-
-        if (this.particleAge++ >= this.particleMaxAge)
-        {
-            this.setDead();
-        }
-
+    	super.onUpdate();
         setParticleTextureIndex(7 - (particleAge * 8) / particleMaxAge);
-        this.motionY -= 0.04D * (double)this.particleGravity;
-        //this.moveEntity(this.motionX, this.motionY, this.motionZ);
-        this.motionX *= 0.9800000190734863D;
-        this.motionY *= 0.9800000190734863D;
-        this.motionZ *= 0.9800000190734863D;
-
-        if (this.onGround)
-        {
-            this.motionX *= 0.699999988079071D;
-            this.motionZ *= 0.699999988079071D;
-        }
     }
 }

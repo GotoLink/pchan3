@@ -13,7 +13,7 @@ public class CommonProxy implements IGuiHandler{
 
 	public void registerRenderInformation() {}
 	public void displayExplodeFX(Entity entity){}
-	public void displayShipExplodeFX(DamageSource source, EntityAirship entity){}
+	public void displayShipExplodeFX(DamageSource source, EntityAirship entity) {}
 	public void displaySmoke(Entity entity){}
 	public void displaySplashEffect(Entity entity,double par1){}
 	@Override
@@ -32,4 +32,5 @@ public class CommonProxy implements IGuiHandler{
 		else 
 			return null;
 	}
+	
 }

@@ -188,7 +188,7 @@ public class EntityPirate extends EntityFlying implements IMob,IRangedAttackMob 
 	}
 	@Override
 	public void setDead() {
-		if (!this.worldObj.isRemote ){
+		if (this.worldObj.isRemote){
 			PChan3Mods.instance.proxy.displayExplodeFX(this);
 		}
 		super.setDead();
