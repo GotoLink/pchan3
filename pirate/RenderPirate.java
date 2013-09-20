@@ -22,7 +22,7 @@ public class RenderPirate extends RenderLiving
     {
         if(i == 0)
         {
-        	this.func_110776_a(balloon);              
+        	this.bindTexture(balloon);              
             return 2;
         } 
         else
@@ -37,7 +37,7 @@ public class RenderPirate extends RenderLiving
     }
 
 	@Override
-	protected ResourceLocation func_110775_a(Entity entity) 
+	protected ResourceLocation getEntityTexture(Entity entity) 
 	{
 		return body;
 	}

@@ -425,7 +425,7 @@ public class EntitySteamBoat extends Entity
     }
 	
     @Override
-    public boolean func_130002_c(EntityPlayer par1EntityPlayer)
+    public boolean interactFirst(EntityPlayer par1EntityPlayer)
     {
         if (this.riddenByEntity != null && this.riddenByEntity instanceof EntityPlayer && this.riddenByEntity != par1EntityPlayer)
         {
@@ -485,7 +485,7 @@ public class EntitySteamBoat extends Entity
     }
     public float getDamageTaken()
     {
-        return this.dataWatcher.func_111145_d(19);
+        return this.dataWatcher.getWatchableObjectFloat(19);
     }
     public void setTimeSinceHit(int par1)
     {

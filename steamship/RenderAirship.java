@@ -54,13 +54,13 @@ public class RenderAirship extends Render
         GL11.glScalef(f4, f4, f4);
         GL11.glScalef(1.0F / f4, 1.0F / f4, 1.0F / f4);
 
-    	this.func_110777_b(entityairship);
+    	this.bindEntityTexture(entityairship);
         
         GL11.glScalef(-1F, -1F, 1.0F);
         
         model.render(entityairship,0.0F, 0.0F, -0.1F, 0.0F, 0.0F, 0.0625F);
         	
-        this.func_110776_a(balloon);
+        this.bindTexture(balloon);
 		renderPassModel.render(entityairship,0.0F, 0.0F, -0.1F, 0.0F, 0.0F, 0.0625F);	
         GL11.glPopMatrix();
     }
@@ -73,7 +73,7 @@ public class RenderAirship extends Render
     }
 
 	@Override
-	protected ResourceLocation func_110775_a(Entity entity) 
+	protected ResourceLocation getEntityTexture(Entity entity) 
 	{
 		return airship;
 	}

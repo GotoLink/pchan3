@@ -30,7 +30,7 @@ public class GuiAirship extends GuiContainer
     protected void drawGuiContainerBackgroundLayer(float f,int b,int r)
     {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.mc.renderEngine.func_110577_a(gui);
+        this.mc.renderEngine.bindTexture(gui);
         int j = (width - xSize) / 2;
         int k = (height - ySize) / 2;
         drawTexturedModalRect(j, k, 0, 0, xSize, ySize);

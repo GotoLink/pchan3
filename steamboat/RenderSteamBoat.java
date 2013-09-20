@@ -37,12 +37,10 @@ public class RenderSteamBoat extends Render
         {
             GL11.glRotatef(((MathHelper.sin(f2) * f2 * f3) / 10F) * (float)entityboat.getForwardDirection(), 1.0F, 0.0F, 0.0F);
         }
-        //loadTexture("/terrain.png");
         float f4 = 0.75F;
         GL11.glScalef(f4, f4, f4);
         GL11.glScalef(1.0F / f4, 1.0F / f4, 1.0F / f4);
-        //loadTexture("/assets/pchan3/textures/models/steamboat.png");
-        func_110777_b(entityboat);
+        bindEntityTexture(entityboat);
         GL11.glScalef(-1F, -1F, 1.0F);
         model.render(entityboat,0.0F, 0.0F, -0.1F, 0.0F, 0.0F, 0.0625F);
         GL11.glPopMatrix();
@@ -54,7 +52,7 @@ public class RenderSteamBoat extends Render
     }
 
 	@Override
-	protected ResourceLocation func_110775_a(Entity entity) 
+	protected ResourceLocation getEntityTexture(Entity entity) 
 	{
 		return boat;
 	}

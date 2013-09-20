@@ -203,7 +203,7 @@ public class EntityAirship extends Entity implements IInventory {
     }
     public float getDamageTaken()
     {
-        return this.dataWatcher.func_111145_d(19);
+        return this.dataWatcher.getWatchableObjectFloat(19);
     }
     public void setTimeSinceHit(int par1)
     {
@@ -494,8 +494,8 @@ public class EntityAirship extends Entity implements IInventory {
 
             if (this.thrower instanceof EntityLivingBase)
             {
-                par1NBTTagCompound.setLong("UUIDMost", this.thrower.func_110124_au().getMostSignificantBits());
-                par1NBTTagCompound.setLong("UUIDLeast", this.thrower.func_110124_au().getLeastSignificantBits());
+                par1NBTTagCompound.setLong("UUIDMost", this.thrower.getUniqueID().getMostSignificantBits());
+                par1NBTTagCompound.setLong("UUIDLeast", this.thrower.getUniqueID().getLeastSignificantBits());
             }
             else if (this.thrower instanceof EntityHanging)
             {
@@ -580,7 +580,7 @@ public class EntityAirship extends Entity implements IInventory {
     }
     
     @Override
-    public boolean func_130002_c(EntityPlayer entityplayer) 
+    public boolean interactFirst(EntityPlayer entityplayer) 
     {
 		if (this.riddenByEntity != null && this.riddenByEntity instanceof EntityPlayer && this.riddenByEntity != entityplayer) {
 			return true;

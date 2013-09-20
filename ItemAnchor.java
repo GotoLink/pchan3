@@ -47,7 +47,7 @@ public class ItemAnchor extends Item{
 	
 	public static boolean attach(EntityPlayer par0EntityPlayer, World par1World, int par2, int par3, int par4)
     {
-        EntityLeashKnot entityleashknot = EntityLeashKnot.func_110130_b(par1World, par2, par3, par4);
+        EntityLeashKnot entityleashknot = EntityLeashKnot.getKnotForBlock(par1World, par2, par3, par4);
         double d0 = 7.0D;
         List list = par1World.getEntitiesWithinAABB(EntityAirship.class, AxisAlignedBB.getAABBPool().getAABB((double)par2 - d0, (double)par3 - d0, (double)par4 - d0, (double)par2 + d0, (double)par3 + d0, (double)par4 + d0));
 
