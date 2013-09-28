@@ -81,6 +81,7 @@ public class PChan3Mods{
 		{
 			// Engine
 			engine = new Item(engineItemID).setUnlocalizedName("pchan3:Engine").setCreativeTab(CreativeTabs.tabTransport).setTextureName("pchan3:Engine");
+			GameRegistry.registerItem(engine, "Engine");
 			LanguageRegistry.addName(engine, "Engine");
 			GameRegistry.addRecipe(new ItemStack(engine), new Object[]{
 			    "###",
@@ -91,6 +92,7 @@ public class PChan3Mods{
 		     
 		  // Balloon
 			balloon = new Item(balloonItemID).setUnlocalizedName("pchan3:Balloon").setCreativeTab(CreativeTabs.tabTransport).setTextureName("pchan3:Balloon");
+			GameRegistry.registerItem(balloon, "Balloon");
 			LanguageRegistry.addName(balloon, "Balloon");
 			GameRegistry.addRecipe(new ItemStack(balloon), new Object[]{
 			    "###",
@@ -101,7 +103,8 @@ public class PChan3Mods{
 			
 			//AirShip
 		    airShip = new ItemAirship(airshipItemID).setUnlocalizedName("pchan3:Airship").setTextureName("pchan3:Airship");
-			LanguageRegistry.addName(airShip, "Airship");
+		    GameRegistry.registerItem(airShip, "Airship");
+		    LanguageRegistry.addName(airShip, "Airship");
 			EntityRegistry.registerModEntity(EntityAirship.class, "Airship", 1, this, 40, 1, true);
 			GameRegistry.addRecipe(new ItemStack(airShip), new Object[]{
 			    "XBX",
@@ -127,6 +130,7 @@ public class PChan3Mods{
 	    if (ENABLE_STEAMBOAT)
 	 	{
 			steamBoat = new ItemSteamBoat(steamboatItemID).setUnlocalizedName("pchan3:Steamboat").setTextureName("pchan3:Steamboat");
+			GameRegistry.registerItem(steamBoat, "Steam Boat");
 			LanguageRegistry.addName(steamBoat, "Steam Boat");
 			EntityRegistry.registerModEntity(EntitySteamBoat.class, "SteamBoat", 2,this,40,1,false);
 			GameRegistry.addRecipe(new ItemStack(steamBoat), new Object[] {
