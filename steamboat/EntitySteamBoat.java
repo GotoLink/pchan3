@@ -145,7 +145,8 @@ public class EntitySteamBoat extends Entity
         this.setTimeSinceHit(10);
         this.setDamageTaken(this.getDamageTaken() * 11.0F);
     }
-    @SideOnly(Side.CLIENT)
+    @Override
+	@SideOnly(Side.CLIENT)
     public void setPositionAndRotation2(double par1, double par3, double par5, float par7, float par8, int par9)
     {
         if (this.field_70279_a)
@@ -177,7 +178,8 @@ public class EntitySteamBoat extends Entity
         this.motionZ = this.velocityZ;
     }
 
-    @SideOnly(Side.CLIENT)
+    @Override
+	@SideOnly(Side.CLIENT)
     public void setVelocity(double par1, double par3, double par5)
     {
         this.velocityX = this.motionX = par1;
@@ -465,7 +467,8 @@ public class EntitySteamBoat extends Entity
     @Override
     protected void readEntityFromNBT(NBTTagCompound par1NBTTagCompound) {}
 
-    @SideOnly(Side.CLIENT)
+    @Override
+	@SideOnly(Side.CLIENT)
     public float getShadowSize()
     {
         return 0.0F;

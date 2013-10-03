@@ -1,6 +1,5 @@
 package assets.pchan3.steamship;
 
-import assets.pchan3.PChan3Mods;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
