@@ -4,8 +4,7 @@ import net.minecraft.client.model.ModelBase;
 import net.minecraft.entity.Entity;
 import assets.pchan3.CustomModelRenderer;
 
-public class ModelBalloon extends ModelBase
-{
+public class ModelBalloon extends ModelBase {
 	public CustomModelRenderer boxes;
 
 	public ModelBalloon() {
@@ -16,8 +15,8 @@ public class ModelBalloon extends ModelBase
 		boxes.rotateAngleX = 1.570796F;
 	}
 
-    @Override
-	public void render(Entity entity,float f, float f1, float f2, float f3, float f4, float f5) {
+	@Override
+	public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5) {
 		boxes.render(f5);
 	}
 }
