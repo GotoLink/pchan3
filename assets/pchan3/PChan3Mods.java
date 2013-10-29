@@ -33,7 +33,6 @@ import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.LanguageRegistry;
 
 /**
  * @author pchan3
@@ -58,45 +57,24 @@ public class PChan3Mods {
 	private Logger logger;
 
 	@EventHandler
-	public void preload(FMLPreInitializationEvent event) {
-		logger = event.getModLog();
-		// Read properties file.
-		config = new Configuration(event.getSuggestedConfigurationFile());
-		config.load();
-		SHOW_BOILER = config.get("general", "show_boiler", true).getBoolean(true);
-		ENABLE_AIRSHIP = config.get("general", "Enable_Airship", true).getBoolean(true);
-		ENABLE_STEAMBOAT = config.get("general", "Enable_Steamboat", true).getBoolean(true);
-		ENABLE_PIRATE = config.get("general", "Enable_Pirate", true).getBoolean(true);
-		airshipItemID = config.getItem("AirshipID", airshipItemID).getInt();
-		engineItemID = config.getItem("EngineID", engineItemID).getInt();
-		balloonItemID = config.getItem("BalloonID", balloonItemID).getInt();
-		steamboatItemID = config.getItem("SteamboatID", steamboatItemID).getInt();
-		anchorItemID = config.getItem("AnchorID", anchorItemID).getInt();
-	}
-
-	@EventHandler
 	public void load(FMLInitializationEvent event) {
 		if (ENABLE_AIRSHIP) {
 			// Engine
 			engine = new Item(engineItemID).setUnlocalizedName("pchan3:Engine").setCreativeTab(CreativeTabs.tabTransport).setTextureName("pchan3:Engine");
 			GameRegistry.registerItem(engine, "Engine");
-			LanguageRegistry.addName(engine, "Engine");
 			GameRegistry.addRecipe(new ItemStack(engine), new Object[] { "###", "#X#", "###", Character.valueOf('#'), Item.ingotIron, Character.valueOf('X'), Block.pistonBase });
 			// Balloon
 			balloon = new Item(balloonItemID).setUnlocalizedName("pchan3:Balloon").setCreativeTab(CreativeTabs.tabTransport).setTextureName("pchan3:Balloon");
 			GameRegistry.registerItem(balloon, "Balloon");
-			LanguageRegistry.addName(balloon, "Balloon");
 			GameRegistry.addRecipe(new ItemStack(balloon), new Object[] { "###", "###", "L L", Character.valueOf('#'), Item.leather, Character.valueOf('L'), Item.silk });
 			//AirShip
 			airShip = new ItemAirship(airshipItemID).setUnlocalizedName("pchan3:Airship").setTextureName("pchan3:Airship");
 			GameRegistry.registerItem(airShip, "Airship");
-			LanguageRegistry.addName(airShip, "Airship");
 			EntityRegistry.registerModEntity(EntityAirship.class, "Airship", 1, this, 40, 1, true);
 			GameRegistry.addRecipe(new ItemStack(airShip), new Object[] { "XBX", "EFE", "XDX", Character.valueOf('X'), Item.silk, Character.valueOf('B'), balloon, Character.valueOf('E'), engine,
-				Character.valueOf('D'), Item.boat, Character.valueOf('F'), Block.furnaceIdle });
+					Character.valueOf('D'), Item.boat, Character.valueOf('F'), Block.furnaceIdle });
 			//Anchor
 			anchor = new ItemAnchor(anchorItemID).setUnlocalizedName("pchan3:anchor").setTextureName("lead");
-			LanguageRegistry.addName(anchor, "Anchor");
 			GameRegistry.addRecipe(new ItemStack(anchor), new Object[] { " L ", " L ", "III", Character.valueOf('L'), Item.silk, Character.valueOf('I'), Item.ingotIron });
 			NetworkRegistry.instance().registerGuiHandler(this, proxy);
 		}
@@ -104,28 +82,9 @@ public class PChan3Mods {
 		if (ENABLE_STEAMBOAT) {
 			steamBoat = new ItemSteamBoat(steamboatItemID).setUnlocalizedName("pchan3:Steamboat").setTextureName("pchan3:Steamboat");
 			GameRegistry.registerItem(steamBoat, "Steam Boat");
-			LanguageRegistry.addName(steamBoat, "Steam Boat");
 			EntityRegistry.registerModEntity(EntitySteamBoat.class, "SteamBoat", 2, this, 40, 1, false);
 			GameRegistry.addRecipe(new ItemStack(steamBoat), new Object[] { "#X#", "###", Character.valueOf('#'), Block.planks, Character.valueOf('X'), Item.ingotIron });
 		}
-	}
-
-	private BiomeGenBase[] getAvailableBiomes() {
-		ArrayList<BiomeGenBase> result = new ArrayList<BiomeGenBase>();
-		Iterator<BiomeGenBase> itr = Arrays.asList(BiomeGenBase.biomeList).iterator();
-		BiomeGenBase biome = null;
-		while (itr.hasNext()) {
-			biome = itr.next();
-			if (biome != null)
-				for (int id = 0; id < SPAWNABLE_BIOMES.length; id++) {
-					if (SPAWNABLE_BIOMES[id] != null && SPAWNABLE_BIOMES[id] != "" && biome.biomeName.equalsIgnoreCase(SPAWNABLE_BIOMES[id].trim())) {
-						result.add(biome);
-						break;
-					}
-				}
-		}
-		result.trimToSize();
-		return (result.size() != 0 && !result.isEmpty()) ? (BiomeGenBase[]) result.toArray(new BiomeGenBase[result.size()]) : null;
 	}
 
 	@EventHandler
@@ -147,11 +106,45 @@ public class PChan3Mods {
 						logger.finest("Pirate added to biome " + biomes[i].biomeName);
 					}
 				}
-				LanguageRegistry.instance().addStringLocalization("entity.pchan3.Pirate.name", "en_US", "Pirate");
 			}
 		}
 		if (config.hasChanged())
 			config.save();
 		proxy.registerRenderInformation();
+	}
+
+	@EventHandler
+	public void preload(FMLPreInitializationEvent event) {
+		logger = event.getModLog();
+		// Read properties file.
+		config = new Configuration(event.getSuggestedConfigurationFile());
+		config.load();
+		SHOW_BOILER = config.get("general", "show_boiler", true).getBoolean(true);
+		ENABLE_AIRSHIP = config.get("general", "Enable_Airship", true).getBoolean(true);
+		ENABLE_STEAMBOAT = config.get("general", "Enable_Steamboat", true).getBoolean(true);
+		ENABLE_PIRATE = config.get("general", "Enable_Pirate", true).getBoolean(true);
+		airshipItemID = config.getItem("AirshipID", airshipItemID).getInt();
+		engineItemID = config.getItem("EngineID", engineItemID).getInt();
+		balloonItemID = config.getItem("BalloonID", balloonItemID).getInt();
+		steamboatItemID = config.getItem("SteamboatID", steamboatItemID).getInt();
+		anchorItemID = config.getItem("AnchorID", anchorItemID).getInt();
+	}
+
+	private BiomeGenBase[] getAvailableBiomes() {
+		ArrayList<BiomeGenBase> result = new ArrayList<BiomeGenBase>();
+		Iterator<BiomeGenBase> itr = Arrays.asList(BiomeGenBase.biomeList).iterator();
+		BiomeGenBase biome = null;
+		while (itr.hasNext()) {
+			biome = itr.next();
+			if (biome != null)
+				for (int id = 0; id < SPAWNABLE_BIOMES.length; id++) {
+					if (SPAWNABLE_BIOMES[id] != null && !SPAWNABLE_BIOMES[id].equals("") && biome.biomeName.equalsIgnoreCase(SPAWNABLE_BIOMES[id].trim())) {
+						result.add(biome);
+						break;
+					}
+				}
+		}
+		result.trimToSize();
+		return (result.size() != 0 && !result.isEmpty()) ? (BiomeGenBase[]) result.toArray(new BiomeGenBase[result.size()]) : null;
 	}
 }
