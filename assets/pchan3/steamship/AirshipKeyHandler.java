@@ -29,7 +29,7 @@ public class AirshipKeyHandler extends KeyHandler {
 			Entity ent = client.thePlayer.ridingEntity;
 			if (ent != null && ent instanceof EntityAirship) {
 				if (kb.keyDescription.equals(chestKeyDesc) && client.currentScreen == null) {
-					((EntityPlayer) ent.riddenByEntity).openGui(PChan3Mods.instance, PChan3Mods.instance.GUI_ID, ent.worldObj, ent.serverPosX, ent.serverPosY, ent.serverPosZ);
+					((EntityPlayer) ent.riddenByEntity).openGui(PChan3Mods.instance, PChan3Mods.GUI_ID, ent.worldObj, ent.serverPosX, ent.serverPosY, ent.serverPosZ);
 					client.getNetHandler().addToSendQueue(PacketHandler.getPacket(0));
 				} else if (kb.keyDescription.equals(upKeyDesc) && ((EntityAirship) ent).getFuelTime() != 0) {
 					client.getNetHandler().addToSendQueue(PacketHandler.getPacket(1));

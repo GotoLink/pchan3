@@ -38,10 +38,10 @@ public class ItemAnchor extends Item {
 	public static boolean attach(EntityPlayer par0EntityPlayer, World par1World, int par2, int par3, int par4) {
 		EntityLeashKnot entityleashknot = EntityLeashKnot.getKnotForBlock(par1World, par2, par3, par4);
 		double d0 = 7.0D;
-		List list = par1World.getEntitiesWithinAABB(EntityAirship.class,
+		List<?> list = par1World.getEntitiesWithinAABB(EntityAirship.class,
 				AxisAlignedBB.getAABBPool().getAABB(par2 - d0, par3 - d0, par4 - d0, par2 + d0, par3 + d0, par4 + d0));
 		if (list != null) {
-			Iterator iterator = list.iterator();
+			Iterator<?> iterator = list.iterator();
 			while (iterator.hasNext()) {
 				EntityAirship airship = (EntityAirship) iterator.next();
 				if (airship.isAnchor && airship.thrower == par0EntityPlayer) {

@@ -130,7 +130,7 @@ public class EntityAirship extends Entity implements IInventory {
 			}
 		}
 		if (this.worldObj.isRemote)
-			PChan3Mods.instance.proxy.displayExplodeFX(this);
+			PChan3Mods.proxy.displayExplodeFX(this);
 		super.setDead();
 	}
 
@@ -163,13 +163,13 @@ public class EntityAirship extends Entity implements IInventory {
 				if (this.riddenByEntity != null) {
 					this.riddenByEntity.mountEntity(this);
 				}
-				this.dropItemWithOffset(PChan3Mods.instance.airShip.itemID, 1, 0.0F);
+				this.dropItemWithOffset(PChan3Mods.airShip.itemID, 1, 0.0F);
 				this.setDead();
 			}
 			return true;
 		}
 		if (this.worldObj.isRemote && this.isDead) {
-			PChan3Mods.instance.proxy.displayShipExplodeFX(source, this);
+			PChan3Mods.proxy.displayShipExplodeFX(source, this);
 		}
 		return true;
 	}
@@ -316,11 +316,11 @@ public class EntityAirship extends Entity implements IInventory {
 					this.motionX *= 0.5D;
 					this.motionY *= 0.5D;
 					this.motionZ *= 0.5D;
-				} else if (PChan3Mods.instance.SHOW_BOILER) {
-					PChan3Mods.instance.proxy.displaySmoke(this);
+				} else if (PChan3Mods.SHOW_BOILER) {
+					PChan3Mods.proxy.displaySmoke(this);
 				}
 				if (d3 > 0.15D) {
-					PChan3Mods.instance.proxy.displaySplashEffect(this, d3);
+					PChan3Mods.proxy.displaySplashEffect(this, d3);
 				}
 				this.motionX *= 0.99D;
 				this.motionY *= 0.95D;

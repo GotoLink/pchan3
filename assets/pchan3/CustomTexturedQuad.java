@@ -59,5 +59,4 @@ public class CustomTexturedQuad {
 
 	public PositionTextureVertex field_1195_a[];
 	public int field_1194_b;
-	private int texWidth, texHeight;
 }

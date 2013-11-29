@@ -30,7 +30,7 @@ public class ClientProxy extends CommonProxy {
 		RenderingRegistry.registerEntityRenderingHandler(EntityAirship.class, new RenderAirship(new ModelAirship(), new ModelBalloon(), 3.0f));
 		RenderingRegistry.registerEntityRenderingHandler(EntityPirate.class, new RenderPirate(new ModelPirate(), new ModelBalloon(), 1.0f));
 		RenderingRegistry.registerEntityRenderingHandler(EntitySteamBoat.class, new RenderSteamBoat());
-		KeyBindingRegistry.registerKeyBinding(new AirshipKeyHandler(PChan3Mods.instance.KEY_CHEST, PChan3Mods.instance.KEY_UP, PChan3Mods.instance.KEY_DOWN, PChan3Mods.instance.KEY_FIRE));
+		KeyBindingRegistry.registerKeyBinding(new AirshipKeyHandler(PChan3Mods.KEY_CHEST, PChan3Mods.KEY_UP, PChan3Mods.KEY_DOWN, PChan3Mods.KEY_FIRE));
 	}
 
 	@Override

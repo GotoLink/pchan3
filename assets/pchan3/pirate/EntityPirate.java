@@ -149,7 +149,7 @@ public class EntityPirate extends EntityFlying implements IMob, IRangedAttackMob
 		if (par1) {
 			Random rand = new Random();
 			if (rand.nextInt(100) < 5 + par2) {
-				dropItem(PChan3Mods.instance.engine.itemID, 1);
+				dropItem(PChan3Mods.engine.itemID, 1);
 			} else if (rand.nextBoolean() == true) {
 				dropItem(Item.arrow.itemID, 4);
 			} else {
@@ -171,7 +171,7 @@ public class EntityPirate extends EntityFlying implements IMob, IRangedAttackMob
 	@Override
 	public void setDead() {
 		if (this.worldObj.isRemote) {
-			PChan3Mods.instance.proxy.displayExplodeFX(this);
+			PChan3Mods.proxy.displayExplodeFX(this);
 		}
 		super.setDead();
 	}

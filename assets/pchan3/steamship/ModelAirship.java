@@ -149,7 +149,7 @@ public class ModelAirship extends ModelBase {
 		// Boiler
 		// boiler
 		// -8, -4, 0, 10, 8, 4
-		if (PChan3Mods.instance.SHOW_BOILER) {
+		if (PChan3Mods.SHOW_BOILER) {
 			boxes[20].addBox(-8, -4, 0.0f, 10, 8, 4, 0.0F);
 			boxes[21].addBox(-2, -13, -1f, 2, 14, 2, 0.0F);
 		} else {

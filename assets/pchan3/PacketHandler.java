@@ -41,7 +41,7 @@ public class PacketHandler implements IPacketHandler {
 		if (ent != null && ent instanceof EntityAirship) {
 			switch (data) {
 			case 0:
-				((EntityPlayer) player).openGui(PChan3Mods.instance, PChan3Mods.instance.GUI_ID, ent.worldObj, (int) ent.posX, (int) ent.posY, (int) ent.posZ);
+				((EntityPlayer) player).openGui(PChan3Mods.instance, PChan3Mods.GUI_ID, ent.worldObj, (int) ent.posX, (int) ent.posY, (int) ent.posZ);
 				break;
 			case 1:
 				((EntityAirship) ent).isGoingUp = true;

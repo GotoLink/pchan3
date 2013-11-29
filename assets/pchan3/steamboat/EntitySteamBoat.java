@@ -294,7 +294,7 @@ public class EntitySteamBoat extends Entity {
 			this.rotationYaw = (float) (this.rotationYaw + var14);
 			this.setRotation(this.rotationYaw, this.rotationPitch);
 			if (!this.worldObj.isRemote) {
-				List var16 = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, this.boundingBox.expand(0.20000000298023224D, 0.0D, 0.20000000298023224D));
+				List<?> var16 = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, this.boundingBox.expand(0.20000000298023224D, 0.0D, 0.20000000298023224D));
 				int var27;
 				if (var16 != null && !var16.isEmpty()) {
 					for (var27 = 0; var27 < var16.size(); ++var27) {
