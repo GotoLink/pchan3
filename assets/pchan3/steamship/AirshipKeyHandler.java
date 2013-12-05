@@ -5,11 +5,10 @@ import java.util.EnumSet;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import assets.pchan3.PChan3Mods;
 import assets.pchan3.PacketHandler;
 import cpw.mods.fml.client.registry.KeyBindingRegistry.KeyHandler;
 import cpw.mods.fml.common.TickType;
+import cpw.mods.fml.common.network.PacketDispatcher;
 
 public class AirshipKeyHandler extends KeyHandler {
 	public static final String chestKeyDesc = "OpenAirshipChest";
@@ -29,14 +28,13 @@ public class AirshipKeyHandler extends KeyHandler {
 			Entity ent = client.thePlayer.ridingEntity;
 			if (ent != null && ent instanceof EntityAirship) {
 				if (kb.keyDescription.equals(chestKeyDesc) && client.currentScreen == null) {
-					((EntityPlayer) ent.riddenByEntity).openGui(PChan3Mods.instance, PChan3Mods.GUI_ID, ent.worldObj, ent.serverPosX, ent.serverPosY, ent.serverPosZ);
-					client.getNetHandler().addToSendQueue(PacketHandler.getPacket(0));
+					PacketDispatcher.sendPacketToServer(PacketHandler.getPacket(ent.entityId, 0));
 				} else if (kb.keyDescription.equals(upKeyDesc) && ((EntityAirship) ent).getFuelTime() != 0) {
-					client.getNetHandler().addToSendQueue(PacketHandler.getPacket(1));
+					PacketDispatcher.sendPacketToServer(PacketHandler.getPacket(ent.entityId, 1));
 				} else if (kb.keyDescription.equals(downKeyDesc)) {
-					client.getNetHandler().addToSendQueue(PacketHandler.getPacket(2));
+					PacketDispatcher.sendPacketToServer(PacketHandler.getPacket(ent.entityId, 2));
 				} else if (kb.keyDescription.equals(fireKeyDesc) && ((EntityAirship) ent).getFireCountDown() == 0) {
-					client.getNetHandler().addToSendQueue(PacketHandler.getPacket(3));
+					PacketDispatcher.sendPacketToServer(PacketHandler.getPacket(ent.entityId, 3));
 				}
 			}
 		}
@@ -48,13 +46,13 @@ public class AirshipKeyHandler extends KeyHandler {
 			Entity ent = client.thePlayer.ridingEntity;
 			if (ent != null && ent instanceof EntityAirship) {
 				if (kb.keyDescription.equals(upKeyDesc)) {
-					client.getNetHandler().addToSendQueue(PacketHandler.getPacket(4));
+					PacketDispatcher.sendPacketToServer(PacketHandler.getPacket(ent.entityId, 4));
 				}
 				if (kb.keyDescription.equals(downKeyDesc)) {
-					client.getNetHandler().addToSendQueue(PacketHandler.getPacket(5));
+					PacketDispatcher.sendPacketToServer(PacketHandler.getPacket(ent.entityId, 5));
 				}
 				if (kb.keyDescription.equals(fireKeyDesc)) {
-					client.getNetHandler().addToSendQueue(PacketHandler.getPacket(6));
+					PacketDispatcher.sendPacketToServer(PacketHandler.getPacket(ent.entityId, 6));
 				}
 			}
 		}

@@ -5,6 +5,7 @@ import java.util.Random;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.EntitySmokeFX;
+import net.minecraft.client.renderer.entity.RenderLeashKnot;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
@@ -15,6 +16,7 @@ import assets.pchan3.steamboat.EntitySteamBoat;
 import assets.pchan3.steamboat.RenderSteamBoat;
 import assets.pchan3.steamship.AirshipKeyHandler;
 import assets.pchan3.steamship.EntityAirship;
+import assets.pchan3.steamship.EntityAnchor;
 import assets.pchan3.steamship.ModelAirship;
 import assets.pchan3.steamship.ModelBalloon;
 import assets.pchan3.steamship.RenderAirship;
@@ -25,14 +27,6 @@ import cpw.mods.fml.client.registry.RenderingRegistry;
  * @author pchan3
  */
 public class ClientProxy extends CommonProxy {
-	@Override
-	public void registerRenderInformation() {
-		RenderingRegistry.registerEntityRenderingHandler(EntityAirship.class, new RenderAirship(new ModelAirship(), new ModelBalloon(), 3.0f));
-		RenderingRegistry.registerEntityRenderingHandler(EntityPirate.class, new RenderPirate(new ModelPirate(), new ModelBalloon(), 1.0f));
-		RenderingRegistry.registerEntityRenderingHandler(EntitySteamBoat.class, new RenderSteamBoat());
-		KeyBindingRegistry.registerKeyBinding(new AirshipKeyHandler(PChan3Mods.KEY_CHEST, PChan3Mods.KEY_UP, PChan3Mods.KEY_DOWN, PChan3Mods.KEY_FIRE));
-	}
-
 	@Override
 	public void displayExplodeFX(Entity entity) {
 		for (int i = 1; i < 30; i++) {
@@ -91,5 +85,14 @@ public class ClientProxy extends CommonProxy {
 				}
 			}
 		}
+	}
+
+	@Override
+	public void registerRenderInformation() {
+		RenderingRegistry.registerEntityRenderingHandler(EntityAnchor.class, new RenderLeashKnot());
+		RenderingRegistry.registerEntityRenderingHandler(EntityAirship.class, new RenderAirship(new ModelAirship(), new ModelBalloon(), 3.0f));
+		RenderingRegistry.registerEntityRenderingHandler(EntityPirate.class, new RenderPirate(new ModelPirate(), new ModelBalloon(), 1.0f));
+		RenderingRegistry.registerEntityRenderingHandler(EntitySteamBoat.class, new RenderSteamBoat());
+		KeyBindingRegistry.registerKeyBinding(new AirshipKeyHandler(PChan3Mods.KEY_CHEST, PChan3Mods.KEY_UP, PChan3Mods.KEY_DOWN, PChan3Mods.KEY_FIRE));
 	}
 }

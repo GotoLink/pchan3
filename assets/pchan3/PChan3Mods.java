@@ -21,12 +21,12 @@ import assets.pchan3.pirate.EntityPirate;
 import assets.pchan3.steamboat.EntitySteamBoat;
 import assets.pchan3.steamboat.ItemSteamBoat;
 import assets.pchan3.steamship.EntityAirship;
+import assets.pchan3.steamship.EntityAnchor;
 import assets.pchan3.steamship.ItemAirship;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
@@ -52,40 +52,10 @@ public class PChan3Mods {
 	public static int KEY_CHEST = Keyboard.KEY_R, KEY_FIRE = Keyboard.KEY_NUMPAD5;
 	public static int GUI_ID = 0;
 	private static String[] SPAWNABLE_BIOMES = new String[] { "Ocean", "Plains" };
-	private int[] spawnChance = new int[] { 2, 1 }, packSize = new int[] { 1, 2 };
+	private static int[] spawnChance = new int[] { 2, 1 }, packSize = new int[] { 1, 2 };
+	public static double airUpSpeed, airDownSpeed, airSpeed;
 	private Configuration config;
 	private Logger logger;
-
-	@EventHandler
-	public void load(FMLInitializationEvent event) {
-		if (ENABLE_AIRSHIP) {
-			// Engine
-			engine = new Item(engineItemID).setUnlocalizedName("pchan3:Engine").setCreativeTab(CreativeTabs.tabTransport).setTextureName("pchan3:Engine");
-			GameRegistry.registerItem(engine, "Engine");
-			GameRegistry.addRecipe(new ItemStack(engine), new Object[] { "###", "#X#", "###", Character.valueOf('#'), Item.ingotIron, Character.valueOf('X'), Block.pistonBase });
-			// Balloon
-			balloon = new Item(balloonItemID).setUnlocalizedName("pchan3:Balloon").setCreativeTab(CreativeTabs.tabTransport).setTextureName("pchan3:Balloon");
-			GameRegistry.registerItem(balloon, "Balloon");
-			GameRegistry.addRecipe(new ItemStack(balloon), new Object[] { "###", "###", "L L", Character.valueOf('#'), Item.leather, Character.valueOf('L'), Item.silk });
-			//AirShip
-			airShip = new ItemAirship(airshipItemID).setUnlocalizedName("pchan3:Airship").setTextureName("pchan3:Airship");
-			GameRegistry.registerItem(airShip, "Airship");
-			EntityRegistry.registerModEntity(EntityAirship.class, "Airship", 1, this, 40, 1, true);
-			GameRegistry.addRecipe(new ItemStack(airShip), new Object[] { "XBX", "EFE", "XDX", Character.valueOf('X'), Item.silk, Character.valueOf('B'), balloon, Character.valueOf('E'), engine,
-					Character.valueOf('D'), Item.boat, Character.valueOf('F'), Block.furnaceIdle });
-			//Anchor
-			anchor = new ItemAnchor(anchorItemID).setUnlocalizedName("pchan3:anchor").setTextureName("lead");
-			GameRegistry.addRecipe(new ItemStack(anchor), new Object[] { " L ", " L ", "III", Character.valueOf('L'), Item.silk, Character.valueOf('I'), Item.ingotIron });
-			NetworkRegistry.instance().registerGuiHandler(this, proxy);
-		}
-		//Boat
-		if (ENABLE_STEAMBOAT) {
-			steamBoat = new ItemSteamBoat(steamboatItemID).setUnlocalizedName("pchan3:Steamboat").setTextureName("pchan3:Steamboat");
-			GameRegistry.registerItem(steamBoat, "Steam Boat");
-			EntityRegistry.registerModEntity(EntitySteamBoat.class, "SteamBoat", 2, this, 40, 1, false);
-			GameRegistry.addRecipe(new ItemStack(steamBoat), new Object[] { "#X#", "###", Character.valueOf('#'), Block.planks, Character.valueOf('X'), Item.ingotIron });
-		}
-	}
 
 	@EventHandler
 	public void modsLoaded(FMLPostInitializationEvent event) {
@@ -98,7 +68,7 @@ public class PChan3Mods {
 				EntityRegistry.registerModEntity(EntityPirate.class, "Pirate", 3, this, 80, 1, true);
 				BiomeGenBase[] biomes = getAvailableBiomes();
 				for (int i = 0; i < biomes.length && i < spawnChance.length && i < packSize.length; i++) {
-					List spawns = null;
+					List<SpawnListEntry> spawns = null;
 					if (biomes[i] != null)
 						spawns = biomes[i].getSpawnableList(EnumCreatureType.monster);
 					if (spawns != null) {
@@ -118,7 +88,6 @@ public class PChan3Mods {
 		logger = event.getModLog();
 		// Read properties file.
 		config = new Configuration(event.getSuggestedConfigurationFile());
-		config.load();
 		SHOW_BOILER = config.get("general", "show_boiler", true).getBoolean(true);
 		ENABLE_AIRSHIP = config.get("general", "Enable_Airship", true).getBoolean(true);
 		ENABLE_STEAMBOAT = config.get("general", "Enable_Steamboat", true).getBoolean(true);
@@ -128,6 +97,37 @@ public class PChan3Mods {
 		balloonItemID = config.getItem("BalloonID", balloonItemID).getInt();
 		steamboatItemID = config.getItem("SteamboatID", steamboatItemID).getInt();
 		anchorItemID = config.getItem("AnchorID", anchorItemID).getInt();
+		airUpSpeed = config.get("cheats", "AirshipUpSpeed", 2D).getDouble(2D) / 100;
+		airDownSpeed = config.get("cheats", "AirshipDownSpeed", 3D).getDouble(3D) / 100;
+		airSpeed = config.get("cheats", "AirshipMainSpeed", 5D).getDouble(5D) / 100;
+		if (ENABLE_AIRSHIP) {
+			// Engine
+			engine = new Item(engineItemID).setUnlocalizedName("pchan3:Engine").setCreativeTab(CreativeTabs.tabTransport).setTextureName("pchan3:Engine");
+			GameRegistry.registerItem(engine, "Engine");
+			GameRegistry.addRecipe(new ItemStack(engine), new Object[] { "###", "#X#", "###", Character.valueOf('#'), Item.ingotIron, Character.valueOf('X'), Block.pistonBase });
+			// Balloon
+			balloon = new Item(balloonItemID).setUnlocalizedName("pchan3:Balloon").setCreativeTab(CreativeTabs.tabTransport).setTextureName("pchan3:Balloon");
+			GameRegistry.registerItem(balloon, "Balloon");
+			GameRegistry.addRecipe(new ItemStack(balloon), new Object[] { "###", "###", "L L", Character.valueOf('#'), Item.leather, Character.valueOf('L'), Item.silk });
+			//AirShip
+			airShip = new ItemAirship(airshipItemID).setUnlocalizedName("pchan3:Airship").setTextureName("pchan3:Airship");
+			GameRegistry.registerItem(airShip, "Airship");
+			EntityRegistry.registerModEntity(EntityAirship.class, "Airship", 1, this, 40, 1, true);
+			GameRegistry.addRecipe(new ItemStack(airShip), new Object[] { "XBX", "EFE", "XDX", Character.valueOf('X'), Item.silk, Character.valueOf('B'), balloon, Character.valueOf('E'), engine,
+					Character.valueOf('D'), Item.boat, Character.valueOf('F'), Block.furnaceIdle });
+			//Anchor
+			anchor = new ItemAnchor(anchorItemID).setUnlocalizedName("pchan3:anchor").setTextureName("lead");
+			GameRegistry.addRecipe(new ItemStack(anchor), new Object[] { " L ", " L ", "III", Character.valueOf('L'), Item.silk, Character.valueOf('I'), Item.ingotIron });
+			NetworkRegistry.instance().registerGuiHandler(this, proxy);
+			EntityRegistry.registerModEntity(EntityAnchor.class, "Anchor", 0, this, 160, 80, false);
+		}
+		//Boat
+		if (ENABLE_STEAMBOAT) {
+			steamBoat = new ItemSteamBoat(steamboatItemID).setUnlocalizedName("pchan3:Steamboat").setTextureName("pchan3:Steamboat");
+			GameRegistry.registerItem(steamBoat, "Steam Boat");
+			EntityRegistry.registerModEntity(EntitySteamBoat.class, "SteamBoat", 2, this, 40, 1, false);
+			GameRegistry.addRecipe(new ItemStack(steamBoat), new Object[] { "#X#", "###", Character.valueOf('#'), Block.planks, Character.valueOf('X'), Item.ingotIron });
+		}
 	}
 
 	private BiomeGenBase[] getAvailableBiomes() {
