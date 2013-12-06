@@ -5,6 +5,7 @@ import java.util.EnumSet;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
+import assets.pchan3.PChan3Mods;
 import assets.pchan3.PacketHandler;
 import cpw.mods.fml.client.registry.KeyBindingRegistry.KeyHandler;
 import cpw.mods.fml.common.TickType;
@@ -23,11 +24,17 @@ public class AirshipKeyHandler extends KeyHandler {
 	}
 
 	@Override
+	public String getLabel() {
+		return "Airship KeyHandler";
+	}
+
+	@Override
 	public void keyDown(EnumSet<TickType> es, KeyBinding kb, boolean endTick, boolean repeat) {
 		if (client != null && client.thePlayer != null && endTick) {
 			Entity ent = client.thePlayer.ridingEntity;
 			if (ent != null && ent instanceof EntityAirship) {
 				if (kb.keyDescription.equals(chestKeyDesc) && client.currentScreen == null) {
+					client.thePlayer.openGui(PChan3Mods.instance, PChan3Mods.GUI_ID, client.theWorld, 0, 0, 0);
 					PacketDispatcher.sendPacketToServer(PacketHandler.getPacket(ent.entityId, 0));
 				} else if (kb.keyDescription.equals(upKeyDesc) && ((EntityAirship) ent).getFuelTime() != 0) {
 					PacketDispatcher.sendPacketToServer(PacketHandler.getPacket(ent.entityId, 1));
@@ -61,10 +68,5 @@ public class AirshipKeyHandler extends KeyHandler {
 	@Override
 	public EnumSet<TickType> ticks() {
 		return EnumSet.of(TickType.CLIENT);
-	}
-
-	@Override
-	public String getLabel() {
-		return "Airship KeyHandler";
 	}
 }

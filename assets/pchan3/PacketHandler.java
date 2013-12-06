@@ -40,11 +40,11 @@ public class PacketHandler implements IPacketHandler {
 			e.printStackTrace();
 			return;
 		}
-		Entity ent =((EntityPlayer) player).worldObj.getEntityByID(id);
+		Entity ent = ((EntityPlayer) player).worldObj.getEntityByID(id);
 		if (ent != null && ent instanceof EntityAirship && ent.riddenByEntity instanceof EntityPlayer) {
 			switch (data) {
 			case 0:
-				((EntityPlayer) ent.riddenByEntity).openGui(PChan3Mods.instance, PChan3Mods.GUI_ID, ent.worldObj, (int) ent.posX, (int) ent.posY, (int) ent.posZ);
+				((EntityPlayer) ent.riddenByEntity).openGui(PChan3Mods.instance, PChan3Mods.GUI_ID, ent.worldObj, 0, 0, 0);
 				break;
 			case 1:
 				((EntityAirship) ent).isGoingUp = true;
@@ -65,7 +65,7 @@ public class PacketHandler implements IPacketHandler {
 				((EntityAirship) ent).isFiring = false;
 				break;
 			}
-			if(!((EntityPlayer) player).worldObj.isRemote){
+			if (data != 0) {
 				PacketDispatcher.sendPacketToPlayer(payload, (Player) ent.riddenByEntity);
 			}
 		}
