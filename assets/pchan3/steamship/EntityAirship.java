@@ -127,12 +127,9 @@ public class EntityAirship extends Entity implements IInventory {
 		return stack;
 	}
 
-	public void FireArrow(EntityPlayer entityplayer) {
-		boolean playerHasArrows = entityplayer.inventory.hasItem(Item.arrow.itemID);
+	public void fireArrow(EntityPlayer entityplayer) {
+		boolean playerHasArrows = entityplayer.inventory.hasItem(Item.arrow.itemID) && PChan3Mods.usePlayerArrow;
 		boolean shipHasArrows = this.getStackInSlot(1) != null && this.getStackInSlot(1).itemID == Item.arrow.itemID;
-		//if (this.getStackInSlot(1)!=null)
-		//Entity entity =this.getStackInSlot(1).getItem().createEntity(this.worldObj, location, this.getStackInSlot(1));
-		//if (entity instanceof IProjectile);
 		if ((playerHasArrows || shipHasArrows || entityplayer.capabilities.isCreativeMode) && this.getFireCountDown() == 0) {
 			Vec3 vec = entityplayer.getLookVec();
 			double d8 = 4D;
@@ -146,11 +143,14 @@ public class EntityAirship extends Entity implements IInventory {
 			if (!this.worldObj.isRemote) {
 				this.worldObj.spawnEntityInWorld(arrow);
 				this.setFireCountDown(20);
-			} else if (!entityplayer.capabilities.isCreativeMode && shipHasArrows)
-				if (--this.cargoItems[1].stackSize == 0)
-					this.setInventorySlotContents(1, (ItemStack) null);
-				else if (!entityplayer.capabilities.isCreativeMode && playerHasArrows)
+			}
+			if (!entityplayer.capabilities.isCreativeMode) {
+				if (shipHasArrows) {
+					if (--this.cargoItems[1].stackSize <= 0)
+						this.setInventorySlotContents(1, null);
+				} else if (playerHasArrows)
 					entityplayer.inventory.consumeInventoryItem(Item.arrow.itemID);
+			}
 		}
 	}
 
@@ -300,14 +300,11 @@ public class EntityAirship extends Entity implements IInventory {
 		if (this.getFuelTime() == 0 && this.riddenByEntity != null) {
 			if (this.getStackInSlot(0) != null && this.getStackInSlot(0).itemID == Item.coal.itemID) {
 				this.setFuelTime(1600);
-				if (this.worldObj.isRemote) {
-					if (--this.cargoItems[0].stackSize == 0)
-						this.setInventorySlotContents(0, (ItemStack) null);
-				}
-			} else if (((EntityPlayer) this.riddenByEntity).inventory.hasItem(Item.coal.itemID)) {
+				if (--this.cargoItems[0].stackSize <= 0)
+					this.setInventorySlotContents(0, (ItemStack) null);
+			} else if (PChan3Mods.usePlayerCoal && ((EntityPlayer) this.riddenByEntity).inventory.hasItem(Item.coal.itemID)) {
 				this.setFuelTime(1600);
-				if (!this.worldObj.isRemote)
-					((EntityPlayer) this.riddenByEntity).inventory.consumeInventoryItem(Item.coal.itemID);
+				((EntityPlayer) this.riddenByEntity).inventory.consumeInventoryItem(Item.coal.itemID);
 			}
 		}
 		this.prevPosX = this.posX;
@@ -440,7 +437,7 @@ public class EntityAirship extends Entity implements IInventory {
 				}
 			}
 			if (this.isFiring && this.getFireCountDown() == 0) {
-				this.FireArrow((EntityPlayer) this.riddenByEntity);
+				this.fireArrow((EntityPlayer) this.riddenByEntity);
 			}
 		}
 		if (!this.worldObj.isRemote) {
