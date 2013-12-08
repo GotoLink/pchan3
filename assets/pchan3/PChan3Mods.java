@@ -14,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.SpawnListEntry;
 import net.minecraftforge.common.Configuration;
+import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import org.lwjgl.input.Keyboard;
 
@@ -106,20 +107,20 @@ public class PChan3Mods {
 			// Engine
 			engine = new Item(engineItemID).setUnlocalizedName("pchan3:Engine").setCreativeTab(CreativeTabs.tabTransport).setTextureName("pchan3:Engine");
 			GameRegistry.registerItem(engine, "Engine");
-			GameRegistry.addRecipe(new ItemStack(engine), new Object[] { "###", "#X#", "###", Character.valueOf('#'), Item.ingotIron, Character.valueOf('X'), Block.pistonBase });
+			GameRegistry.addRecipe(new ItemStack(engine), "###", "#X#", "###", Character.valueOf('#'), Item.ingotIron, Character.valueOf('X'), Block.pistonBase);
 			// Balloon
 			balloon = new Item(balloonItemID).setUnlocalizedName("pchan3:Balloon").setCreativeTab(CreativeTabs.tabTransport).setTextureName("pchan3:Balloon");
 			GameRegistry.registerItem(balloon, "Balloon");
-			GameRegistry.addRecipe(new ItemStack(balloon), new Object[] { "###", "###", "L L", Character.valueOf('#'), Item.leather, Character.valueOf('L'), Item.silk });
+			GameRegistry.addRecipe(new ItemStack(balloon), "###", "###", "L L", Character.valueOf('#'), Item.leather, Character.valueOf('L'), Item.silk);
 			//AirShip
 			airShip = new ItemAirship(airshipItemID).setUnlocalizedName("pchan3:Airship").setTextureName("pchan3:Airship");
 			GameRegistry.registerItem(airShip, "Airship");
 			EntityRegistry.registerModEntity(EntityAirship.class, "Airship", 1, this, 40, 1, true);
-			GameRegistry.addRecipe(new ItemStack(airShip), new Object[] { "XBX", "EFE", "XDX", Character.valueOf('X'), Item.silk, Character.valueOf('B'), balloon, Character.valueOf('E'), engine,
-					Character.valueOf('D'), Item.boat, Character.valueOf('F'), Block.furnaceIdle });
+			GameRegistry.addRecipe(new ItemStack(airShip), "XBX", "EFE", "XDX", Character.valueOf('X'), Item.silk, Character.valueOf('B'), balloon, Character.valueOf('E'), engine,
+					Character.valueOf('D'), Item.boat, Character.valueOf('F'), Block.furnaceIdle);
 			//Anchor
 			anchor = new ItemAnchor(anchorItemID).setUnlocalizedName("pchan3:anchor").setTextureName("lead");
-			GameRegistry.addRecipe(new ItemStack(anchor), new Object[] { " L ", " L ", "III", Character.valueOf('L'), Item.silk, Character.valueOf('I'), Item.ingotIron });
+			GameRegistry.addRecipe(new ItemStack(anchor), " L ", " L ", "III", Character.valueOf('L'), Item.silk, Character.valueOf('I'), Item.ingotIron);
 			NetworkRegistry.instance().registerGuiHandler(this, proxy);
 			EntityRegistry.registerModEntity(EntityAnchor.class, "Anchor", 0, this, 160, 80, false);
 		}
@@ -128,7 +129,7 @@ public class PChan3Mods {
 			steamBoat = new ItemSteamBoat(steamboatItemID).setUnlocalizedName("pchan3:Steamboat").setTextureName("pchan3:Steamboat");
 			GameRegistry.registerItem(steamBoat, "Steam Boat");
 			EntityRegistry.registerModEntity(EntitySteamBoat.class, "SteamBoat", 2, this, 40, 1, false);
-			GameRegistry.addRecipe(new ItemStack(steamBoat), new Object[] { "#X#", "###", Character.valueOf('#'), Block.planks, Character.valueOf('X'), Item.ingotIron });
+			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(steamBoat), "#X#", "###", Character.valueOf('#'), "plankWood", Character.valueOf('X'), Item.ingotIron));
 		}
 	}
 
