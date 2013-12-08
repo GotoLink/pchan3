@@ -46,7 +46,7 @@ public class PChan3Mods {
 	public static CommonProxy proxy;
 	private static int steamboatItemID = 12500, airshipItemID = 12503, engineItemID = 12502, balloonItemID = 12501, anchorItemID = 12504;
 	private static boolean ENABLE_AIRSHIP = true, ENABLE_STEAMBOAT = true, ENABLE_PIRATE = true;
-	public static boolean SHOW_BOILER = true;
+	public static boolean SHOW_BOILER = true, usePlayerArrow = true, usePlayerCoal = true;
 	public static Item airShip, engine, balloon, steamBoat, anchor;
 	public static int KEY_UP = Keyboard.KEY_NUMPAD8, KEY_DOWN = Keyboard.KEY_NUMPAD2;
 	public static int KEY_CHEST = Keyboard.KEY_R, KEY_FIRE = Keyboard.KEY_NUMPAD5;
@@ -100,6 +100,8 @@ public class PChan3Mods {
 		airUpSpeed = config.get("cheats", "AirshipUpSpeed", 2D).getDouble(2D) / 100;
 		airDownSpeed = config.get("cheats", "AirshipDownSpeed", 3D).getDouble(3D) / 100;
 		airSpeed = config.get("cheats", "AirshipMainSpeed", 5D).getDouble(5D) / 100;
+		usePlayerArrow = config.get("cheats", "Use arrows from player inventory", usePlayerArrow).getBoolean(true);
+		usePlayerCoal = config.get("cheats", "Use coal from player inventory", usePlayerCoal).getBoolean(true);
 		if (ENABLE_AIRSHIP) {
 			// Engine
 			engine = new Item(engineItemID).setUnlocalizedName("pchan3:Engine").setCreativeTab(CreativeTabs.tabTransport).setTextureName("pchan3:Engine");
