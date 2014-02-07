@@ -6,3 +6,8 @@ item.pchan3:anchor.name=Anchor
 item.pchan3:Steamboat.name=Steam Boat
 
 entity.pchan3.Pirate.name=Pirate
+key.categories.airship=Airship
+key.openchest=Open Chest
+key.up=Up
+key.down=Down
+key.fire=Fire

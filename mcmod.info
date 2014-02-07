@@ -1,0 +1,17 @@
+[
+{
+  "modid": "pchan3",
+  "name": "PChan3 mods",
+  "description": "Steamship, Steamboat and Pirates",
+  "version": $version,
+  "credits": "Original idea and Code: PChan3, Arts: Glimmar",
+  "logoFile": "",
+  "mcversion": $mcversion,
+  "url": "http://www.minecraftforum.net/topic/164940-",
+  "updateUrl": "",
+  "authors": ["PChan3","Glimmar"],
+  "parent":"",
+  "screenshots": [],
+  "dependencies": []
+}
+]

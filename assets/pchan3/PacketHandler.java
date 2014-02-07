@@ -1,55 +1,52 @@
 package assets.pchan3;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.network.FMLNetworkEvent;
+import cpw.mods.fml.common.network.internal.FMLProxyPacket;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.INetworkManager;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.Packet250CustomPayload;
+import net.minecraft.network.NetHandlerPlayServer;
 import assets.pchan3.steamship.EntityAirship;
-import cpw.mods.fml.common.network.IPacketHandler;
-import cpw.mods.fml.common.network.PacketDispatcher;
-import cpw.mods.fml.common.network.Player;
 
-/**
- * @author pchan3
- */
-public class PacketHandler implements IPacketHandler {
+public class PacketHandler {
 	public static String CHANNEL = "Steamship";
 
-	@Override
-	public void onPacketData(INetworkManager manager, Packet250CustomPayload payload, Player player) {
-		if (payload.channel.equals(CHANNEL)) {
-			this.handle(payload, player);
-		}
+	@SubscribeEvent
+	public void onPacketData(FMLNetworkEvent.ServerCustomPacketEvent event) {
+		if (event.packet.channel().equals(CHANNEL))
+            if(event.packet.getTarget().isServer()) {
+			    event.reply = this.handle(event.packet, ((NetHandlerPlayServer)event.handler).field_147369_b);
+		    }else{
+                this.handle(event.packet, getPlayer());
+            }
 	}
 
-	private void handle(Packet250CustomPayload payload, Player player) {
-		DataInputStream inStream = new DataInputStream(new ByteArrayInputStream(payload.data));
-		int id;
-		short data;
-		try {
-			id = inStream.readInt();
-			data = inStream.readShort();
-		} catch (IOException e) {
-			e.printStackTrace();
-			return;
-		}
-		Entity ent = ((EntityPlayer) player).worldObj.getEntityByID(id);
+    @SideOnly(Side.CLIENT)
+    private EntityPlayer getPlayer() {
+        return Minecraft.getMinecraft().thePlayer;
+    }
+
+    private FMLProxyPacket handle(FMLProxyPacket packet, EntityPlayer player) {
+		ByteBuf buf = packet.payload();
+		int id = buf.readInt();
+		short data = buf.readShort();
+		Entity ent = player.worldObj.getEntityByID(id);
 		if (ent != null && ent instanceof EntityAirship && ent.riddenByEntity instanceof EntityPlayer) {
 			switch (data) {
 			case 0:
 				((EntityPlayer) ent.riddenByEntity).openGui(PChan3Mods.instance, PChan3Mods.GUI_ID, ent.worldObj, 0, 0, 0);
 				break;
 			case 1:
+                ((EntityAirship) ent).isGoingDown = false;
 				((EntityAirship) ent).isGoingUp = true;
 				break;
 			case 2:
+                ((EntityAirship) ent).isGoingUp = false;
 				((EntityAirship) ent).isGoingDown = true;
 				break;
 			case 3:
@@ -65,25 +62,20 @@ public class PacketHandler implements IPacketHandler {
 				((EntityAirship) ent).isFiring = false;
 				break;
 			}
-			if (data != 0) {
-				PacketDispatcher.sendPacketToPlayer(payload, (Player) ent.riddenByEntity);
+			if (!player.worldObj.isRemote && data != 0) {
+                packet.setTarget(Side.CLIENT);
+                return packet;
 			}
 		}
+        return null;
 	}
 
-	public static Packet getPacket(int id, int key) {
-		ByteArrayOutputStream bos = new ByteArrayOutputStream(4);
-		DataOutputStream outputStream = new DataOutputStream(bos);
-		try {
-			outputStream.writeInt(id);
-			outputStream.writeShort(key);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		Packet250CustomPayload packet = new Packet250CustomPayload();
-		packet.channel = CHANNEL;
-		packet.data = bos.toByteArray();
-		packet.length = bos.size();
+	public static FMLProxyPacket getPacket(Side side,int id, int key) {
+		ByteBuf payload = Unpooled.buffer();
+        payload.writeInt(id);
+        payload.writeShort(key);
+		FMLProxyPacket packet = new FMLProxyPacket(payload, CHANNEL);
+		packet.setTarget(side);
 		return packet;
 	}
 }

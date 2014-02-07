@@ -9,6 +9,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IRangedAttackMob;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.projectile.EntityArrow;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
@@ -32,7 +33,7 @@ public class EntityPirate extends EntityFlying implements IMob, IRangedAttackMob
 
 	@Override
 	protected void updateEntityActionState() {
-		if (!this.worldObj.isRemote && this.worldObj.difficultySetting == 0) {
+		if (!this.worldObj.isRemote && this.worldObj.difficultySetting.ordinal() == 0) {
 			this.setDead();
 		}
 		this.despawnEntity();
@@ -141,7 +142,7 @@ public class EntityPirate extends EntityFlying implements IMob, IRangedAttackMob
 
 	@Override
 	public boolean getCanSpawnHere() {
-		return this.rand.nextInt(15) == 0 && super.getCanSpawnHere() && this.worldObj.difficultySetting > 0;
+		return this.rand.nextInt(15) == 0 && super.getCanSpawnHere() && this.worldObj.difficultySetting.ordinal() > 0;
 	}
 
 	@Override
@@ -149,18 +150,18 @@ public class EntityPirate extends EntityFlying implements IMob, IRangedAttackMob
 		if (par1) {
 			Random rand = new Random();
 			if (rand.nextInt(100) < 5 + par2) {
-				dropItem(PChan3Mods.engine.itemID, 1);
+                func_145779_a(PChan3Mods.engine, 1);
 			} else if (rand.nextBoolean() == true) {
-				dropItem(Item.arrow.itemID, 4);
+                func_145779_a(Items.arrow, 4);
 			} else {
-				dropItem(Item.leather.itemID, 4);
+                func_145779_a(Items.leather, 4);
 			}
 		}
 	}
 
 	@Override
-	protected int getDropItemId() {
-		return Item.arrow.itemID;
+	protected Item func_146068_u() {
+		return Items.arrow;
 	}
 
 	@Override
@@ -183,11 +184,11 @@ public class EntityPirate extends EntityFlying implements IMob, IRangedAttackMob
 
 	@Override
 	public void attackEntityWithRangedAttack(EntityLivingBase par1EntityLiving, float f) {
-		EntityArrow arrow = new EntityArrow(this.worldObj, this, par1EntityLiving, 1.6F, 14 - this.worldObj.difficultySetting * 4);
+		EntityArrow arrow = new EntityArrow(this.worldObj, this, par1EntityLiving, 1.6F, 14 - this.worldObj.difficultySetting.ordinal() * 4);
 		int i = EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, this.getHeldItem());
 		int j = EnchantmentHelper.getEnchantmentLevel(Enchantment.punch.effectId, this.getHeldItem());
 		int k = EnchantmentHelper.getEnchantmentLevel(Enchantment.flame.effectId, this.getHeldItem());
-		arrow.setDamage(f * 2.0F + this.rand.nextGaussian() * 0.25D + this.worldObj.difficultySetting * 0.11F);
+		arrow.setDamage(f * 2.0F + this.rand.nextGaussian() * 0.25D + this.worldObj.difficultySetting.ordinal() * 0.11F);
 		if (i > 0)
 			arrow.setDamage(arrow.getDamage() + i * 0.5D + 0.5D);
 		if (j > 0)

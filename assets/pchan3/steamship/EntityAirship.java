@@ -13,13 +13,12 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemCoal;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.network.packet.Packet39AttachEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
@@ -37,7 +36,6 @@ public class EntityAirship extends Entity implements IInventory {
 	private double airShipX, airShipY, airShipZ;
 	private double airshipYaw, airshipPitch;
 	public boolean isGoingUp, isGoingDown, isFiring;
-	private boolean field_70279_a;
 	@SideOnly(Side.CLIENT)
 	private double velocityX;
 	@SideOnly(Side.CLIENT)
@@ -50,7 +48,6 @@ public class EntityAirship extends Entity implements IInventory {
 
 	public EntityAirship(World world) {
 		super(world);
-		this.field_70279_a = true;
 		this.preventEntitySpawning = true;
 		this.setSize(1.5F, 1.7F);
 		this.yOffset = this.height / 2.0F;
@@ -84,7 +81,7 @@ public class EntityAirship extends Entity implements IInventory {
 				if (this.riddenByEntity != null) {
 					this.riddenByEntity.mountEntity(this);
 				}
-				this.dropItemWithOffset(PChan3Mods.airShip.itemID, 1, 0.0F);
+				this.func_145778_a(PChan3Mods.airShip, 1, 0.0F);
 				this.setDead();
 			}
 			return true;
@@ -114,12 +111,12 @@ public class EntityAirship extends Entity implements IInventory {
 		ItemStack stack = this.getStackInSlot(i);
 		if (stack != null) {
 			if (stack.stackSize <= j) {
-				this.setInventorySlotContents(i, (ItemStack) null);
+				this.setInventorySlotContents(i, null);
 				this.onInventoryChanged();
 			} else {
 				stack = stack.splitStack(j);
 				if (stack.stackSize == 0) {
-					this.setInventorySlotContents(i, (ItemStack) null);
+					this.setInventorySlotContents(i, null);
 					this.onInventoryChanged();
 				}
 			}
@@ -128,8 +125,8 @@ public class EntityAirship extends Entity implements IInventory {
 	}
 
 	public void fireArrow(EntityPlayer entityplayer) {
-		boolean playerHasArrows = entityplayer.inventory.hasItem(Item.arrow.itemID) && PChan3Mods.usePlayerArrow;
-		boolean shipHasArrows = this.getStackInSlot(1) != null && this.getStackInSlot(1).itemID == Item.arrow.itemID;
+		boolean playerHasArrows = entityplayer.inventory.func_146028_b(Items.arrow) && PChan3Mods.usePlayerArrow;
+		boolean shipHasArrows = this.getStackInSlot(1) != null && this.getStackInSlot(1).getItem() == Items.arrow;
 		if ((playerHasArrows || shipHasArrows || entityplayer.capabilities.isCreativeMode) && this.getFireCountDown() == 0) {
 			Vec3 vec = entityplayer.getLookVec();
 			double d8 = 4D;
@@ -149,14 +146,9 @@ public class EntityAirship extends Entity implements IInventory {
 					if (--this.cargoItems[1].stackSize <= 0)
 						this.setInventorySlotContents(1, null);
 				} else if (playerHasArrows)
-					entityplayer.inventory.consumeInventoryItem(Item.arrow.itemID);
+					entityplayer.inventory.func_146026_a(Items.arrow);
 			}
 		}
-	}
-
-	@SideOnly(Side.CLIENT)
-	public void func_70270_d(boolean par1) {
-		this.field_70279_a = par1;
 	}
 
 	@Override
@@ -195,7 +187,7 @@ public class EntityAirship extends Entity implements IInventory {
 	}
 
 	@Override
-	public String getInvName() {
+	public String func_145825_b() {
 		return "Airship";
 	}
 
@@ -244,7 +236,7 @@ public class EntityAirship extends Entity implements IInventory {
 						this.setFuelTime(1600);
 					else if (this.getStackInSlot(0) == null)
 						this.setInventorySlotContents(0, new ItemStack(itemstack.getItem()));
-					else if (this.getStackInSlot(0).itemID == Item.coal.itemID) {
+					else if (this.getStackInSlot(0).getItem() == Items.coal) {
 						this.cargoItems[0].stackSize++;
 						this.onInventoryChanged();
 					}
@@ -255,7 +247,7 @@ public class EntityAirship extends Entity implements IInventory {
 						if (!entityplayer.capabilities.isCreativeMode && --itemstack.stackSize == 0) {
 							entityplayer.destroyCurrentEquippedItem();
 						}
-					} else if (this.thrower.entityId == entityplayer.entityId) {
+					} else if (this.thrower.func_145782_y() == entityplayer.func_145782_y()) {
 						this.unsetAnchor(true, !entityplayer.capabilities.isCreativeMode);
 					}
 					return true;
@@ -268,13 +260,13 @@ public class EntityAirship extends Entity implements IInventory {
 	}
 
 	@Override
-	public boolean isInvNameLocalized() {
+	public boolean func_145818_k_() {
 		return false;
 	}
 
 	@Override
 	public boolean isItemValidForSlot(int i, ItemStack itemstack) {
-		return i > 2 || (itemstack.getItem() instanceof ItemCoal && i == 0) || (itemstack.itemID == Item.arrow.itemID && i == 1);
+		return i > 2 || (itemstack.getItem() instanceof ItemCoal && i == 0) || (itemstack.getItem() == Items.arrow && i == 1);
 	}
 
 	@Override
@@ -298,13 +290,13 @@ public class EntityAirship extends Entity implements IInventory {
 		if (this.getDamageTaken() > 0)
 			this.setDamageTaken(this.getDamageTaken() - 1);
 		if (this.getFuelTime() == 0 && this.riddenByEntity != null) {
-			if (this.getStackInSlot(0) != null && this.getStackInSlot(0).itemID == Item.coal.itemID) {
+			if (this.getStackInSlot(0) != null && this.getStackInSlot(0).getItem() == Items.coal) {
 				this.setFuelTime(1600);
 				if (--this.cargoItems[0].stackSize <= 0)
-					this.setInventorySlotContents(0, (ItemStack) null);
-			} else if (PChan3Mods.usePlayerCoal && ((EntityPlayer) this.riddenByEntity).inventory.hasItem(Item.coal.itemID)) {
+					this.setInventorySlotContents(0, null);
+			} else if (PChan3Mods.usePlayerCoal && ((EntityPlayer) this.riddenByEntity).inventory.func_146028_b(Items.coal)) {
 				this.setFuelTime(1600);
-				((EntityPlayer) this.riddenByEntity).inventory.consumeInventoryItem(Item.coal.itemID);
+				((EntityPlayer) this.riddenByEntity).inventory.func_146026_a(Items.coal);
 			}
 		}
 		this.prevPosX = this.posX;
@@ -315,12 +307,12 @@ public class EntityAirship extends Entity implements IInventory {
 			double d5 = (this.boundingBox.minY + ((this.boundingBox.maxY - this.boundingBox.minY) * (j + 0)) / i) - 0.125D;
 			double d9 = (this.boundingBox.minY + ((this.boundingBox.maxY - this.boundingBox.minY) * (j + 1)) / i) - 0.125D;
 			AxisAlignedBB axisalignedbb = AxisAlignedBB.getBoundingBox(this.boundingBox.minX, d5, this.boundingBox.minZ, this.boundingBox.maxX, d9, this.boundingBox.maxZ);
-			if (this.worldObj.isAABBInMaterial(axisalignedbb, Material.water)) {
+			if (this.worldObj.isAABBInMaterial(axisalignedbb, Material.field_151586_h)) {
 			}
 		}
 		double d3 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
 		double d1;
-		if (this.worldObj.isRemote && this.field_70279_a) {
+		if (this.worldObj.isRemote) {
 			if (this.airshipPosRotationIncrements > 0) {
 				d1 = this.posX + (this.airShipX - this.posX) / this.airshipPosRotationIncrements;
 				double d5 = this.posY + (this.airShipY - this.posY) / this.airshipPosRotationIncrements;
@@ -374,7 +366,7 @@ public class EntityAirship extends Entity implements IInventory {
 					double d41 = (this.boundingBox.minY + ((this.boundingBox.maxY - this.boundingBox.minY) * (j - 2)) / i) - 0.125D;
 					double d8 = (this.boundingBox.minY + ((this.boundingBox.maxY - this.boundingBox.minY) * (j - 4)) / i) - 0.125D;
 					AxisAlignedBB axisalignedbb = AxisAlignedBB.getBoundingBox(this.boundingBox.minX, d41, this.boundingBox.minZ, this.boundingBox.maxX, d8, this.boundingBox.maxZ);
-					if (!this.worldObj.isAABBInMaterial(axisalignedbb, Material.water)) {
+					if (!this.worldObj.isAABBInMaterial(axisalignedbb, Material.field_151586_h)) {
 						this.motionY -= PChan3Mods.airDownSpeed;
 					} else {
 						this.posY += 5D;
@@ -461,7 +453,7 @@ public class EntityAirship extends Entity implements IInventory {
 		this.isAnchor = true;
 		this.thrower = par1Entity;
 		if (!this.worldObj.isRemote && forcePacket && this.worldObj instanceof WorldServer) {
-			((WorldServer) this.worldObj).getEntityTracker().sendPacketToAllPlayersTrackingEntity(this, new Packet39AttachEntity(1, this, this.thrower));
+			//((WorldServer) this.worldObj).getEntityTracker().sendPacketToAllPlayersTrackingEntity(this, new Packet39AttachEntity(1, this, this.thrower));
 		}
 	}
 
@@ -483,7 +475,7 @@ public class EntityAirship extends Entity implements IInventory {
 						var6 = var2.stackSize;
 					}
 					var2.stackSize -= var6;
-					EntityItem var7 = new EntityItem(this.worldObj, this.posX + var3, this.posY + var4, this.posZ + var5, new ItemStack(var2.itemID, var6, var2.getItemDamage()));
+					EntityItem var7 = new EntityItem(this.worldObj, this.posX + var3, this.posY + var4, this.posZ + var5, new ItemStack(var2.getItem(), var6, var2.getItemDamage()));
 					if (var2.hasTagCompound()) {
 						var7.getEntityItem().setTagCompound((NBTTagCompound) var2.getTagCompound().copy());
 					}
@@ -524,18 +516,7 @@ public class EntityAirship extends Entity implements IInventory {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void setPositionAndRotation2(double x, double y, double z, float f, float f1, int i) {
-		if (this.field_70279_a) {
-			this.airshipPosRotationIncrements = i + 5;
-		} else {
-			double d3 = x - this.posX;
-			double d4 = y - this.posY;
-			double d5 = z - this.posZ;
-			double d6 = d3 * d3 + d4 * d4 + d5 * d5;
-			if (d6 <= 1.0D) {
-				return;
-			}
-			this.airshipPosRotationIncrements = 3;
-		}
+        this.airshipPosRotationIncrements = i + 5;
 		this.airShipX = x;
 		this.airShipY = y;
 		this.airShipZ = z;
@@ -563,10 +544,10 @@ public class EntityAirship extends Entity implements IInventory {
 			this.isAnchor = false;
 			this.thrower = null;
 			if (!this.worldObj.isRemote && forceDrop) {
-				this.dropItem(PChan3Mods.anchor.itemID, 1);
+				this.func_145779_a(PChan3Mods.anchor, 1);
 			}
 			if (!this.worldObj.isRemote && forcePacket && this.worldObj instanceof WorldServer) {
-				((WorldServer) this.worldObj).getEntityTracker().sendPacketToAllPlayersTrackingEntity(this, new Packet39AttachEntity(1, this, (Entity) null));
+				//((WorldServer) this.worldObj).getEntityTracker().sendPacketToAllPlayersTrackingEntity(this, new Packet39AttachEntity(1, this, (Entity) null));
 			}
 		}
 	}
@@ -595,10 +576,10 @@ public class EntityAirship extends Entity implements IInventory {
 
 	@Override
 	protected void readEntityFromNBT(NBTTagCompound par1NBTTagCompound) {
-		NBTTagList itemTags = par1NBTTagCompound.getTagList("Items");
+		NBTTagList itemTags = (NBTTagList) par1NBTTagCompound.getTag("Items");
 		this.cargoItems = new ItemStack[this.getSizeInventory()];
 		for (int id = 0; id < itemTags.tagCount(); ++id) {
-			NBTTagCompound var4 = (NBTTagCompound) itemTags.tagAt(id);
+			NBTTagCompound var4 = itemTags.func_150305_b(id);
 			int var5 = var4.getByte("Slot") & 255;
 			if (var5 >= 0 && var5 < this.cargoItems.length) {
 				this.cargoItems[var5] = ItemStack.loadItemStackFromNBT(var4);
@@ -635,17 +616,17 @@ public class EntityAirship extends Entity implements IInventory {
 		par1NBTTagCompound.setTag("Items", tags);
 		par1NBTTagCompound.setBoolean("Leashed", this.isAnchor);
 		if (this.thrower != null) {
-			par1NBTTagCompound = new NBTTagCompound("Leash");
+			NBTTagCompound tag = new NBTTagCompound();
 			if (this.thrower instanceof EntityLivingBase) {
-				par1NBTTagCompound.setLong("UUIDMost", this.thrower.getUniqueID().getMostSignificantBits());
-				par1NBTTagCompound.setLong("UUIDLeast", this.thrower.getUniqueID().getLeastSignificantBits());
+                tag.setLong("UUIDMost", this.thrower.getUniqueID().getMostSignificantBits());
+                tag.setLong("UUIDLeast", this.thrower.getUniqueID().getLeastSignificantBits());
 			} else if (this.thrower instanceof EntityHanging) {
 				EntityHanging entityhanging = (EntityHanging) this.thrower;
-				par1NBTTagCompound.setInteger("X", entityhanging.xPosition);
-				par1NBTTagCompound.setInteger("Y", entityhanging.yPosition);
-				par1NBTTagCompound.setInteger("Z", entityhanging.zPosition);
+                tag.setInteger("X", entityhanging.field_146063_b);
+                tag.setInteger("Y", entityhanging.field_146064_c);
+                tag.setInteger("Z", entityhanging.field_146062_d);
 			}
-			par1NBTTagCompound.setTag("Leash", par1NBTTagCompound);
+			par1NBTTagCompound.setTag("Leash", tag);
 		}
 	}
 

@@ -2,6 +2,7 @@ package assets.pchan3;
 
 import java.util.Random;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.EntitySmokeFX;
@@ -20,13 +21,15 @@ import assets.pchan3.steamship.EntityAnchor;
 import assets.pchan3.steamship.ModelAirship;
 import assets.pchan3.steamship.ModelBalloon;
 import assets.pchan3.steamship.RenderAirship;
-import cpw.mods.fml.client.registry.KeyBindingRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
+import org.lwjgl.input.Keyboard;
 
 /**
  * @author pchan3
  */
 public class ClientProxy extends CommonProxy {
+    public static int KEY_UP = Keyboard.KEY_NUMPAD8, KEY_DOWN = Keyboard.KEY_NUMPAD2;
+    public static int KEY_CHEST = Keyboard.KEY_R, KEY_FIRE = Keyboard.KEY_NUMPAD5;
 	@Override
 	public void displayExplodeFX(Entity entity) {
 		for (int i = 1; i < 30; i++) {
@@ -74,13 +77,13 @@ public class ClientProxy extends CommonProxy {
 			if (rand.nextBoolean()) {
 				double d21 = (entity.posX - d13 * d18 * 0.8D) + d15 * d20;
 				double d23 = entity.posZ - d15 * d18 * 0.8D - d13 * d20;
-				if (entity.worldObj.isAABBInMaterial(axisalignedbb, Material.water)) {
+				if (entity.worldObj.isAABBInMaterial(axisalignedbb, Material.field_151586_h)) {
 					entity.worldObj.spawnParticle("splash", d21, entity.posY - 0.125D, d23, entity.motionX, entity.motionY, entity.motionZ);
 				}
 			} else {
 				double d22 = entity.posX + d13 + d15 * d18 * 0.69999999999999996D;
 				double d24 = (entity.posZ + d15) - d13 * d18 * 0.69999999999999996D;
-				if (entity.worldObj.isAABBInMaterial(axisalignedbb, Material.water)) {
+				if (entity.worldObj.isAABBInMaterial(axisalignedbb, Material.field_151586_h)) {
 					entity.worldObj.spawnParticle("splash", d22, entity.posY - 0.125D, d24, entity.motionX, entity.motionY, entity.motionZ);
 				}
 			}
@@ -93,6 +96,6 @@ public class ClientProxy extends CommonProxy {
 		RenderingRegistry.registerEntityRenderingHandler(EntityAirship.class, new RenderAirship(new ModelAirship(), new ModelBalloon(), 3.0f));
 		RenderingRegistry.registerEntityRenderingHandler(EntityPirate.class, new RenderPirate(new ModelPirate(), new ModelBalloon(), 1.0f));
 		RenderingRegistry.registerEntityRenderingHandler(EntitySteamBoat.class, new RenderSteamBoat());
-		KeyBindingRegistry.registerKeyBinding(new AirshipKeyHandler(PChan3Mods.KEY_CHEST, PChan3Mods.KEY_UP, PChan3Mods.KEY_DOWN, PChan3Mods.KEY_FIRE));
+        FMLCommonHandler.instance().bus().register(new AirshipKeyHandler(KEY_CHEST, KEY_UP, KEY_DOWN, KEY_FIRE));
 	}
 }

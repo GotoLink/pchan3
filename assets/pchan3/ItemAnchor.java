@@ -16,15 +16,15 @@ import assets.pchan3.steamship.EntityAirship;
 import assets.pchan3.steamship.EntityAnchor;
 
 public class ItemAnchor extends Item {
-	public ItemAnchor(int par1) {
-		super(par1);
+	public ItemAnchor() {
+		super();
 		this.setCreativeTab(CreativeTabs.tabTools);
 	}
 
 	@Override
 	public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer player, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10) {
-		int i1 = par3World.getBlockId(par4, par5, par6);
-		if (Block.blocksList[i1] != null && Block.blocksList[i1] instanceof BlockFence) {
+		Block i1 = par3World.func_147439_a(par4, par5, par6);
+		if (i1 instanceof BlockFence) {
 			if (par3World.isRemote) {
 				return true;
 			} else {
@@ -44,7 +44,7 @@ public class ItemAnchor extends Item {
 			Iterator<?> iterator = list.iterator();
 			while (iterator.hasNext()) {
 				EntityAirship airship = (EntityAirship) iterator.next();
-				if (airship.isAnchor && airship.thrower.entityId == player.entityId) {
+				if (airship.isAnchor && airship.thrower.func_145782_y() == player.func_145782_y()) {
 					if (entityleashknot == null) {
 						entityleashknot = EntityAnchor.specialSpawn(par1World, par2, par3, par4);
 					}

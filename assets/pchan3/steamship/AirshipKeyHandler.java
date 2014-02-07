@@ -1,72 +1,62 @@
 package assets.pchan3.steamship;
 
-import java.util.EnumSet;
-
+import cpw.mods.fml.client.registry.ClientRegistry;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.InputEvent;
+import cpw.mods.fml.relauncher.Side;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import assets.pchan3.PChan3Mods;
 import assets.pchan3.PacketHandler;
-import cpw.mods.fml.client.registry.KeyBindingRegistry.KeyHandler;
-import cpw.mods.fml.common.TickType;
-import cpw.mods.fml.common.network.PacketDispatcher;
+import org.lwjgl.input.Keyboard;
 
-public class AirshipKeyHandler extends KeyHandler {
-	public static final String chestKeyDesc = "OpenAirshipChest";
-	public static final String upKeyDesc = "AirshipUp";
-	public static final String downKeyDesc = "AirshipDown";
-	public static final String fireKeyDesc = "AirshipFire";
+public class AirshipKeyHandler {
+	public static final String chestKeyDesc = "openchest";
+	public static final String upKeyDesc = "up";
+	public static final String downKeyDesc = "down";
+	public static final String fireKeyDesc = "fire";
+    public static KeyBinding chest, up, down, fire;
 	public Minecraft client = Minecraft.getMinecraft();
 
 	public AirshipKeyHandler(int CHEST_KEY, int UP_KEY, int DOWN_KEY, int FIRE_KEY) {
-		super(new KeyBinding[] { new KeyBinding(chestKeyDesc, CHEST_KEY), new KeyBinding(upKeyDesc, UP_KEY), new KeyBinding(downKeyDesc, DOWN_KEY), new KeyBinding(fireKeyDesc, FIRE_KEY) },
-				new boolean[] { false, false, false, false });
+		chest = new KeyBinding("key."+chestKeyDesc, CHEST_KEY, "key.categories.airship");
+        up = new KeyBinding("key."+upKeyDesc, UP_KEY, "key.categories.airship");
+        down = new KeyBinding("key."+downKeyDesc, DOWN_KEY, "key.categories.airship");
+        fire = new KeyBinding("key."+fireKeyDesc, FIRE_KEY, "key.categories.airship");
+        ClientRegistry.registerKeyBinding(chest);
+        ClientRegistry.registerKeyBinding(up);
+        ClientRegistry.registerKeyBinding(down);
+        ClientRegistry.registerKeyBinding(fire);
 	}
 
-	@Override
-	public String getLabel() {
-		return "Airship KeyHandler";
-	}
-
-	@Override
-	public void keyDown(EnumSet<TickType> es, KeyBinding kb, boolean endTick, boolean repeat) {
-		if (client != null && client.thePlayer != null && endTick) {
+	@SubscribeEvent
+	public void keyDown(InputEvent.KeyInputEvent event) {
+		if (client != null && client.thePlayer != null) {
 			Entity ent = client.thePlayer.ridingEntity;
 			if (ent != null && ent instanceof EntityAirship) {
-				if (kb.keyDescription.equals(chestKeyDesc) && client.currentScreen == null) {
-					client.thePlayer.openGui(PChan3Mods.instance, PChan3Mods.GUI_ID, client.theWorld, 0, 0, 0);
-					PacketDispatcher.sendPacketToServer(PacketHandler.getPacket(ent.entityId, 0));
-				} else if (kb.keyDescription.equals(upKeyDesc) && ((EntityAirship) ent).getFuelTime() != 0) {
-					PacketDispatcher.sendPacketToServer(PacketHandler.getPacket(ent.entityId, 1));
-				} else if (kb.keyDescription.equals(downKeyDesc)) {
-					PacketDispatcher.sendPacketToServer(PacketHandler.getPacket(ent.entityId, 2));
-				} else if (kb.keyDescription.equals(fireKeyDesc) && ((EntityAirship) ent).getFireCountDown() == 0) {
-					PacketDispatcher.sendPacketToServer(PacketHandler.getPacket(ent.entityId, 3));
+				if (Keyboard.getEventKey() == chest.func_151463_i()){
+                    if(client.currentScreen == null) {
+					    client.thePlayer.openGui(PChan3Mods.instance, PChan3Mods.GUI_ID, client.theWorld, 0, 0, 0);
+					    PChan3Mods.channel.sendToServer(PacketHandler.getPacket(Side.SERVER, ent.func_145782_y(), 0));
+                    }
+				} else if (Keyboard.getEventKey() == up.func_151463_i() && ((EntityAirship) ent).getFuelTime() != 0) {
+                    PChan3Mods.channel.sendToServer(PacketHandler.getPacket(Side.SERVER, ent.func_145782_y(), 1));
+				} else if (Keyboard.getEventKey() == down.func_151463_i()) {
+                    PChan3Mods.channel.sendToServer(PacketHandler.getPacket(Side.SERVER, ent.func_145782_y(), 2));
+				} else if (Keyboard.getEventKey() == fire.func_151463_i() && ((EntityAirship) ent).getFireCountDown() == 0) {
+                    PChan3Mods.channel.sendToServer(PacketHandler.getPacket(Side.SERVER, ent.func_145782_y(), 3));
 				}
+                if(!up.func_151470_d()){
+                    PChan3Mods.channel.sendToServer(PacketHandler.getPacket(Side.SERVER, ent.func_145782_y(), 4));
+                }
+                if(!down.func_151470_d()){
+                    PChan3Mods.channel.sendToServer(PacketHandler.getPacket(Side.SERVER, ent.func_145782_y(), 5));
+                }
+                if(!fire.func_151470_d()){
+                    PChan3Mods.channel.sendToServer(PacketHandler.getPacket(Side.SERVER, ent.func_145782_y(), 6));
+                }
 			}
 		}
-	}
-
-	@Override
-	public void keyUp(EnumSet<TickType> es, KeyBinding kb, boolean tickEnd) {
-		if (client != null && client.thePlayer != null && tickEnd) {
-			Entity ent = client.thePlayer.ridingEntity;
-			if (ent != null && ent instanceof EntityAirship) {
-				if (kb.keyDescription.equals(upKeyDesc)) {
-					PacketDispatcher.sendPacketToServer(PacketHandler.getPacket(ent.entityId, 4));
-				}
-				if (kb.keyDescription.equals(downKeyDesc)) {
-					PacketDispatcher.sendPacketToServer(PacketHandler.getPacket(ent.entityId, 5));
-				}
-				if (kb.keyDescription.equals(fireKeyDesc)) {
-					PacketDispatcher.sendPacketToServer(PacketHandler.getPacket(ent.entityId, 6));
-				}
-			}
-		}
-	}
-
-	@Override
-	public EnumSet<TickType> ticks() {
-		return EnumSet.of(TickType.CLIENT);
 	}
 }

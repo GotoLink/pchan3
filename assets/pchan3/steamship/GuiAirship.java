@@ -20,20 +20,20 @@ public class GuiAirship extends GuiContainer {
 	}
 
 	@Override
-	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
-		fontRenderer.drawString("Airship Inventory", 8, 4, 0x404040);
-		fontRenderer.drawString("Arrows:", 89, 55, 0x404040);
-		fontRenderer.drawString("Fuel:", 105, 20, 0x404040);
-		fontRenderer.drawString("Inventory", 8, (ySize - 96) + 2, 0x404040);
+	protected void func_146979_b(int par1, int par2) {
+        field_146289_q.drawString("Airship Inventory", 8, 4, 0x404040);
+        field_146289_q.drawString("Arrows:", 89, 55, 0x404040);
+        field_146289_q.drawString("Fuel:", 105, 20, 0x404040);
+        field_146289_q.drawString("Inventory", 8, (field_147000_g - 96) + 2, 0x404040);
 	}
 
 	@Override
-	protected void drawGuiContainerBackgroundLayer(float f, int b, int r) {
+	protected void func_146976_a(float f, int b, int r) {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		this.mc.renderEngine.bindTexture(gui);
-		int j = (width - xSize) / 2;
-		int k = (height - ySize) / 2;
-		drawTexturedModalRect(j, k, 0, 0, xSize, ySize);
+		this.field_146297_k.renderEngine.bindTexture(gui);
+		int j = (this.field_146294_l - this.field_146999_f) / 2;
+		int k = (this.field_146295_m - this.field_147000_g) / 2;
+		drawTexturedModalRect(j, k, 0, 0, field_146999_f, field_147000_g);
 		int x = airship.getFuelScaled(10);//32 = Empty, 0 = Full, Work Out Fuel level.
 		this.drawTexturedModalRect(j + 156, k + 15, 176, 32 - x, 12, 32);
 		//drawTexturedModalRect(j + 79, k + 34, 176, 14, i1 + 1, 16);

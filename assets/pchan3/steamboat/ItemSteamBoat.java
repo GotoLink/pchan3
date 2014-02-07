@@ -2,22 +2,21 @@ package assets.pchan3.steamboat;
 
 import java.util.List;
 
-import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.EnumMovingObjectType;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
 public class ItemSteamBoat extends Item {
-	public ItemSteamBoat(int par1) {
-		super(par1);
+	public ItemSteamBoat() {
+		super();
 		this.maxStackSize = 1;
 		this.setCreativeTab(CreativeTabs.tabTransport);
 	}
@@ -62,11 +61,11 @@ public class ItemSteamBoat extends Item {
 			if (var26)
 				return par1ItemStack;
 			else {
-				if (var24.typeOfHit == EnumMovingObjectType.TILE) {
+				if (var24.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
 					var29 = var24.blockX;
 					int var33 = var24.blockY;
 					int var34 = var24.blockZ;
-					if (par2World.getBlockId(var29, var33, var34) == Block.snow.blockID) {
+					if (par2World.func_147439_a(var29, var33, var34) == Blocks.snow) {
 						--var33;
 					}
 					EntitySteamBoat var35 = new EntitySteamBoat(par2World, var29 + 0.5F, var33 + 1.0F, var34 + 0.5F);

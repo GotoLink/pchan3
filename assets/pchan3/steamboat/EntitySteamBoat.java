@@ -7,6 +7,8 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -23,7 +25,6 @@ public class EntitySteamBoat extends Entity {
 	private int boatPosRotationIncrements;
 	private double boatX, boatY, boatZ;
 	private double boatYaw;
-	private boolean field_70279_a;
 	private double speedMultiplier;
 	@SideOnly(Side.CLIENT)
 	private double velocityX;
@@ -34,7 +35,6 @@ public class EntitySteamBoat extends Entity {
 
 	public EntitySteamBoat(World world) {
 		super(world);
-		this.field_70279_a = true;
 		this.speedMultiplier = 0.14D;
 		this.preventEntitySpawning = true;
 		this.setSize(1.5F, 0.6F);
@@ -66,7 +66,7 @@ public class EntitySteamBoat extends Entity {
 				if (this.riddenByEntity != null) {
 					this.riddenByEntity.mountEntity(this);
 				}
-				this.dropItemWithOffset(PChan3Mods.steamBoat.itemID, 1, 0.0f);
+				this.func_145778_a(PChan3Mods.steamBoat, 1, 0.0f);
 				this.setDead();
 				return true;
 			}
@@ -74,8 +74,8 @@ public class EntitySteamBoat extends Entity {
 				if (this.riddenByEntity != null) {
 					this.riddenByEntity.mountEntity(this);
 				}
-				this.dropItemWithOffset(Block.planks.blockID, 5, 0.0F);
-				this.dropItemWithOffset(Item.ingotIron.itemID, 1, 0.0f);
+				this.func_145778_a(Item.func_150898_a(Blocks.planks), 5, 0.0F);
+				this.func_145778_a(Items.iron_ingot, 1, 0.0f);
 				this.setDead();
 			}
 			return true;
@@ -91,11 +91,6 @@ public class EntitySteamBoat extends Entity {
 	@Override
 	public boolean canBePushed() {
 		return true;
-	}
-
-	@SideOnly(Side.CLIENT)
-	public void func_70270_d(boolean par1) {
-		this.field_70279_a = par1;
 	}
 
 	@Override
@@ -141,7 +136,7 @@ public class EntitySteamBoat extends Entity {
 			return true;
 		else if (!this.worldObj.isRemote) {
 			ItemStack var2 = par1EntityPlayer.getCurrentEquippedItem();
-			if (var2 != null && var2.itemID == Item.coal.itemID) {
+			if (var2 != null && var2.getItem() == Items.coal) {
 				if (--var2.stackSize == 0) {
 					par1EntityPlayer.destroyCurrentEquippedItem();
 				}
@@ -167,9 +162,9 @@ public class EntitySteamBoat extends Entity {
 			this.setFuelTime(this.getFuelTime() - 1);
 		}
 		if (this.getFuelTime() == 0 && this.riddenByEntity != null && this.riddenByEntity instanceof EntityPlayer) {
-			if (((EntityPlayer) this.riddenByEntity).inventory.hasItem(263)) {
+			if (((EntityPlayer) this.riddenByEntity).inventory.func_146028_b(Items.coal)) {
 				this.setFuelTime(1600);
-				((EntityPlayer) this.riddenByEntity).inventory.consumeInventoryItem(263);
+				((EntityPlayer) this.riddenByEntity).inventory.func_146026_a(Items.coal);
 			}
 		}
 		this.prevPosX = this.posX;
@@ -181,7 +176,7 @@ public class EntitySteamBoat extends Entity {
 			double var5 = this.boundingBox.minY + (this.boundingBox.maxY - this.boundingBox.minY) * (var4 + 0) / var1 - 0.125D;
 			double var7 = this.boundingBox.minY + (this.boundingBox.maxY - this.boundingBox.minY) * (var4 + 1) / var1 - 0.125D;
 			AxisAlignedBB var9 = AxisAlignedBB.getAABBPool().getAABB(this.boundingBox.minX, var5, this.boundingBox.minZ, this.boundingBox.maxX, var7, this.boundingBox.maxZ);
-			if (this.worldObj.isAABBInMaterial(var9, Material.water)) {
+			if (this.worldObj.isAABBInMaterial(var9, Material.field_151586_h)) {
 				var2 += 1.0D / var1;
 			}
 		}
@@ -196,7 +191,7 @@ public class EntitySteamBoat extends Entity {
 		}
 		double var12;
 		double var26;
-		if (this.worldObj.isRemote && this.field_70279_a) {
+		if (this.worldObj.isRemote) {
 			if (this.boatPosRotationIncrements > 0) {
 				var6 = this.posX + (this.boatX - this.posX) / this.boatPosRotationIncrements;
 				var8 = this.posY + (this.boatY - this.posY) / this.boatPosRotationIncrements;
@@ -266,10 +261,10 @@ public class EntitySteamBoat extends Entity {
 				if (!this.worldObj.isRemote && !this.isDead) {
 					this.setDead();
 					for (int k = 0; k < 5; k++) {
-						this.dropItemWithOffset(Block.planks.blockID, 1, 0.0F);
+						this.func_145778_a(Item.func_150898_a(Blocks.planks), 1, 0.0F);
 					}
 					for (int l = 0; l < 1; l++) {
-						this.dropItemWithOffset(Item.ingotIron.itemID, 1, 0.0F);
+						this.func_145778_a(Items.iron_ingot, 1, 0.0F);
 					}
 				}
 			} else {
@@ -309,11 +304,11 @@ public class EntitySteamBoat extends Entity {
 					int var19 = MathHelper.floor_double(this.posZ + (var27 / 2 - 0.5D) * 0.8D);
 					for (int var20 = 0; var20 < 2; ++var20) {
 						int var21 = MathHelper.floor_double(this.posY) + var20;
-						int var22 = this.worldObj.getBlockId(var28, var21, var19);
-						if (var22 == Block.snow.blockID) {
-							this.worldObj.setBlockToAir(var28, var21, var19);
-						} else if (var22 == Block.waterlily.blockID) {
-							this.worldObj.destroyBlock(var28, var21, var19, true);
+						Block var22 = this.worldObj.func_147439_a(var28, var21, var19);
+						if (var22 == Blocks.snow) {
+							this.worldObj.func_147468_f(var28, var21, var19);
+						} else if (var22 == Blocks.waterlily) {
+							this.worldObj.func_147480_a(var28, var21, var19, true);
 						}
 					}
 				}
@@ -347,17 +342,7 @@ public class EntitySteamBoat extends Entity {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void setPositionAndRotation2(double par1, double par3, double par5, float par7, float par8, int par9) {
-		if (this.field_70279_a) {
-			this.boatPosRotationIncrements = par9 + 5;
-		} else {
-			double d3 = par1 - this.posX;
-			double d4 = par3 - this.posY;
-			double d5 = par5 - this.posZ;
-			double d6 = d3 * d3 + d4 * d4 + d5 * d5;
-			if (d6 <= 1.0D)
-				return;
-			this.boatPosRotationIncrements = 3;
-		}
+        this.boatPosRotationIncrements = par9 + 5;
 		this.boatX = par1;
 		this.boatY = par3;
 		this.boatZ = par5;
