@@ -37,35 +37,31 @@ public class PacketHandler {
 		short data = buf.readShort();
 		Entity ent = player.worldObj.getEntityByID(id);
 		if (ent != null && ent instanceof EntityAirship && ent.riddenByEntity instanceof EntityPlayer) {
-			switch (data) {
-			case 0:
-				((EntityPlayer) ent.riddenByEntity).openGui(PChan3Mods.instance, PChan3Mods.GUI_ID, ent.worldObj, 0, 0, 0);
-				break;
-			case 1:
-                ((EntityAirship) ent).isGoingDown = false;
-				((EntityAirship) ent).isGoingUp = true;
-				break;
-			case 2:
+            if(data==0){
+                ((EntityPlayer) ent.riddenByEntity).openGui(PChan3Mods.instance, PChan3Mods.GUI_ID, ent.worldObj, 0, 0, 0);
+                return null;
+            }else{
                 ((EntityAirship) ent).isGoingUp = false;
-				((EntityAirship) ent).isGoingDown = true;
-				break;
-			case 3:
-				((EntityAirship) ent).isFiring = true;
-				break;
-			case 4:
-				((EntityAirship) ent).isGoingUp = false;
-				break;
-			case 5:
-				((EntityAirship) ent).isGoingDown = false;
-				break;
-			case 6:
-				((EntityAirship) ent).isFiring = false;
-				break;
-			}
-			if (!player.worldObj.isRemote && data != 0) {
-                packet.setTarget(Side.CLIENT);
-                return packet;
-			}
+                ((EntityAirship) ent).isGoingDown = false;
+                ((EntityAirship) ent).isFiring = false;
+                switch (data) {
+                    case 1:
+                        if(((EntityAirship) ent).getFuelTime() > 0){
+                            ((EntityAirship) ent).isGoingUp = true;
+                        }
+                        break;
+                    case 2:
+                        ((EntityAirship) ent).isGoingDown = true;
+                        break;
+                    case 3:
+                        ((EntityAirship) ent).isFiring = ((EntityAirship) ent).getFireCountDown() == 0;
+                        break;
+                }
+                if (!player.worldObj.isRemote) {
+                    packet.setTarget(Side.CLIENT);
+                    return packet;
+                }
+            }
 		}
         return null;
 	}
