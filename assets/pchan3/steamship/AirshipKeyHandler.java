@@ -34,19 +34,19 @@ public class AirshipKeyHandler {
 		if (event.phase == TickEvent.Phase.START && client != null && client.thePlayer != null) {
 			Entity ent = client.thePlayer.ridingEntity;
 			if (ent != null && ent instanceof EntityAirship) {
-				if (chest.func_151470_d()){
+				if (chest.getIsKeyPressed()){
                     if(client.currentScreen == null) {
 					    client.thePlayer.openGui(PChan3Mods.instance, PChan3Mods.GUI_ID, client.theWorld, 0, 0, 0);
-					    PChan3Mods.channel.sendToServer(PacketHandler.getPacket(Side.SERVER, ent.func_145782_y(), 0));
+					    PChan3Mods.channel.sendToServer(PacketHandler.getPacket(Side.SERVER, ent.getEntityId(), 0));
                     }
-				} else if (up.func_151470_d()) {
-                    PChan3Mods.channel.sendToServer(PacketHandler.getPacket(Side.SERVER, ent.func_145782_y(), 1));
-				} else if (down.func_151470_d()) {
-                    PChan3Mods.channel.sendToServer(PacketHandler.getPacket(Side.SERVER, ent.func_145782_y(), 2));
-				} else if (fire.func_151470_d()) {
-                    PChan3Mods.channel.sendToServer(PacketHandler.getPacket(Side.SERVER, ent.func_145782_y(), 3));
+				} else if (up.getIsKeyPressed()) {
+                    PChan3Mods.channel.sendToServer(PacketHandler.getPacket(Side.SERVER, ent.getEntityId(), 1));
+				} else if (down.getIsKeyPressed()) {
+                    PChan3Mods.channel.sendToServer(PacketHandler.getPacket(Side.SERVER, ent.getEntityId(), 2));
+				} else if (fire.getIsKeyPressed()) {
+                    PChan3Mods.channel.sendToServer(PacketHandler.getPacket(Side.SERVER, ent.getEntityId(), 3));
 				} else{
-                    PChan3Mods.channel.sendToServer(PacketHandler.getPacket(Side.SERVER, ent.func_145782_y(), 4));
+                    PChan3Mods.channel.sendToServer(PacketHandler.getPacket(Side.SERVER, ent.getEntityId(), 4));
                 }
 			}
 		}

@@ -20,7 +20,7 @@ public class PacketHandler {
 	public void onPacketData(FMLNetworkEvent.ServerCustomPacketEvent event) {
 		if (event.packet.channel().equals(CHANNEL))
             if(event.packet.getTarget().isServer()) {
-			    event.reply = this.handle(event.packet, ((NetHandlerPlayServer)event.handler).field_147369_b);
+			    event.reply = this.handle(event.packet, ((NetHandlerPlayServer)event.handler).playerEntity);
 		    }else{
                 this.handle(event.packet, getPlayer());
             }

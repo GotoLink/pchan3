@@ -74,7 +74,7 @@ public class EntitySteamBoat extends Entity {
 				if (this.riddenByEntity != null) {
 					this.riddenByEntity.mountEntity(this);
 				}
-				this.func_145778_a(Item.func_150898_a(Blocks.planks), 5, 0.0F);
+				this.func_145778_a(Item.getItemFromBlock(Blocks.planks), 5, 0.0F);
 				this.func_145778_a(Items.iron_ingot, 1, 0.0f);
 				this.setDead();
 			}
@@ -162,9 +162,8 @@ public class EntitySteamBoat extends Entity {
 			this.setFuelTime(this.getFuelTime() - 1);
 		}
 		if (this.getFuelTime() == 0 && this.riddenByEntity != null && this.riddenByEntity instanceof EntityPlayer) {
-			if (((EntityPlayer) this.riddenByEntity).inventory.func_146028_b(Items.coal)) {
+			if (((EntityPlayer) this.riddenByEntity).inventory.consumeInventoryItem(Items.coal)) {
 				this.setFuelTime(1600);
-				((EntityPlayer) this.riddenByEntity).inventory.func_146026_a(Items.coal);
 			}
 		}
 		this.prevPosX = this.posX;
@@ -176,7 +175,7 @@ public class EntitySteamBoat extends Entity {
 			double var5 = this.boundingBox.minY + (this.boundingBox.maxY - this.boundingBox.minY) * (var4 + 0) / var1 - 0.125D;
 			double var7 = this.boundingBox.minY + (this.boundingBox.maxY - this.boundingBox.minY) * (var4 + 1) / var1 - 0.125D;
 			AxisAlignedBB var9 = AxisAlignedBB.getAABBPool().getAABB(this.boundingBox.minX, var5, this.boundingBox.minZ, this.boundingBox.maxX, var7, this.boundingBox.maxZ);
-			if (this.worldObj.isAABBInMaterial(var9, Material.field_151586_h)) {
+			if (this.worldObj.isAABBInMaterial(var9, Material.water)) {
 				var2 += 1.0D / var1;
 			}
 		}
@@ -261,7 +260,7 @@ public class EntitySteamBoat extends Entity {
 				if (!this.worldObj.isRemote && !this.isDead) {
 					this.setDead();
 					for (int k = 0; k < 5; k++) {
-						this.func_145778_a(Item.func_150898_a(Blocks.planks), 1, 0.0F);
+						this.func_145778_a(Item.getItemFromBlock(Blocks.planks), 1, 0.0F);
 					}
 					for (int l = 0; l < 1; l++) {
 						this.func_145778_a(Items.iron_ingot, 1, 0.0F);
@@ -304,9 +303,9 @@ public class EntitySteamBoat extends Entity {
 					int var19 = MathHelper.floor_double(this.posZ + (var27 / 2 - 0.5D) * 0.8D);
 					for (int var20 = 0; var20 < 2; ++var20) {
 						int var21 = MathHelper.floor_double(this.posY) + var20;
-						Block var22 = this.worldObj.func_147439_a(var28, var21, var19);
+						Block var22 = this.worldObj.getBlock(var28, var21, var19);
 						if (var22 == Blocks.snow) {
-							this.worldObj.func_147468_f(var28, var21, var19);
+							this.worldObj.setBlockToAir(var28, var21, var19);
 						} else if (var22 == Blocks.waterlily) {
 							this.worldObj.func_147480_a(var28, var21, var19, true);
 						}

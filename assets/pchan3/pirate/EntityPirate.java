@@ -150,17 +150,17 @@ public class EntityPirate extends EntityFlying implements IMob, IRangedAttackMob
 		if (par1) {
 			Random rand = new Random();
 			if (rand.nextInt(100) < 5 + par2) {
-                func_145779_a(PChan3Mods.engine, 1);
+                dropItem(PChan3Mods.engine, 1);
 			} else if (rand.nextBoolean() == true) {
-                func_145779_a(Items.arrow, 4);
+                dropItem(Items.arrow, 4);
 			} else {
-                func_145779_a(Items.leather, 4);
+                dropItem(Items.leather, 4);
 			}
 		}
 	}
 
 	@Override
-	protected Item func_146068_u() {
+	protected Item getDropItem() {
 		return Items.arrow;
 	}
 

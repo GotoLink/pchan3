@@ -77,13 +77,13 @@ public class ClientProxy extends CommonProxy {
 			if (rand.nextBoolean()) {
 				double d21 = (entity.posX - d13 * d18 * 0.8D) + d15 * d20;
 				double d23 = entity.posZ - d15 * d18 * 0.8D - d13 * d20;
-				if (entity.worldObj.isAABBInMaterial(axisalignedbb, Material.field_151586_h)) {
+				if (entity.worldObj.isAABBInMaterial(axisalignedbb, Material.water)) {
 					entity.worldObj.spawnParticle("splash", d21, entity.posY - 0.125D, d23, entity.motionX, entity.motionY, entity.motionZ);
 				}
 			} else {
-				double d22 = entity.posX + d13 + d15 * d18 * 0.69999999999999996D;
-				double d24 = (entity.posZ + d15) - d13 * d18 * 0.69999999999999996D;
-				if (entity.worldObj.isAABBInMaterial(axisalignedbb, Material.field_151586_h)) {
+				double d22 = entity.posX + d13 + d15 * d18 * 0.7D;
+				double d24 = (entity.posZ + d15) - d13 * d18 * 0.7D;
+				if (entity.worldObj.isAABBInMaterial(axisalignedbb, Material.water)) {
 					entity.worldObj.spawnParticle("splash", d22, entity.posY - 0.125D, d24, entity.motionX, entity.motionY, entity.motionZ);
 				}
 			}

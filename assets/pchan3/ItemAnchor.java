@@ -23,7 +23,7 @@ public class ItemAnchor extends Item {
 
 	@Override
 	public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer player, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10) {
-		Block i1 = par3World.func_147439_a(par4, par5, par6);
+		Block i1 = par3World.getBlock(par4, par5, par6);
 		if (i1 instanceof BlockFence) {
 			if (par3World.isRemote) {
 				return true;
@@ -44,7 +44,7 @@ public class ItemAnchor extends Item {
 			Iterator<?> iterator = list.iterator();
 			while (iterator.hasNext()) {
 				EntityAirship airship = (EntityAirship) iterator.next();
-				if (airship.isAnchor && airship.thrower.func_145782_y() == player.func_145782_y()) {
+				if (airship.isAnchor && airship.thrower.getEntityId() == player.getEntityId()) {
 					if (entityleashknot == null) {
 						entityleashknot = EntityAnchor.specialSpawn(par1World, par2, par3, par4);
 					}

@@ -127,7 +127,7 @@ public class PChan3Mods {
 
 	private BiomeGenBase[] getAvailableBiomes() {
 		ArrayList<BiomeGenBase> result = new ArrayList<BiomeGenBase>();
-		Iterator<BiomeGenBase> itr = Arrays.asList(BiomeGenBase.func_150565_n()).iterator();
+		Iterator<BiomeGenBase> itr = Arrays.asList(BiomeGenBase.getBiomeGenArray()).iterator();
 		BiomeGenBase biome = null;
 		while (itr.hasNext()) {
 			biome = itr.next();
