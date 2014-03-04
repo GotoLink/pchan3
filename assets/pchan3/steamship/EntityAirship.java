@@ -7,8 +7,6 @@ import java.util.UUID;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityHanging;
-import net.minecraft.entity.EntityLeashKnot;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,7 +22,6 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import assets.pchan3.ItemAnchor;
 import assets.pchan3.PChan3Mods;
 import cpw.mods.fml.relauncher.Side;
@@ -99,7 +96,7 @@ public class EntityAirship extends Entity implements IInventory {
 
 	@Override
 	public boolean canBePushed() {
-		return true;
+		return !isAnchor;
 	}
 
 	@Override
@@ -243,16 +240,16 @@ public class EntityAirship extends Entity implements IInventory {
 					return false;
 				} else if (itemstack.getItem() instanceof ItemAnchor) {
 					if (!this.isAnchor) {
-						this.setAnchor(entityplayer, true);
+						this.setAnchor(entityplayer);
 						if (!entityplayer.capabilities.isCreativeMode && --itemstack.stackSize == 0) {
 							entityplayer.destroyCurrentEquippedItem();
 						}
-					} else if (this.thrower.getEntityId() == entityplayer.getEntityId()) {
-						this.unsetAnchor(true, !entityplayer.capabilities.isCreativeMode);
 					}
 					return true;
 				}
-			}
+			}else if(this.isAnchor && this.thrower.getEntityId() == entityplayer.getEntityId()){
+                this.unsetAnchor(!entityplayer.capabilities.isCreativeMode);
+            }
 			entityplayer.mountEntity(this);
 			return true;
 		}
@@ -337,7 +334,7 @@ public class EntityAirship extends Entity implements IInventory {
 		} else {
 			double d4;
 			double d5;
-			if (this.riddenByEntity != null && this.riddenByEntity instanceof EntityLivingBase) {
+			if (!this.isAnchor && this.riddenByEntity != null && this.riddenByEntity instanceof EntityLivingBase) {
 				d4 = ((EntityLivingBase) this.riddenByEntity).moveForward;//>0 for forward key, <0 for backward
 				d5 = ((EntityLivingBase) this.riddenByEntity).moveStrafing;//>0 for left key, <0 for right key
 				double d0 = -Math.sin(this.riddenByEntity.rotationYaw * (float) Math.PI / 180.0F);
@@ -351,7 +348,7 @@ public class EntityAirship extends Entity implements IInventory {
 				this.motionX *= d5;
 				this.motionZ *= d5;
 			}
-			if (this.isGoingUp) {
+			if (this.isGoingUp && !this.isAnchor) {
 				this.motionY += PChan3Mods.airUpSpeed;
 			} else if (this.isGoingDown) {
 				for (int j = 0; j < i; j++) {
@@ -378,7 +375,7 @@ public class EntityAirship extends Entity implements IInventory {
 				this.motionZ = -d7;
 			if (this.motionZ > d7)
 				this.motionZ = d7;
-			if (this.getFuelTime() == 0) {
+			if (this.getFuelTime() == 0||this.isAnchor) {
 				this.motionX *= 0.5D;
 				this.motionY *= 0.5D;
 				this.motionZ *= 0.5D;
@@ -441,12 +438,9 @@ public class EntityAirship extends Entity implements IInventory {
 		this.setDamageTaken(this.getDamageTaken() * 11.0F);
 	}
 
-	public void setAnchor(Entity par1Entity, boolean forcePacket) {
+	public void setAnchor(Entity par1Entity) {
 		this.isAnchor = true;
 		this.thrower = par1Entity;
-		if (!this.worldObj.isRemote && forcePacket && this.worldObj instanceof WorldServer) {
-			//((WorldServer) this.worldObj).getEntityTracker().sendPacketToAllPlayersTrackingEntity(this, new Packet39AttachEntity(1, this, this.thrower));
-		}
 	}
 
 	public void setDamageTaken(float par1) {
@@ -531,15 +525,12 @@ public class EntityAirship extends Entity implements IInventory {
 		this.velocityZ = this.motionZ = par5;
 	}
 
-	public void unsetAnchor(boolean forcePacket, boolean forceDrop) {
+	public void unsetAnchor(boolean forceDrop) {
 		if (this.isAnchor) {
 			this.isAnchor = false;
 			this.thrower = null;
 			if (!this.worldObj.isRemote && forceDrop) {
 				this.dropItem(PChan3Mods.anchor, 1);
-			}
-			if (!this.worldObj.isRemote && forcePacket && this.worldObj instanceof WorldServer) {
-				//((WorldServer) this.worldObj).getEntityTracker().sendPacketToAllPlayersTrackingEntity(this, new Packet39AttachEntity(1, this, (Entity) null));
 			}
 		}
 	}
@@ -589,7 +580,7 @@ public class EntityAirship extends Entity implements IInventory {
 		}
 		if (this.isAnchor) {
 			if (this.thrower == null || this.thrower.isDead) {
-				this.unsetAnchor(true, true);
+				this.unsetAnchor(true);
 			}
 		}
 	}
@@ -612,11 +603,6 @@ public class EntityAirship extends Entity implements IInventory {
 			if (this.thrower instanceof EntityLivingBase) {
                 tag.setLong("UUIDMost", this.thrower.getUniqueID().getMostSignificantBits());
                 tag.setLong("UUIDLeast", this.thrower.getUniqueID().getLeastSignificantBits());
-			} else if (this.thrower instanceof EntityHanging) {
-				EntityHanging entityhanging = (EntityHanging) this.thrower;
-                tag.setInteger("X", entityhanging.field_146063_b);
-                tag.setInteger("Y", entityhanging.field_146064_c);
-                tag.setInteger("Z", entityhanging.field_146062_d);
 			}
 			par1NBTTagCompound.setTag("Leash", tag);
 		}
@@ -635,17 +621,8 @@ public class EntityAirship extends Entity implements IInventory {
 						break;
 					}
 				}
-			} else if (this.leash.hasKey("X") && this.leash.hasKey("Y") && this.leash.hasKey("Z")) {
-				int i = this.leash.getInteger("X");
-				int j = this.leash.getInteger("Y");
-				int k = this.leash.getInteger("Z");
-				EntityLeashKnot entityleashknot = EntityLeashKnot.getKnotForBlock(this.worldObj, i, j, k);
-				if (entityleashknot == null) {
-					entityleashknot = EntityAnchor.specialSpawn(this.worldObj, i, j, k);
-				}
-				this.thrower = entityleashknot;
 			} else {
-				this.unsetAnchor(false, true);
+				this.unsetAnchor(true);
 			}
 		}
 		this.leash = null;
