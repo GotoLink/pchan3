@@ -20,7 +20,6 @@ import assets.pchan3.pirate.EntityPirate;
 import assets.pchan3.steamboat.EntitySteamBoat;
 import assets.pchan3.steamboat.ItemSteamBoat;
 import assets.pchan3.steamship.EntityAirship;
-import assets.pchan3.steamship.EntityAnchor;
 import assets.pchan3.steamship.ItemAirship;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -112,7 +111,6 @@ public class PChan3Mods {
             GameRegistry.registerItem(anchor, "Anchor");
             GameRegistry.addRecipe(new ItemStack(anchor), " L ", " L ", "III",'L', Items.string,'I', Items.iron_ingot);
 			NetworkRegistry.INSTANCE.registerGuiHandler(this, proxy);
-			EntityRegistry.registerModEntity(EntityAnchor.class, "Anchor", 0, this, 160, 80, false);
             channel = NetworkRegistry.INSTANCE.newEventDrivenChannel(PacketHandler.CHANNEL);
             channel.register(new PacketHandler());
 		}
