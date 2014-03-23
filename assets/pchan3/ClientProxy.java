@@ -7,6 +7,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.EntitySmokeFX;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
 import assets.pchan3.pirate.EntityPirate;
@@ -95,4 +96,9 @@ public class ClientProxy extends CommonProxy {
 		RenderingRegistry.registerEntityRenderingHandler(EntitySteamBoat.class, new RenderSteamBoat());
         FMLCommonHandler.instance().bus().register(new AirshipKeyHandler(KEY_CHEST, KEY_UP, KEY_DOWN, KEY_FIRE));
 	}
+
+    @Override
+    public EntityPlayer getPlayer(){
+        return Minecraft.getMinecraft().thePlayer;
+    }
 }

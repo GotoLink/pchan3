@@ -9,7 +9,7 @@
   "mcversion": $mcversion,
   "url": "http://www.minecraftforum.net/topic/164940-",
   "updateUrl": "",
-  "authors": ["PChan3","Glimmar"],
+  "authorList": ["PChan3","Glimmar"],
   "parent":"",
   "screenshots": [],
   "dependencies": []

@@ -4,10 +4,8 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.network.FMLNetworkEvent;
 import cpw.mods.fml.common.network.internal.FMLProxyPacket;
 import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.NetHandlerPlayServer;
@@ -21,14 +19,13 @@ public class PacketHandler {
 		if (event.packet.channel().equals(CHANNEL))
             if(event.packet.getTarget().isServer()) {
 			    event.reply = this.handle(event.packet, ((NetHandlerPlayServer)event.handler).playerEntity);
-		    }else{
-                this.handle(event.packet, getPlayer());
-            }
+		    }
 	}
 
-    @SideOnly(Side.CLIENT)
-    private EntityPlayer getPlayer() {
-        return Minecraft.getMinecraft().thePlayer;
+    @SubscribeEvent
+    public void onClientPacket(FMLNetworkEvent.ClientCustomPacketEvent event){
+        if (event.packet.channel().equals(CHANNEL))
+            this.handle(event.packet, PChan3Mods.proxy.getPlayer());
     }
 
     private FMLProxyPacket handle(FMLProxyPacket packet, EntityPlayer player) {
