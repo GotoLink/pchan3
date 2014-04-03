@@ -12,20 +12,33 @@ import assets.pchan3.PacketHandler;
 
 public class AirshipKeyHandler {
 	public static final String chestKeyDesc = "openchest";
-	public static final String upKeyDesc = "up";
-	public static final String downKeyDesc = "down";
+	public static final String upKeyDesc = "fly.up";
+	public static final String downKeyDesc = "fly.down";
 	public static final String fireKeyDesc = "fire";
+    private static final String CAT = "key.categories.airship";
     public static KeyBinding chest, up, down, fire;
 	public Minecraft client = Minecraft.getMinecraft();
 
 	public AirshipKeyHandler(int CHEST_KEY, int UP_KEY, int DOWN_KEY, int FIRE_KEY) {
-		chest = new KeyBinding("key."+chestKeyDesc, CHEST_KEY, "key.categories.airship");
-        up = new KeyBinding("key."+upKeyDesc, UP_KEY, "key.categories.airship");
-        down = new KeyBinding("key."+downKeyDesc, DOWN_KEY, "key.categories.airship");
-        fire = new KeyBinding("key."+fireKeyDesc, FIRE_KEY, "key.categories.airship");
+        for(KeyBinding key:client.gameSettings.keyBindings){
+            if(up==null && key.getKeyDescription().contains(upKeyDesc)){
+                up = key;
+            }
+            if(down==null && key.getKeyDescription().contains(downKeyDesc)){
+                down = key;
+            }
+        }
+        if(up==null){
+            up = new KeyBinding("key."+upKeyDesc, UP_KEY, "key.categories.movement");
+            ClientRegistry.registerKeyBinding(up);
+        }
+        if(down==null){
+            down = new KeyBinding("key."+downKeyDesc, DOWN_KEY, "key.categories.movement");
+            ClientRegistry.registerKeyBinding(down);
+        }
+        chest = new KeyBinding("key."+chestKeyDesc, CHEST_KEY, CAT);
+        fire = new KeyBinding("key."+fireKeyDesc, FIRE_KEY, CAT);
         ClientRegistry.registerKeyBinding(chest);
-        ClientRegistry.registerKeyBinding(up);
-        ClientRegistry.registerKeyBinding(down);
         ClientRegistry.registerKeyBinding(fire);
 	}
 

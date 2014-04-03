@@ -268,7 +268,7 @@ public class EntityAirship extends Entity implements IInventory {
 
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer entityPlayer) {
-		return this.isDead ? false : entityPlayer.getDistanceSqToEntity(this) <= 64.0D;
+		return !this.isDead && entityPlayer.getDistanceSqToEntity(this) <= 64.0D;
 	}
 
 	@Override
