@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.network.FMLEventChannel;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EnumCreatureType;
@@ -34,7 +36,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 /**
  * @author pchan3
  */
-@Mod(modid = "pchan3", name = "PChan3 mods", version = "0.7")
+@Mod(modid = "pchan3", name = "PChan3 mods", useMetadata = true)
 public class PChan3Mods {
 	@Instance("pchan3")
 	public static PChan3Mods instance;
@@ -121,6 +123,16 @@ public class PChan3Mods {
 			EntityRegistry.registerModEntity(EntitySteamBoat.class, "SteamBoat", 2, this, 40, 1, false);
 			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(steamBoat), "#X#", "###",'#', "plankWood",'X', Items.iron_ingot));
 		}
+        if(event.getSourceFile().getName().endsWith(".jar") && event.getSide().isClient()){
+            try {
+                Class.forName("mods.mud.ModUpdateDetector").getDeclaredMethod("registerMod", ModContainer.class, String.class, String.class).invoke(null,
+                        FMLCommonHandler.instance().findContainerFor(this),
+                        "https://raw.github.com/GotoLink/pchan3/master/update.xml",
+                        "https://raw.github.com/GotoLink/pchan3/master/changelog.md"
+                );
+            } catch (Throwable e) {
+            }
+        }
 	}
 
 	private BiomeGenBase[] getAvailableBiomes() {

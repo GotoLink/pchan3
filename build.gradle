@@ -20,7 +20,7 @@ minecraft {
     assetDir = "eclipse/assets"
 }
 archivesBaseName = "PChan3Mods"
-version = "0.7(1.7.2)"
+version = "0.7"
 sourceSets.main.java{srcDirs project.projectDir.getPath() include("assets/**")}
 sourceSets.main.resources{srcDirs project.projectDir.getPath() include("assets/**" , "*.info", "*.mcmeta", "*.txt")}
 processResources {
@@ -34,4 +34,11 @@ processResources {
     from(project.sourceSets.main.resources.srcDirs) {
         include("*.png"," *.lang", "pack.mcmeta", "license.txt")
     }
+}
+jar {
+    //Keep the jar as clean as possible
+    includeEmptyDirs = false
+    //Append with minecraft version
+    classifier = "("+minecraft.version+")"
+    archiveName = archivesBaseName + "-" + version + classifier+"."+extension
 }

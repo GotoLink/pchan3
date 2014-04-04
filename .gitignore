@@ -2,6 +2,11 @@
 
 !.gitignore
 !build.gradle
+!/gradle/
+!gradle*
 !mcmod.info
 !pack.mcmeta
 !/assets/
+!update.xml
+!changelog.md
+!license.txt
