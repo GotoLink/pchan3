@@ -42,10 +42,10 @@ public class PChan3Mods {
 	public static PChan3Mods instance;
 	@SidedProxy(clientSide = "assets.pchan3.ClientProxy", serverSide = "assets.pchan3.CommonProxy")
 	public static CommonProxy proxy;
-	private static boolean ENABLE_AIRSHIP = true, ENABLE_STEAMBOAT = true, ENABLE_PIRATE = true;
+	private static boolean ENABLE_PIRATE = true;
 	public static boolean SHOW_BOILER = true, usePlayerArrow = true, usePlayerCoal = true;
 	public static Item airShip, engine, balloon, steamBoat, anchor;
-	public static int GUI_ID = 0;
+	public static final int GUI_ID = 0;
 	private static String[] SPAWNABLE_BIOMES = new String[] { "Ocean", "Plains" };
 	private static int[] spawnChance = new int[] { 2, 1 }, packSize = new int[] { 1, 2 };
 	public static double airUpSpeed, airDownSpeed, airSpeed;
@@ -85,8 +85,8 @@ public class PChan3Mods {
 		// Read properties file.
 		config = new Configuration(event.getSuggestedConfigurationFile());
 		SHOW_BOILER = config.get("general", "show_boiler", true).getBoolean(true);
-		ENABLE_AIRSHIP = config.get("general", "Enable_Airship", true).getBoolean(true);
-		ENABLE_STEAMBOAT = config.get("general", "Enable_Steamboat", true).getBoolean(true);
+		boolean ENABLE_AIRSHIP = config.get("general", "Enable_Airship", true).getBoolean(true);
+		boolean ENABLE_STEAMBOAT = config.get("general", "Enable_Steamboat", true).getBoolean(true);
 		ENABLE_PIRATE = config.get("general", "Enable_Pirate", true).getBoolean(true);
 		airUpSpeed = config.get("cheats", "AirshipUpSpeed", 2D).getDouble(2D) / 100;
 		airDownSpeed = config.get("cheats", "AirshipDownSpeed", 3D).getDouble(3D) / 100;
@@ -138,7 +138,7 @@ public class PChan3Mods {
 	private BiomeGenBase[] getAvailableBiomes() {
 		ArrayList<BiomeGenBase> result = new ArrayList<BiomeGenBase>();
 		Iterator<BiomeGenBase> itr = Arrays.asList(BiomeGenBase.getBiomeGenArray()).iterator();
-		BiomeGenBase biome = null;
+		BiomeGenBase biome;
 		while (itr.hasNext()) {
 			biome = itr.next();
 			if (biome != null)

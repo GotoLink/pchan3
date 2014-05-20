@@ -70,11 +70,11 @@ public class EntityPirate extends EntityFlying implements IMob, IRangedAttackMob
 		}
 		if (targetedEntity != null && targetedEntity.getDistanceSqToEntity(this) < 64 * 64) {
 			if (canEntityBeSeen(targetedEntity)) {
-				if (attackCounter == 0 && playedWeigh == false) {
+				if (attackCounter == 0 && !playedWeigh) {
 					this.worldObj.playSoundAtEntity(this, "mob.pirate.weighanchor", getSoundVolume(), (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
 					playedWeigh = true;
 				}
-				if (attackCounter == 5 && playedPrep == false) {
+				if (attackCounter == 5 && !playedPrep) {
 					this.worldObj.playSoundAtEntity(this, "mob.pirate.prepare", getSoundVolume(), (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
 					playedPrep = true;
 				}
@@ -151,7 +151,7 @@ public class EntityPirate extends EntityFlying implements IMob, IRangedAttackMob
 			Random rand = new Random();
 			if (rand.nextInt(100) < 5 + par2) {
                 dropItem(PChan3Mods.engine, 1);
-			} else if (rand.nextBoolean() == true) {
+			} else if (rand.nextBoolean()) {
                 dropItem(Items.arrow, 4);
 			} else {
                 dropItem(Items.leather, 4);

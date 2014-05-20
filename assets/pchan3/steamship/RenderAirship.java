@@ -13,7 +13,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class RenderAirship extends Render {
-	protected ModelBase model;
+	protected final ModelBase model;
 	protected ModelBase renderPassModel;
 	private static final ResourceLocation balloon = new ResourceLocation("pchan3", "textures/models/balloon.png");
 	private static final ResourceLocation airship = new ResourceLocation("pchan3", "textures/models/airship.png");

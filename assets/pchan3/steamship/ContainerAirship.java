@@ -46,7 +46,7 @@ public class ContainerAirship extends Container {
 			} else
 				this.mergeItemStack(itemstack1, 2, this.airship.getSizeInventory(), false);
 			if (itemstack1.stackSize == 0) {
-				slot.putStack((ItemStack) null);
+				slot.putStack(null);
 			} else {
 				slot.onSlotChanged();
 			}

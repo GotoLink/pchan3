@@ -12,7 +12,7 @@ import net.minecraft.network.NetHandlerPlayServer;
 import assets.pchan3.steamship.EntityAirship;
 
 public class PacketHandler {
-	public static String CHANNEL = "Steamship";
+	public final static String CHANNEL = "Steamship";
 
 	@SubscribeEvent
 	public void onPacketData(FMLNetworkEvent.ServerCustomPacketEvent event) {

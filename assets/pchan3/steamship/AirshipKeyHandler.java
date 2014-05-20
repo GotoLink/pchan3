@@ -17,7 +17,7 @@ public class AirshipKeyHandler {
 	public static final String fireKeyDesc = "fire";
     private static final String CAT = "key.categories.airship";
     public static KeyBinding chest, up, down, fire;
-	public Minecraft client = Minecraft.getMinecraft();
+	public final Minecraft client = Minecraft.getMinecraft();
 
 	public AirshipKeyHandler(int CHEST_KEY, int UP_KEY, int DOWN_KEY, int FIRE_KEY) {
         for(KeyBinding key:client.gameSettings.keyBindings){

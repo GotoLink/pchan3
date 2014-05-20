@@ -11,7 +11,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class GuiAirship extends GuiContainer {
-	private EntityAirship airship;
+	private final EntityAirship airship;
 	public static final ResourceLocation gui = new ResourceLocation("pchan3", "textures/gui/airshipgui.png");
 
 	public GuiAirship(InventoryPlayer inventoryplayer, EntityAirship air) {

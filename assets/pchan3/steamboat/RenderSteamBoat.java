@@ -13,7 +13,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class RenderSteamBoat extends Render {
-	protected ModelBase model;
+	protected final ModelBase model;
 	private static final ResourceLocation boat = new ResourceLocation("pchan3", "textures/models/steamboat.png");
 
 	public RenderSteamBoat() {
