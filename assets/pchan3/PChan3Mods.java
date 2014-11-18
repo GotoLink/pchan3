@@ -7,6 +7,7 @@ import java.util.List;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
 import cpw.mods.fml.common.network.FMLEventChannel;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EnumCreatureType;
@@ -119,7 +120,7 @@ public class PChan3Mods {
 		//Boat
 		if (ENABLE_STEAMBOAT) {
 			steamBoat = new ItemSteamBoat().setUnlocalizedName("pchan3:Steamboat").setTextureName("pchan3:Steamboat");
-			GameRegistry.registerItem(steamBoat, "Steam Boat");
+			GameRegistry.registerItem(steamBoat, "SteamBoat");
 			EntityRegistry.registerModEntity(EntitySteamBoat.class, "SteamBoat", 2, this, 40, 1, false);
 			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(steamBoat), "#X#", "###",'#', "plankWood",'X', Items.iron_ingot));
 		}
@@ -152,4 +153,12 @@ public class PChan3Mods {
 		result.trimToSize();
 		return (result.size() != 0 && !result.isEmpty()) ? result.toArray(new BiomeGenBase[result.size()]) : null;
 	}
+
+    @EventHandler
+    public void remap(FMLMissingMappingsEvent event){
+        for(FMLMissingMappingsEvent.MissingMapping missingMapping:event.get()){
+            if(missingMapping.name.equals("pchan3:Steam Boat"))
+                missingMapping.remap(steamBoat);
+        }
+    }
 }
