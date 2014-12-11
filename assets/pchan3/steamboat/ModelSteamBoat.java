@@ -1,10 +1,10 @@
 package assets.pchan3.steamboat;
 
+import assets.pchan3.CustomModelRenderer;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.entity.Entity;
-import assets.pchan3.CustomModelRenderer;
 
-public class ModelSteamBoat extends ModelBase {
+public final class ModelSteamBoat extends ModelBase {
 	public CustomModelRenderer boxes[];
 	private long lastframe;
 	private float paddlespin;

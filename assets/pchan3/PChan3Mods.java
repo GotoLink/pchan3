@@ -1,14 +1,23 @@
 package assets.pchan3;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-
+import assets.pchan3.pirate.EntityPirate;
+import assets.pchan3.steamboat.EntitySteamBoat;
+import assets.pchan3.steamboat.ItemSteamBoat;
+import assets.pchan3.steamship.EntityAirship;
+import assets.pchan3.steamship.ItemAirship;
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.Mod.EventHandler;
+import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.FMLEventChannel;
+import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.registry.EntityRegistry;
+import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.init.Blocks;
@@ -19,26 +28,16 @@ import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
-import assets.pchan3.pirate.EntityPirate;
-import assets.pchan3.steamboat.EntitySteamBoat;
-import assets.pchan3.steamboat.ItemSteamBoat;
-import assets.pchan3.steamship.EntityAirship;
-import assets.pchan3.steamship.ItemAirship;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.registry.EntityRegistry;
-import cpw.mods.fml.common.registry.GameRegistry;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author pchan3
  */
 @Mod(modid = "pchan3", name = "PChan3 mods", useMetadata = true)
-public class PChan3Mods {
+public final class PChan3Mods {
 	@Instance("pchan3")
 	public static PChan3Mods instance;
 	@SidedProxy(clientSide = "assets.pchan3.ClientProxy", serverSide = "assets.pchan3.CommonProxy")

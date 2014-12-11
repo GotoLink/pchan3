@@ -1,10 +1,10 @@
 package assets.pchan3.steamship;
 
+import assets.pchan3.CustomModelRenderer;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.entity.Entity;
-import assets.pchan3.CustomModelRenderer;
 
-public class ModelBalloon extends ModelBase {
+public final class ModelBalloon extends ModelBase {
 	public CustomModelRenderer boxes;
 
 	public ModelBalloon() {

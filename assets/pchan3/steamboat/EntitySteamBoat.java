@@ -1,7 +1,8 @@
 package assets.pchan3.steamboat;
 
-import java.util.List;
-
+import assets.pchan3.PChan3Mods;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
@@ -16,9 +17,8 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
-import assets.pchan3.PChan3Mods;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+
+import java.util.List;
 
 public class EntitySteamBoat extends Entity {
 	private double boatPitch;

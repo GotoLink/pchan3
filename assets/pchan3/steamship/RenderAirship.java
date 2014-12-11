@@ -1,18 +1,16 @@
 package assets.pchan3.steamship;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
-
 import org.lwjgl.opengl.GL11;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 @SideOnly(Side.CLIENT)
-public class RenderAirship extends Render {
+public final class RenderAirship extends Render {
 	protected final ModelBase model;
 	protected ModelBase renderPassModel;
 	private static final ResourceLocation balloon = new ResourceLocation("pchan3", "textures/models/balloon.png");

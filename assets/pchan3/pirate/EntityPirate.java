@@ -1,7 +1,6 @@
 package assets.pchan3.pirate;
 
-import java.util.Random;
-
+import assets.pchan3.PChan3Mods;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityFlying;
@@ -14,7 +13,8 @@ import net.minecraft.item.Item;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
-import assets.pchan3.PChan3Mods;
+
+import java.util.Random;
 
 public class EntityPirate extends EntityFlying implements IMob, IRangedAttackMob {
 	public int courseChangeCooldown = 0;

@@ -1,9 +1,9 @@
 package assets.pchan3;
 
-import net.minecraft.client.particle.EntityFX;
-import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.particle.EntityFX;
+import net.minecraft.world.World;
 
 @SideOnly(Side.CLIENT)
 public class EntitySteamExplode extends EntityFX {

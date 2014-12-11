@@ -1,13 +1,13 @@
 package assets.pchan3;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.model.PositionTextureVertex;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.Vec3;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class CustomTexturedQuad {
+public final class CustomTexturedQuad {
 	public CustomTexturedQuad(PositionTextureVertex aPositionTextureVertex[]) {
 		field_1195_a = aPositionTextureVertex;
 		field_1194_b = aPositionTextureVertex.length;

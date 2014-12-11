@@ -1,13 +1,13 @@
 package assets.pchan3;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.DamageSource;
-import net.minecraft.world.World;
 import assets.pchan3.steamship.ContainerAirship;
 import assets.pchan3.steamship.EntityAirship;
 import assets.pchan3.steamship.GuiAirship;
 import cpw.mods.fml.common.network.IGuiHandler;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.DamageSource;
+import net.minecraft.world.World;
 
 public class CommonProxy implements IGuiHandler {
 	public void registerRenderInformation() {

@@ -1,16 +1,14 @@
 package assets.pchan3;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.model.PositionTextureVertex;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.Tessellator;
-
 import org.lwjgl.opengl.GL11;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 @SideOnly(Side.CLIENT)
-public class CustomModelRenderer {
+public final class CustomModelRenderer {
 	public CustomModelRenderer(int i, int j, int w, int h) {
 		compiled = false;
 		displayList = 0;

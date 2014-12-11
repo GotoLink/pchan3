@@ -1,7 +1,12 @@
 package assets.pchan3;
 
-import java.util.Random;
-
+import assets.pchan3.pirate.EntityPirate;
+import assets.pchan3.pirate.ModelPirate;
+import assets.pchan3.pirate.RenderPirate;
+import assets.pchan3.steamboat.EntitySteamBoat;
+import assets.pchan3.steamboat.RenderSteamBoat;
+import assets.pchan3.steamship.*;
+import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -10,23 +15,14 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
-import assets.pchan3.pirate.EntityPirate;
-import assets.pchan3.pirate.ModelPirate;
-import assets.pchan3.pirate.RenderPirate;
-import assets.pchan3.steamboat.EntitySteamBoat;
-import assets.pchan3.steamboat.RenderSteamBoat;
-import assets.pchan3.steamship.AirshipKeyHandler;
-import assets.pchan3.steamship.EntityAirship;
-import assets.pchan3.steamship.ModelAirship;
-import assets.pchan3.steamship.ModelBalloon;
-import assets.pchan3.steamship.RenderAirship;
-import cpw.mods.fml.client.registry.RenderingRegistry;
 import org.lwjgl.input.Keyboard;
+
+import java.util.Random;
 
 /**
  * @author pchan3
  */
-public class ClientProxy extends CommonProxy {
+public final class ClientProxy extends CommonProxy {
     public static int KEY_UP = Keyboard.KEY_NUMPAD8, KEY_DOWN = Keyboard.KEY_NUMPAD2;
     public static int KEY_CHEST = Keyboard.KEY_R, KEY_FIRE = Keyboard.KEY_NUMPAD5;
 	@Override

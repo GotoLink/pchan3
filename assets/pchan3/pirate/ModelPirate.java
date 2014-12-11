@@ -1,10 +1,10 @@
 package assets.pchan3.pirate;
 
+import assets.pchan3.CustomModelRenderer;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.entity.Entity;
-import assets.pchan3.CustomModelRenderer;
 
-public class ModelPirate extends ModelBase {
+public final class ModelPirate extends ModelBase {
 	private float bladespin;
 	private long lastframe;
 	public CustomModelRenderer boxes[];
