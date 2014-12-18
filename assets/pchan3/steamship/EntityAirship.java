@@ -83,7 +83,7 @@ public class EntityAirship extends Entity implements IInventory {
 			}
 			return true;
 		}
-		if (this.worldObj.isRemote && this.isDead) {
+		if (this.isDead) {
 			PChan3Mods.proxy.displayShipExplodeFX(source, this);
 		}
 		return true;
@@ -109,12 +109,10 @@ public class EntityAirship extends Entity implements IInventory {
 		if (stack != null) {
 			if (stack.stackSize <= j) {
 				this.setInventorySlotContents(i, null);
-				this.markDirty();
 			} else {
 				stack = stack.splitStack(j);
 				if (stack.stackSize == 0) {
 					this.setInventorySlotContents(i, null);
-					this.markDirty();
 				}
 			}
 		}
@@ -220,23 +218,24 @@ public class EntityAirship extends Entity implements IInventory {
 
 	@Override
 	public boolean interactFirst(EntityPlayer entityplayer) {
-		if (this.riddenByEntity != null && this.riddenByEntity instanceof EntityPlayer && this.riddenByEntity != entityplayer) {
+		if (this.riddenByEntity instanceof EntityPlayer && this.riddenByEntity != entityplayer) {
 			return true;
 		} else if (!this.worldObj.isRemote) {
-			ItemStack itemstack = entityplayer.inventory.getCurrentItem();
+			ItemStack itemstack = entityplayer.getCurrentEquippedItem();
 			if (itemstack != null) {
 				if (itemstack.getItem() instanceof ItemCoal) {
-					if (--itemstack.stackSize == 0) {
-						entityplayer.destroyCurrentEquippedItem();
-					}
-					if (this.getFuelTime() == 0)
-						this.setFuelTime(1600);
-					else if (this.getStackInSlot(0) == null)
-						this.setInventorySlotContents(0, new ItemStack(itemstack.getItem()));
-					else if (this.getStackInSlot(0).getItem() == Items.coal) {
+					if (this.getFuelTime() == 0) {
+                        itemstack.stackSize--;
+                        this.setFuelTime(1600);
+                    }else if (this.getStackInSlot(0) == null) {
+                        this.setInventorySlotContents(0, itemstack.splitStack(itemstack.stackSize));
+                    }else if (this.getStackInSlot(0).getItem() == Items.coal && this.getStackInSlot(0).stackSize < getInventoryStackLimit()) {
 						this.cargoItems[0].stackSize++;
-						this.markDirty();
+                        itemstack.stackSize--;
 					}
+                    if (itemstack.stackSize == 0) {
+                        entityplayer.destroyCurrentEquippedItem();
+                    }
 					return false;
 				} else if (itemstack.getItem() instanceof ItemAnchor) {
 					if (!this.isAnchor) {
@@ -247,10 +246,13 @@ public class EntityAirship extends Entity implements IInventory {
 					}
 					return true;
 				}
-			}else if(this.isAnchor && this.thrower.getEntityId() == entityplayer.getEntityId()){
+			}
+            if(this.isAnchor && this.thrower.getEntityId() == entityplayer.getEntityId())
                 this.unsetAnchor(!entityplayer.capabilities.isCreativeMode);
-            }
-			entityplayer.mountEntity(this);
+            else if(entityplayer.ridingEntity == null)
+			    entityplayer.mountEntity(this);
+            else if(entityplayer.ridingEntity == this)
+                entityplayer.mountEntity(null);
 			return true;
 		}
 		return false;
@@ -404,15 +406,13 @@ public class EntityAirship extends Entity implements IInventory {
 			this.rotationYaw = (float) (this.rotationYaw + d19);
 			setRotation(this.rotationYaw, this.rotationPitch);
 			if (!this.worldObj.isRemote) {
-				List<?> list = worldObj.getEntitiesWithinAABBExcludingEntity(this, this.boundingBox.expand(0.2D, 0.0D, 0.2D));
-				if (list != null && list.size() > 0) {
-					for (int j1 = 0; j1 < list.size(); j1++) {
-						Entity entity = (Entity) list.get(j1);
-						if (entity != this.riddenByEntity && entity.canBePushed() && (entity instanceof EntityAirship)) {
-							entity.applyEntityCollision(this);
-						}
-					}
-				}
+				List list = worldObj.getEntitiesWithinAABBExcludingEntity(this, this.boundingBox.expand(0.2D, 0.0D, 0.2D));
+                for (Object aList : list) {
+                    Entity entity = (Entity) aList;
+                    if (entity != this.riddenByEntity && entity.canBePushed() && (entity instanceof EntityAirship)) {
+                        entity.applyEntityCollision(this);
+                    }
+                }
 				if (this.riddenByEntity != null && this.riddenByEntity.isDead) {
 					this.riddenByEntity = null;
 				}
@@ -444,7 +444,7 @@ public class EntityAirship extends Entity implements IInventory {
 	}
 
 	public void setDamageTaken(float par1) {
-		this.dataWatcher.updateObject(19, Float.valueOf(par1));
+		this.dataWatcher.updateObject(19, par1);
 	}
 
 	@Override
@@ -474,21 +474,20 @@ public class EntityAirship extends Entity implements IInventory {
 				}
 			}
 		}
-		if (this.worldObj.isRemote)
-			PChan3Mods.proxy.displayExplodeFX(this);
+		PChan3Mods.proxy.displayExplodeFX(this);
 		super.setDead();
 	}
 
 	public void setFireCountDown(int par1) {
-		this.dataWatcher.updateObject(31, Integer.valueOf(par1));
+		this.dataWatcher.updateObject(31, par1);
 	}
 
 	public void setForwardDirection(int par1) {
-		this.dataWatcher.updateObject(18, Integer.valueOf(par1));
+		this.dataWatcher.updateObject(18, par1);
 	}
 
 	public void setFuelTime(int par1) {
-		this.dataWatcher.updateObject(30, Integer.valueOf(par1));
+		this.dataWatcher.updateObject(30, par1);
 	}
 
 	@Override
@@ -496,7 +495,6 @@ public class EntityAirship extends Entity implements IInventory {
 		this.cargoItems[i] = itemstack;
 		if (itemstack != null && itemstack.stackSize > this.getInventoryStackLimit())
 			itemstack.stackSize = this.getInventoryStackLimit();
-		this.markDirty();
 	}
 
 	@Override
@@ -514,7 +512,7 @@ public class EntityAirship extends Entity implements IInventory {
 	}
 
 	public void setTimeSinceHit(int par1) {
-		this.dataWatcher.updateObject(17, Integer.valueOf(par1));
+		this.dataWatcher.updateObject(17, par1);
 	}
 
 	@Override
@@ -546,11 +544,11 @@ public class EntityAirship extends Entity implements IInventory {
 
 	@Override
 	protected void entityInit() {
-		this.dataWatcher.addObject(17, new Integer(0));
-		this.dataWatcher.addObject(18, new Integer(1));
-		this.dataWatcher.addObject(19, new Float(0.0F));
-		this.dataWatcher.addObject(30, new Integer(0));
-		this.dataWatcher.addObject(31, new Integer(0));
+		this.dataWatcher.addObject(17, 0);
+		this.dataWatcher.addObject(18, 1);
+		this.dataWatcher.addObject(19, 0.0F);
+		this.dataWatcher.addObject(30, 0);
+		this.dataWatcher.addObject(31, 0);
 	}
 
 	@Override
@@ -613,14 +611,13 @@ public class EntityAirship extends Entity implements IInventory {
 			if (this.leash.hasKey("UUIDMost") && this.leash.hasKey("UUIDLeast")) {
 				UUID uuid = new UUID(this.leash.getLong("UUIDMost"), this.leash.getLong("UUIDLeast"));
 				List list = this.worldObj.getEntitiesWithinAABB(EntityLivingBase.class, this.boundingBox.expand(10.0D, 10.0D, 10.0D));
-				Iterator iterator = list.iterator();
-				while (iterator.hasNext()) {
-					EntityLivingBase entitylivingbase = (EntityLivingBase) iterator.next();
-					if (entitylivingbase.getUniqueID().equals(uuid)) {
-						this.thrower = entitylivingbase;
-						break;
-					}
-				}
+                for (Object aList : list) {
+                    EntityLivingBase entitylivingbase = (EntityLivingBase) aList;
+                    if (entitylivingbase.getUniqueID().equals(uuid)) {
+                        this.thrower = entitylivingbase;
+                        break;
+                    }
+                }
 			} else {
 				this.unsetAnchor(true);
 			}
