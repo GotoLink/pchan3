@@ -5,11 +5,9 @@ import assets.pchan3.steamboat.EntitySteamBoat;
 import assets.pchan3.steamboat.ItemSteamBoat;
 import assets.pchan3.steamship.EntityAirship;
 import assets.pchan3.steamship.ItemAirship;
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
@@ -123,15 +121,8 @@ public final class PChan3Mods {
 			EntityRegistry.registerModEntity(EntitySteamBoat.class, "SteamBoat", 2, this, 40, 1, false);
 			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(steamBoat), "#X#", "###",'#', "plankWood",'X', Items.iron_ingot));
 		}
-        if(event.getSourceFile().getName().endsWith(".jar") && event.getSide().isClient()){
-            try {
-                Class.forName("mods.mud.ModUpdateDetector").getDeclaredMethod("registerMod", ModContainer.class, String.class, String.class).invoke(null,
-                        FMLCommonHandler.instance().findContainerFor(this),
-                        "https://raw.github.com/GotoLink/pchan3/master/update.xml",
-                        "https://raw.github.com/GotoLink/pchan3/master/changelog.md"
-                );
-            } catch (Throwable e) {
-            }
+        if(event.getSourceFile().getName().endsWith(".jar")){
+            proxy.tryCheckForUpdate();
         }
 	}
 

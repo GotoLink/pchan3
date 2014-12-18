@@ -27,7 +27,7 @@ public class CommonProxy implements IGuiHandler {
 
 	@Override
 	public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-		if (ID == PChan3Mods.GUI_ID)
+		if (ID == PChan3Mods.GUI_ID && player.ridingEntity instanceof EntityAirship)
 			return new ContainerAirship(player.inventory, (EntityAirship) player.ridingEntity);
 		else
 			return null;
@@ -35,13 +35,14 @@ public class CommonProxy implements IGuiHandler {
 
 	@Override
 	public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-		if (ID == PChan3Mods.GUI_ID)
-			return new GuiAirship(player.inventory, (EntityAirship) player.ridingEntity);
-		else
-			return null;
+        return null;
 	}
 
     public EntityPlayer getPlayer(){
         return null;
+    }
+
+    public void tryCheckForUpdate() {
+
     }
 }

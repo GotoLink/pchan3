@@ -33,7 +33,7 @@ public final class PacketHandler {
 		int id = buf.readInt();
 		short data = buf.readShort();
 		Entity ent = player.worldObj.getEntityByID(id);
-		if (ent != null && ent instanceof EntityAirship && ent.riddenByEntity instanceof EntityPlayer) {
+		if (ent instanceof EntityAirship && ent.riddenByEntity instanceof EntityPlayer) {
             if(data==0){
                 ((EntityPlayer) ent.riddenByEntity).openGui(PChan3Mods.instance, PChan3Mods.GUI_ID, ent.worldObj, 0, 0, 0);
                 return null;
@@ -63,12 +63,12 @@ public final class PacketHandler {
         return null;
 	}
 
-	public static FMLProxyPacket getPacket(Side side,int id, int key) {
+	public static FMLProxyPacket getPacket(int id, int key) {
 		ByteBuf payload = Unpooled.buffer();
         payload.writeInt(id);
         payload.writeShort(key);
 		FMLProxyPacket packet = new FMLProxyPacket(payload, CHANNEL);
-		packet.setTarget(side);
+		packet.setTarget(Side.SERVER);
 		return packet;
 	}
 }
