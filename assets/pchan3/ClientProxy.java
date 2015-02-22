@@ -45,6 +45,8 @@ public final class ClientProxy extends CommonProxy {
 
 	@Override
 	public void displayShipExplodeFX(DamageSource source, EntityAirship entity) {
+        if(source.getEntity()==null)
+            return;
 		double d1 = source.getEntity().posX - (source.getEntity().posX - entity.posX) / 2;
 		double d2 = source.getEntity().posY - (source.getEntity().posY - entity.posY) / 2;
 		double d3 = source.getEntity().posZ - (source.getEntity().posZ - entity.posZ) / 2;
@@ -53,8 +55,7 @@ public final class ClientProxy extends CommonProxy {
 
 	@Override
 	public void displaySmoke(Entity entity) {
-		double smoke = rand.nextFloat() * 2.0f - 1.0f;
-		if (smoke > 0.65f) {
+		if (rand.nextFloat() * 2.0f > 1.65f) {
 			EntitySmokeFX fx = new EntitySmokeFX(entity.worldObj, entity.posX, entity.posY + 0.9D, entity.posZ, 0.0D, 0.0D, 0.0D);
 			fx.setRBGColorF(230, 230, 230);
 			addEffect(fx);

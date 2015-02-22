@@ -50,9 +50,9 @@ public class EntityPirate extends EntityFlying implements IMob, IRangedAttackMob
 		if (courseChangeCooldown-- <= 0) {
 			courseChangeCooldown += rand.nextInt(5) + 2;
 			if (isCourseTraversable(this.waypointX, this.waypointY, this.waypointZ, d3)) {
-				this.motionX += (d / d3) * 0.04000000000000001D;
-				this.motionY += (d1 / d3) * 0.04000000000000001D;
-				this.motionZ += (d2 / d3) * 0.04000000000000001D;
+				this.motionX += (d / d3) * 0.04D;
+				this.motionY += (d1 / d3) * 0.04D;
+				this.motionZ += (d2 / d3) * 0.04D;
 			} else {
 				this.waypointX = this.posX;
 				this.waypointY = this.posY;
@@ -80,20 +80,6 @@ public class EntityPirate extends EntityFlying implements IMob, IRangedAttackMob
 				}
 				attackCounter++;
 				if (attackCounter >= 60) {
-					/*
-					 * double b = targetedEntity.posX - posX + 1.200D; double b1
-					 * = targetedEntity.posZ - posZ + 1.200D; EntityArrow
-					 * entityarrow = new EntityArrow(this.worldObj,this,1.0f);
-					 * entityarrow.posY += 1.4D; double b2 = targetedEntity.posY
-					 * - 0.2D - entityarrow.posY; float f1 =
-					 * MathHelper.sqrt_double(b * b + b1 * b1) * 0.3F;
-					 * this.worldObj.playSoundAtEntity(this, "mob.pirate.fire",
-					 * 10.0F, (this.rand.nextFloat() - rand.nextFloat()) * 0.2F
-					 * + 1.0F); //if (!this.worldObj.isRemote)
-					 * this.worldObj.spawnEntityInWorld(entityarrow);
-					 * entityarrow.setThrowableHeading(b, b2 + (double) f1, b1,
-					 * 1.25F, 12F);
-					 */
 					float charge = this.rand.nextFloat();
 					if (charge > 0.1F) {
 						this.attackEntityWithRangedAttack(targetedEntity, charge);
@@ -142,13 +128,12 @@ public class EntityPirate extends EntityFlying implements IMob, IRangedAttackMob
 
 	@Override
 	public boolean getCanSpawnHere() {
-		return this.rand.nextInt(15) == 0 && super.getCanSpawnHere() && this.worldObj.difficultySetting.ordinal() > 0;
+		return this.rand.nextInt(MathHelper.floor_double(1/PChan3Mods.spawn)+1) == 0 && super.getCanSpawnHere() && this.worldObj.difficultySetting.ordinal() > 0;
 	}
 
 	@Override
 	protected void dropFewItems(boolean par1, int par2) {
 		if (par1) {
-			Random rand = new Random();
 			if (rand.nextInt(100) < 5 + par2) {
                 dropItem(PChan3Mods.engine, 1);
 			} else if (rand.nextBoolean()) {

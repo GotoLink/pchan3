@@ -46,7 +46,7 @@ public final class PChan3Mods {
 	public static final int GUI_ID = 0;
 	private static String[] SPAWNABLE_BIOMES = new String[] { "Ocean", "Plains" };
 	private static int[] spawnChance = new int[] { 2, 1 }, packSize = new int[] { 1, 2 };
-	public static double airUpSpeed, airDownSpeed, airSpeed;
+	public static double airUpSpeed, airDownSpeed, airSpeed, spawn = 0.0714D;
 	private Configuration config;
 	private org.apache.logging.log4j.Logger logger;
     public static FMLEventChannel channel;
@@ -55,9 +55,10 @@ public final class PChan3Mods {
 	public void modsLoaded(FMLPostInitializationEvent event) {
 		//Pirate
 		if (ENABLE_PIRATE) {
-			SPAWNABLE_BIOMES = config.get("general", "Pirate_spawn_in_Biomes", SPAWNABLE_BIOMES).getStringList();
-			spawnChance = config.get("general", "Pirate_Spawn_Chance_per_biome", spawnChance).getIntList();
-			packSize = config.get("general", "Pirate_Max_Pack_Size_per_biome", packSize).getIntList();
+			spawn = config.get("general", "Pirate_spawn_discarded_attempt", spawn, "Global ratio of actual spawn attempts. Lower to make pirates rarer.").setMinValue(0.001D).getDouble();
+			SPAWNABLE_BIOMES = config.get("general", "Pirate_spawn_in_Biomes", SPAWNABLE_BIOMES, "Where pirates can spawn, per biome names.").getStringList();
+			spawnChance = config.get("general", "Pirate_Spawn_Chance_per_biome", spawnChance, "Relative chance of pirate spawn against other mob spawn, biome specific. In same order as biome names in Pirate_spawn_in_Biomes option.").getIntList();
+			packSize = config.get("general", "Pirate_Max_Pack_Size_per_biome", packSize, "Maximum number of pirate spawn, per biome. In same order as biome names in Pirate_spawn_in_Biomes option.").getIntList();
 			if (SPAWNABLE_BIOMES != null && SPAWNABLE_BIOMES.length != 0) {
 				EntityRegistry.registerModEntity(EntityPirate.class, "Pirate", 3, this, 80, 1, true);
 				BiomeGenBase[] biomes = getAvailableBiomes();
