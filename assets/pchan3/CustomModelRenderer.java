@@ -121,8 +121,8 @@ public final class CustomModelRenderer {
 		displayList = GLAllocation.generateDisplayLists(1);
 		GL11.glNewList(displayList, 4864 /* GL_COMPILE */);
 		Tessellator tessellator = Tessellator.instance;
-		for (int i = 0; i < faces.length; i++) {
-			faces[i].render(tessellator, f);
+		for (CustomTexturedQuad face : faces) {
+			face.render(tessellator, f);
 		}
 		GL11.glEndList();
 		compiled = true;
